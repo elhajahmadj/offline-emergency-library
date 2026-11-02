@@ -90,7 +90,7 @@ gh_asset_latest(){ # repo regex -> asset url from the 'latest' release
    | grep -oE '"browser_download_url"[ ]*:[ ]*"[^"]+"' | sed -E 's/.*"(https[^"]+)"/\1/' \
    | grep -E "$2" | head -n1
 }
-latest_zim(){ curl -s -A "$UA" "$1" | grep -oE "$2[^\"<]*\.zim" | sort -u | tail -n1; }
+latest_zim(){ curl -sL -A "$UA" "$1" | grep -oE "$2[^\"<]*\.zim" | sort -u | tail -n1; }
 
 # ================================================================ 1. AI engine
 log "=== [1/8] Offline AI engine (llama.cpp) ==="
@@ -132,7 +132,7 @@ fi
 # ================================================================ 4. Kiwix reader
 log "=== [4/8] Kiwix reader ==="
 if [ "$PLAT" = linux ] && [ "$CPU" = x64 ]; then
-  ai="$(curl -s -A "$UA" https://download.kiwix.org/release/kiwix-desktop/ | grep -oE 'kiwix-desktop_x86_64_[0-9][^\"]*\.appimage' | sort -u | tail -n1)"
+  ai="$(curl -sL -A "$UA" https://download.kiwix.org/release/kiwix-desktop/ | grep -oE 'kiwix-desktop_x86_64_[0-9][^\"]*\.appimage' | sort -u | tail -n1)"
   if [ -n "$ai" ]; then log "kiwix: $ai"; fetch "https://download.kiwix.org/release/kiwix-desktop/$ai" "$ROOT/Kiwix-Reader/$ai"; chmod +x "$ROOT/Kiwix-Reader/$ai" 2>/dev/null; fi
 else
   log "kiwix desktop: on macOS install 'Kiwix' from the Mac App Store or kiwix.org; on Linux-ARM use the Kiwix website. (ZIMs still work via the bundled Android app or any Kiwix build.)"
@@ -163,7 +163,7 @@ fi
 
 # ================================================================ 6. PDFs
 log "=== [6/8] Public-domain manuals (PDF) ==="
-ia_pdf(){ curl -s -A "$UA" "https://archive.org/metadata/$1" | grep -oE '"name":"[^"]+\.pdf"' | sed -E 's/"name":"([^"]+)"/\1/' | grep -vE '_text\.pdf$' | head -n1; }
+ia_pdf(){ curl -sL -A "$UA" "https://archive.org/metadata/$1" | grep -oE '"name":"[^"]+\.pdf"' | sed -E 's/"name":"([^"]+)"/\1/' | grep -vE '_text\.pdf$' | head -n1; }
 get_pdf(){ # id  localname  destdir
   f="$(ia_pdf "$1")"
   if [ -n "$f" ]; then
@@ -257,7 +257,7 @@ ku="$(gh_asset_latest kiwix/kiwix-android 'universal-standalone\.apk$')"
 [ -z "$ku" ] && ku="$(gh_asset_latest kiwix/kiwix-android '\.apk$')"
 [ -n "$ku" ] && { log "phone app: Kiwix $(basename "$ku")"; fetch "$ku" "$PA/$(basename "$ku")"; }
 if [ "$SKIP_MAPS" = 0 ]; then
-  vc="$(curl -s -A "$UA" https://f-droid.org/api/v1/packages/net.osmand.plus | grep -oE '"suggestedVersionCode":[0-9]+' | grep -oE '[0-9]+' | head -n1)"
+  vc="$(curl -sL -A "$UA" https://f-droid.org/api/v1/packages/net.osmand.plus | grep -oE '"suggestedVersionCode":[0-9]+' | grep -oE '[0-9]+' | head -n1)"
   [ -n "$vc" ] && { log "phone app: OsmAnd~ $vc"; fetch "https://f-droid.org/repo/net.osmand.plus_$vc.apk" "$PA/OsmAnd-$vc.apk"; }
 fi
 
@@ -309,7 +309,7 @@ SCRIPTDIR="$(cd "$(dirname "$0")" && pwd)"
 place_doc(){ # base  destpath
   for ext in md html; do
     if [ -f "$SCRIPTDIR/docs/$1.$ext" ]; then cp "$SCRIPTDIR/docs/$1.$ext" "$2.$ext"
-    else curl -s -A "$UA" "$REPO_RAW/docs/$1.$ext" -o "$2.$ext"; fi
+    else curl -sL -A "$UA" "$REPO_RAW/docs/$1.$ext" -o "$2.$ext"; fi
   done
 }
 place_doc "START-HERE"            "$ROOT/START-HERE"
