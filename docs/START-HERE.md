@@ -34,6 +34,8 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 
 ## Quick start by need
 
+- **Keep a device charged off-grid:** read [Power and devices](POWER-AND-DEVICES.html)
+  for battery sizing, solar/car charging and low-power reading setups.
 - **I want to chat with an AI offline:** `AI-Offline\` → double-click `CHAT-3B-light.bat`.
 - **I want the AI to answer from my manuals:** set up `DocReader-GPT4All` (see its guide),
   point it at `Manuals\ArmyFieldManuals` and `Medical\Manuals-PDF`, ask away.

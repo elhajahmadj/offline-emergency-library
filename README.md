@@ -66,6 +66,10 @@ install, and future updates), so plan for more than 60 GB.
 
 ## 💻 Hardware requirements — what machine do I need to USE it?
 
+**Planning for an outage?** Read [Power and devices](docs/POWER-AND-DEVICES.md)
+([offline HTML](docs/POWER-AND-DEVICES.html)) for Wh budgets, charging options
+and lower-power ways to read the library.
+
 **To download:** any 64-bit **Windows, macOS, or Linux** computer with internet.
 - Windows: uses `curl` + PowerShell (both built in).
 - macOS/Linux: uses `curl` + `tar` (built in); `unzip` enables the desktop map viewer.
