@@ -271,6 +271,8 @@ everything, or **`START-HERE.html`** for a guided intro.
 Both pages link to each component's guide:
 
 - `I-NEED-TO.html` — **emergency quick index**: "I need to…" → straight to the right file
+- `EMERGENCY-ESSENTIALS.html` — **printable one-pager**: critical reminders (bleeding, CPR,
+  water, signalling, frequencies) for when the battery is dead — print it while you have power
 - `AI-Offline\HOW-TO-RUN-OFFLINE-AI.html` — run the offline AI chat
 - `AI-Offline\DocReader-GPT4All\HOW-TO-ASK-YOUR-DOCS.html` — ask AI about your PDFs
 - `Kiwix-Reader\HOW-TO-USE-KIWIX.html` — read the `.zim` archives

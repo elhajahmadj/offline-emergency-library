@@ -12,6 +12,15 @@ Contributor-driven reliability and portability work, from people running the kit
 hardware.
 
 ### Added
+- **Printable "emergency essentials" one-pager.** A new `EMERGENCY-ESSENTIALS` page (Markdown
+  + print-optimized HTML) placed at the drive root by both installers and linked from
+  START-HERE and the "I need to…" index. Paper is the only thing that works with a dead
+  battery, so this is one page of the most critical reminders — severe bleeding, hands-only
+  CPR, choking, making water safe (rolling boil 1 min / 3 min above ~2,000 m), signalling for
+  help, and the key emergency frequencies (NOAA, marine VHF 16, aviation 121.5, 406 MHz
+  beacon) — drawn from and citing the Army first-aid/survival manuals, *Where There Is No
+  Doctor*, and the radio frequency reference already in the kit. Prints to ~2 pages via the
+  browser (Ctrl+P); it is a reminder card, not a substitute for the manuals. Resolves #19.
 - **Map and compass navigation guide.** A new `MAP-AND-COMPASS` guide (Markdown + offline
   HTML) covers reading a topo map, declination, taking and following a bearing, resection
   (triangulation) and natural direction finding (sun, shadow-stick, stars), adapted in

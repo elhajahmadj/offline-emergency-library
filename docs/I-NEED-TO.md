@@ -13,6 +13,9 @@ source you have, and use your own judgement.
 > then search inside the archive (see [how to use Kiwix](Kiwix-Reader/HOW-TO-USE-KIWIX.html)).
 > If a link doesn't open, that part wasn't included in your build.
 
+> 🖨️ **No power?** This page needs a screen. Print **[Emergency essentials](EMERGENCY-ESSENTIALS.html)**
+> now — one page of the most critical steps that works on paper when the battery is dead.
+
 ---
 
 ## 🩺 Medical emergency

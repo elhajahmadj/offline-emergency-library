@@ -588,6 +588,7 @@ place_doc(){ # base  destpath
 }
 place_doc "START-HERE"            "$ROOT/START-HERE"
 place_doc "I-NEED-TO"             "$ROOT/I-NEED-TO"
+place_doc "EMERGENCY-ESSENTIALS"  "$ROOT/EMERGENCY-ESSENTIALS"
 place_doc "POWER-AND-DEVICES"     "$ROOT/POWER-AND-DEVICES"
 place_doc "HOW-TO-RUN-OFFLINE-AI" "$ROOT/AI-Offline/HOW-TO-RUN-OFFLINE-AI"
 place_doc "HOW-TO-ASK-YOUR-DOCS"  "$ROOT/AI-Offline/DocReader-GPT4All/HOW-TO-ASK-YOUR-DOCS"

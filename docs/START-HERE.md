@@ -6,6 +6,10 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 > 🆘 **In an emergency right now?** Open **[I need to…](I-NEED-TO.html)** — a task-first
 > index that sends you straight to the right file for bleeding, CPR, water, calling for
 > help, navigation and more.
+>
+> 🖨️ **Before the battery dies:** print **[Emergency essentials](EMERGENCY-ESSENTIALS.html)**
+> — one page of the most critical reminders (bleeding, CPR, water, signalling, frequencies)
+> that works on paper with no power.
 
 > **How this kit is meant to be used:** the books, manuals and maps are the authority.
 > The offline AI is a fast
@@ -47,6 +51,8 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 
 ## Quick start by need
 
+- **Prepare for a dead battery:** print `EMERGENCY-ESSENTIALS.html` (one page of critical
+  reminders) and your region's map now, while you have power.
 - **Navigate without a device:** open `OsmAnd\MAP-AND-COMPASS.html` and print it
   while preparing the kit. Keep a paper topographic map and compass.
 - **Keep a device charged off-grid:** read [Power and devices](POWER-AND-DEVICES.html)
