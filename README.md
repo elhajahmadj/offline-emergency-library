@@ -282,6 +282,8 @@ Both pages link to each component's guide:
 - `Maps-Browser\OPEN-MAPS.bat` / `OPEN-MAPS.sh` — street maps in a web browser (opt-in)
 - `Phone-Apps\USE-ON-PHONE.html` — port the library to a phone
 - `Manuals\READ-ME-FIRST.html` and `Medical\READ-ME-FIRST.html`
+- `Medical\PSYCHOLOGICAL-FIRST-AID.html` — helping people (and yourself) cope with panic,
+  fear, grief and stress in a crisis
 - `Manuals\Radio-Communications\RADIO-GUIDE.html` — emergency radio comms
 - `Manuals\Radio-Communications\RADIO-FREQUENCIES.html` - printable US frequency tables,
   regional cautions and primary sources (NOAA, FCC, USCG, FAA)

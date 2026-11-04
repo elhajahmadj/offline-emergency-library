@@ -35,6 +35,7 @@ bookmarks or search (Ctrl+F) for the words in **bold**.
 | **Handle poisoning or a severe allergic reaction** | [Where There Is No Doctor](Medical/Manuals-PDF/Where%20There%20Is%20No%20Doctor.pdf) | search **"poisoning"** / **"allergic"** / **"shock"** |
 | **Deliver a baby / childbirth** | [Where There Is No Doctor](Medical/Manuals-PDF/Where%20There%20Is%20No%20Doctor.pdf) | search **"childbirth"** / **"pregnancy"** |
 | **Severe tooth pain / dental** | [Where There Is No Dentist](Medical/Manuals-PDF/Where%20There%20Is%20No%20Dentist.pdf) | the chapter for your problem |
+| **Help someone cope with panic, fear or grief** | [Psychological first aid](Medical/PSYCHOLOGICAL-FIRST-AID.html) | stay calm, keep them safe, listen, reconnect — and look after yourself |
 
 **More depth:** the medical archives (open in **Kiwix**) — `Medical\WikiMed\` (medical
 Wikipedia) and `Medical\zimgit-medicine\` (first-aid guide). See the

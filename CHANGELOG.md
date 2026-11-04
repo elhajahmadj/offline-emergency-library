@@ -12,6 +12,15 @@ Contributor-driven reliability and portability work, from people running the kit
 hardware.
 
 ### Added
+- **Psychological first aid guide.** A new `PSYCHOLOGICAL-FIRST-AID` guide (Markdown + offline
+  HTML) in `Medical/`, placed by both installers and linked from `Medical/READ-ME-FIRST`, the
+  "I need to…" index and the README. Plain-language, original-wording support for helping
+  people — and helpers themselves — cope with fear, panic, grief and acute stress over the
+  days and weeks of a crisis (the widely taught Look / Listen / Link approach, children, grief,
+  helper self-care, and when to escalate). Written in our own words and citing the WHO PFA
+  field guide and the bundled medical references as further reading; **no copyrighted text is
+  reproduced or bundled** (the WHO guide is "all rights reserved", so it is linked, not
+  shipped). Resolves #25.
 - **Printable "emergency essentials" one-pager.** A new `EMERGENCY-ESSENTIALS` page (Markdown
   + print-optimized HTML) placed at the drive root by both installers and linked from
   START-HERE and the "I need to…" index. Paper is the only thing that works with a dead

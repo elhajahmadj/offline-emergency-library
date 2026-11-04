@@ -649,6 +649,7 @@ PlaceDoc 'HOW-TO-ASK-YOUR-DOCS.md'  (Join-Path $Root 'AI-Offline\DocReader-GPT4A
 PlaceDoc 'HOW-TO-USE-KIWIX.md'      (Join-Path $Root 'Kiwix-Reader\HOW-TO-USE-KIWIX')               'How to Use Kiwix'
 PlaceDoc 'Manuals-READ-ME-FIRST.md' (Join-Path $Root 'Manuals\READ-ME-FIRST')                       'Manuals - Read Me First'
 PlaceDoc 'Medical-READ-ME-FIRST.md' (Join-Path $Root 'Medical\READ-ME-FIRST')                       'Medical - Read Me First'
+PlaceDoc 'PSYCHOLOGICAL-FIRST-AID.md' (Join-Path $Root 'Medical\PSYCHOLOGICAL-FIRST-AID')            'Psychological first aid - helping people cope'
 PlaceDoc 'RADIO-GUIDE.md'           (Join-Path $Root 'Manuals\Radio-Communications\RADIO-GUIDE')     'Emergency Radio Communications Guide'
 PlaceDoc 'RADIO-FREQUENCIES.md'     (Join-Path $Root 'Manuals\Radio-Communications\RADIO-FREQUENCIES') 'Radio Frequency Reference'
 PlaceDoc 'HOW-TO-VIEW-MAPS.md'      (Join-Path $Root 'OsmAnd\HOW-TO-VIEW-MAPS')                      'Offline Maps - How to View'

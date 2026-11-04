@@ -595,6 +595,7 @@ place_doc "HOW-TO-ASK-YOUR-DOCS"  "$ROOT/AI-Offline/DocReader-GPT4All/HOW-TO-ASK
 place_doc "HOW-TO-USE-KIWIX"      "$ROOT/Kiwix-Reader/HOW-TO-USE-KIWIX"
 place_doc "Manuals-READ-ME-FIRST" "$ROOT/Manuals/READ-ME-FIRST"
 place_doc "Medical-READ-ME-FIRST" "$ROOT/Medical/READ-ME-FIRST"
+place_doc "PSYCHOLOGICAL-FIRST-AID" "$ROOT/Medical/PSYCHOLOGICAL-FIRST-AID"
 place_doc "RADIO-GUIDE"           "$ROOT/Manuals/Radio-Communications/RADIO-GUIDE"
 place_doc "RADIO-FREQUENCIES"     "$ROOT/Manuals/Radio-Communications/RADIO-FREQUENCIES"
 place_doc "HOW-TO-VIEW-MAPS"      "$ROOT/OsmAnd/HOW-TO-VIEW-MAPS"
