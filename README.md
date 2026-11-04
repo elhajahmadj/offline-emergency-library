@@ -167,6 +167,11 @@ medical and survival archives, PDF manuals, Kiwix reader, phone apps and regiona
 maps. It skips full Wikipedia, the 8B/7B models, GPT4All, iFixit and Appropedia.
 Only the 3B chat and web-UI launchers are written on a fresh lite install.
 
+Because lite omits GPT4All, a lite drive has **no source-citing AI** — only the plain 3B
+chat. Treat its answers as leads and verify anything safety-critical against the manuals; to
+add the citing **LocalDocs** workflow, re-run without the lite flag (details in
+`HOW-TO-RUN-OFFLINE-AI`).
+
 ```powershell
 .\Get-OfflineLibrary.ps1 -Destination "E:\" -Lite -Region US_delaware
 ```

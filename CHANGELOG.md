@@ -122,6 +122,15 @@ hardware.
   and what doesn't run on iOS. _[@boostedchaos](https://github.com/boostedchaos) — PR #12._
 
 ### Changed
+- **Lite no longer leaves the AI's trust gap silent.** `--lite` / `-Lite` still omits GPT4All
+  (keeping the preset lean — forcing it back in would undo the #32/#39 sizing work), but a lite
+  drive therefore has only the plain 3B chat with **no source-citing RAG** — the less
+  trustworthy path #20 warns about. Rather than skip it silently, both installers now drop a
+  `GPT4All-NOT-INCLUDED-IN-LITE.txt` note in `AI-Offline/DocReader-GPT4All/` explaining the
+  limitation and how to add it, and the docs say so plainly: HOW-TO-RUN-OFFLINE-AI and
+  HOW-TO-ASK-YOUR-DOCS gained a lite caveat ("treat answers as leads, verify against the
+  manuals; re-run without the lite flag to add the citing LocalDocs workflow"), and the README
+  lite section spells out the no-citation consequence. Resolves #31.
 - **Manuals-first AI framing.** The guides now treat the bundled manuals as the authority and the AI as the assistant: START-HERE opens with how the kit is meant to be used, spells out the three ways to read and use things (fixing the GPT4All pointer to `AI-Offline\DocReader-GPT4All\`), and points safety-critical answers at the manual itself; HOW-TO-RUN-OFFLINE-AI gains a "How to use the AI well" note (GPT4All LocalDocs shows the sources it used, so medical and survival answers can be checked against the book). Every generated AI launcher now also prints a one-line reminder (the AI is a helper, follow the manuals for anything safety-critical) before the engine starts. Resolves #20. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #42._
 
 ### Fixed

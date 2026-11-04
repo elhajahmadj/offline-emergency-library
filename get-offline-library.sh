@@ -267,7 +267,21 @@ else
   u="$(gh_asset_latest nomic-ai/gpt4all 'installer-linux-v.*\.run$')"
   [ -n "$u" ] && { log "gpt4all: $(basename "$u")"; fetch "$u" "$ROOT/AI-Offline/DocReader-GPT4All/$(basename "$u")"; chmod +x "$ROOT/AI-Offline/DocReader-GPT4All/$(basename "$u")" 2>/dev/null; }
 fi
-else log "gpt4all: skipped (lite preset)"; fi
+else
+  log "gpt4all: skipped (lite preset)"
+  printf '%s\n' \
+    "GPT4All (offline document Q&A) is NOT included in a --lite install." \
+    "" \
+    "This lite drive has only the plain AI chat (the 3B model), which does not cite" \
+    "sources. Treat its answers as leads and verify anything safety-critical against the" \
+    "manuals on this drive." \
+    "" \
+    "To add GPT4All and its source-citing LocalDocs workflow:" \
+    "  - re-run the installer into this same drive WITHOUT --lite, or" \
+    "  - install GPT4All from gpt4all.io while you still have internet." \
+    "See HOW-TO-ASK-YOUR-DOCS.html in this folder." \
+    > "$ROOT/AI-Offline/DocReader-GPT4All/GPT4All-NOT-INCLUDED-IN-LITE.txt"
+fi
 
 # ================================================================ 4. Kiwix reader
 log "=== [4/8] Kiwix reader ==="

@@ -14,6 +14,12 @@ Once this folder is on your drive, you never need the internet again to use it.
 > workflow in this kit is **GPT4All LocalDocs** (`AI-Offline\DocReader-GPT4All\`): it answers
 > from the kit's own manuals and *shows the sources it used*, so you can check them - see
 > HOW-TO-ASK-YOUR-DOCS.html. Plain chat is the tool for everything else.
+>
+> **Lite installs:** `--lite` / `-Lite` does **not** include GPT4All, so a lite drive has
+> only the plain chat model with **no source-citing RAG**. Treat its answers as *leads* and
+> verify anything safety-critical against the manuals. To add the citing workflow, re-run the
+> installer into the same drive **without** the lite flag (or install GPT4All from gpt4all.io
+> while you still have internet).
 
 ---
 

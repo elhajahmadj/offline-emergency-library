@@ -7,6 +7,11 @@ It runs **entirely offline on your CPU** (no internet, no graphics card required
 Example: *"According to the Army survival manual, how do I purify water?"* → it finds
 the relevant pages in your PDFs and answers, showing which file/page it used.
 
+> **Not included in a `--lite` install.** If you built this drive with `--lite` / `-Lite`,
+> the GPT4All installer is not here, so you have only the plain AI chat (no source-citing
+> answers). To add this tool, re-run the installer into the same drive **without** the lite
+> flag, or download GPT4All from **gpt4all.io** while you still have internet.
+
 ---
 
 ## 0. Dependencies — there are (almost) none

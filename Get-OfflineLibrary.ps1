@@ -231,7 +231,21 @@ try{
   $a = $rel.assets | Where-Object { $_.name -match 'installer-win64-v.*\.exe$' -and $_.name -notmatch 'arm' } | Select-Object -First 1
   if($a){ Log "gpt4all: $($a.name)"; Fetch $a.browser_download_url (Join-Path $Root "AI-Offline\DocReader-GPT4All\$($a.name)") }
 }catch{ Log "gpt4all ERROR: $($_.Exception.Message)" }
-} else { Log 'gpt4all: skipped (lite preset)' }
+} else {
+  Log 'gpt4all: skipped (lite preset)'
+  @(
+    'GPT4All (offline document Q&A) is NOT included in a -Lite install.',
+    '',
+    'This lite drive has only the plain AI chat (the 3B model), which does not cite',
+    'sources. Treat its answers as leads and verify anything safety-critical against the',
+    'manuals on this drive.',
+    '',
+    'To add GPT4All and its source-citing LocalDocs workflow:',
+    '  - re-run the installer into this same drive WITHOUT -Lite, or',
+    '  - install GPT4All from gpt4all.io while you still have internet.',
+    'See HOW-TO-ASK-YOUR-DOCS.html in this folder.'
+  ) | Set-Content -LiteralPath (Join-Path $Root 'AI-Offline\DocReader-GPT4All\GPT4All-NOT-INCLUDED-IN-LITE.txt') -Encoding UTF8
+}
 
 # ================================================================ 4. Kiwix reader
 Log '=== [4/8] Kiwix reader (portable) ==='
