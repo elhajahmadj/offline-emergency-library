@@ -12,6 +12,14 @@ Contributor-driven reliability and portability work, from people running the kit
 hardware.
 
 ### Added
+- **"I need to…" emergency quick index.** A new high-contrast `I-NEED-TO` page (Markdown +
+  offline HTML) at the drive root, placed by both installers and linked prominently from the
+  top of START-HERE. Unlike `README.html` (a catalog of everything), this is task-first: rows
+  like *stop severe bleeding*, *do CPR*, *make water safe*, *call for help by radio* and
+  *navigate without GPS* link straight to the exact file (the first-aid PDFs open on a click;
+  ZIM archives say which one to open in Kiwix and what to search). It routes to the manual
+  rather than giving the steps itself, works offline with no dependencies, and reads on a
+  phone. Resolves #18.
 - **Post-install self-check: no bare DONE on a broken kit.** After writing
   `CHECKSUMS-SHA256.txt`, both installers now run read-only checks of what was built and
   only print DONE if they pass — otherwise they end with `FINISHED WITH PROBLEMS`, name the

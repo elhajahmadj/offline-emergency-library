@@ -1,0 +1,79 @@
+# 🆘 I need to… — emergency quick index
+
+**If professional help is reachable, get it first.** Call your local emergency number
+(911 in the US), or use the [radio guide](Manuals/Radio-Communications/RADIO-GUIDE.html)
+to call for help. Use this drive when no professional help is available.
+
+This page sends you **straight to the right file**. It is not the instructions — it points
+to the manual that has them. The manuals can be wrong or dated; follow the most trustworthy
+source you have, and use your own judgement.
+
+> **How to open what's linked here:** **PDFs** and **.html** guides open in **any web
+> browser** (just click). **`.zim`** archives open in **Kiwix** — open the Kiwix reader,
+> then search inside the archive (see [how to use Kiwix](Kiwix-Reader/HOW-TO-USE-KIWIX.html)).
+> If a link doesn't open, that part wasn't included in your build.
+
+---
+
+## 🩺 Medical emergency
+
+The two fastest references are **Where There Is No Doctor** (clear, illustrated, written for
+people with no medical training) and the Army **First Aid** manual. Open the PDF, then use its
+bookmarks or search (Ctrl+F) for the words in **bold**.
+
+| I need to… | Open this | Find |
+|---|---|---|
+| **Stop severe bleeding** | [Where There Is No Doctor](Medical/Manuals-PDF/Where%20There%20Is%20No%20Doctor.pdf) · [FM 4-25.11 First Aid](Manuals/ArmyFieldManuals/FM%204-25.11%20First%20Aid.pdf) | search **"bleeding"** / **"wounds"** — firm direct pressure on the wound |
+| **Help someone not breathing / do CPR** | [FM 4-25.11 First Aid](Manuals/ArmyFieldManuals/FM%204-25.11%20First%20Aid.pdf) · [Where There Is No Doctor](Medical/Manuals-PDF/Where%20There%20Is%20No%20Doctor.pdf) | search **"CPR"** / **"rescue breathing"** / **"not breathing"** |
+| **Help someone choking** | [FM 4-25.11 First Aid](Manuals/ArmyFieldManuals/FM%204-25.11%20First%20Aid.pdf) | search **"choking"** / **"airway"** |
+| **Treat a burn** | [Where There Is No Doctor](Medical/Manuals-PDF/Where%20There%20Is%20No%20Doctor.pdf) | search **"burns"** |
+| **Treat a broken bone or sprain** | [Where There Is No Doctor](Medical/Manuals-PDF/Where%20There%20Is%20No%20Doctor.pdf) · [FM 4-25.11 First Aid](Manuals/ArmyFieldManuals/FM%204-25.11%20First%20Aid.pdf) | search **"broken bone"** / **"fracture"** / **"splint"** |
+| **Treat hypothermia or heat illness** | [FM 4-25.11 First Aid](Manuals/ArmyFieldManuals/FM%204-25.11%20First%20Aid.pdf) · [FM 21-76 Survival](Manuals/ArmyFieldManuals/FM%2021-76%20Army%20Survival%20Manual.pdf) | search **"hypothermia"** / **"cold"** / **"heat"** |
+| **Handle poisoning or a severe allergic reaction** | [Where There Is No Doctor](Medical/Manuals-PDF/Where%20There%20Is%20No%20Doctor.pdf) | search **"poisoning"** / **"allergic"** / **"shock"** |
+| **Deliver a baby / childbirth** | [Where There Is No Doctor](Medical/Manuals-PDF/Where%20There%20Is%20No%20Doctor.pdf) | search **"childbirth"** / **"pregnancy"** |
+| **Severe tooth pain / dental** | [Where There Is No Dentist](Medical/Manuals-PDF/Where%20There%20Is%20No%20Dentist.pdf) | the chapter for your problem |
+
+**More depth:** the medical archives (open in **Kiwix**) — `Medical\WikiMed\` (medical
+Wikipedia) and `Medical\zimgit-medicine\` (first-aid guide). See the
+[medical read-me](Medical/READ-ME-FIRST.html).
+
+---
+
+## 💧 Water, food, shelter
+
+| I need to… | Open this | Note |
+|---|---|---|
+| **Make water safe to drink** | `Manuals\Survival-Water-Food\` (zimgit-water, in **Kiwix**) · [Where There Is No Doctor](Medical/Manuals-PDF/Where%20There%20Is%20No%20Doctor.pdf) (search **"water"**) | When in doubt, **boil it**: a rolling boil for **1 minute** (**3 minutes** above ~2,000 m / 6,500 ft) kills germs. Use the archive for filtering and chemical treatment. |
+| **Prepare/store food safely** | `Manuals\Survival-Water-Food\` (zimgit-food-preparation, in **Kiwix**) | |
+| **Build shelter and stay warm** | [FM 21-76 Survival](Manuals/ArmyFieldManuals/FM%2021-76%20Army%20Survival%20Manual.pdf) | search **"shelter"** / **"fire"** |
+| **Tie the right knot** | `Manuals\Survival-Water-Food\` (zimgit-knots, in **Kiwix**) | |
+| **Get through the first hours of a disaster** | `Manuals\Survival-Water-Food\` (zimgit-post-disaster, in **Kiwix**) | |
+
+---
+
+## 📻 Call for help & find your way
+
+| I need to… | Open this |
+|---|---|
+| **Call for help by radio** | [Radio guide](Manuals/Radio-Communications/RADIO-GUIDE.html) — how to call for help; which radio to use |
+| **Find the right frequency / channel** | [Radio frequency reference](Manuals/Radio-Communications/RADIO-FREQUENCIES.html) — weather, marine, FRS/GMRS, aviation, beacons |
+| **Navigate without GPS / phone signal** | [How to view the maps](OsmAnd/HOW-TO-VIEW-MAPS.html) (OsmAnd, or `Maps-Browser\` if you added `-BrowserMaps`) · [FM 21-76 Survival](Manuals/ArmyFieldManuals/FM%2021-76%20Army%20Survival%20Manual.pdf) (search **"navigation"** / **"compass"**) |
+
+---
+
+## 🔧 Fix something critical & keep a device powered
+
+| I need to… | Open this |
+|---|---|
+| **Fix a phone, appliance, car or electronics** | `Manuals\Repair-iFixit\` (in **Kiwix**) |
+| **Fix plumbing, wiring, a well or construction** | `Manuals\DIY-Appropedia\` (in **Kiwix**) |
+| **Keep a phone or device charged off-grid** | [Power and devices](POWER-AND-DEVICES.html) — battery sizing, solar/car charging, low-power setups |
+
+---
+
+**Want to search across everything at once?** The offline AI's GPT4All **LocalDocs** can
+answer from the bundled manuals and show the sources it used — a good way to find the right
+page fast. It is a helper, not an authority: for anything safety-critical, open the manual it
+points to and follow that. See `AI-Offline\DocReader-GPT4All\HOW-TO-ASK-YOUR-DOCS.html`.
+
+_Browse everything: open **README.html** (full index) or **START-HERE.html** (guided intro)._

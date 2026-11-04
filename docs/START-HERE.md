@@ -3,6 +3,10 @@
 This drive is a self-contained **offline survival library + AI**. Everything works with
 **no internet**. This page explains what's here and how to open each part.
 
+> 🆘 **In an emergency right now?** Open **[I need to…](I-NEED-TO.html)** — a task-first
+> index that sends you straight to the right file for bleeding, CPR, water, calling for
+> help, navigation and more.
+
 > **How this kit is meant to be used:** the books, manuals and maps are the authority.
 > The offline AI is a fast
 > **assistant**: it helps you *find and digest* the library - search it, summarize it,
