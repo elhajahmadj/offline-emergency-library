@@ -7,10 +7,15 @@ for each are bundled or explained below.
 
 ---
 
-## Street maps in a web browser (opt-in: `-BrowserMaps` / `--browser-maps`)
+## Street maps in a web browser — ✅ recommended on a computer (opt-in: `-BrowserMaps` / `--browser-maps`)
 
 Add `-BrowserMaps` (Windows) or `--browser-maps` (macOS/Linux) when you run the installer to also get
 **street maps that open in any web browser**, on Windows, macOS or Linux. No app and no Java are needed.
+
+**This is the recommended way to view maps on a computer, especially on Windows** — it renders
+reliably in the browser, unlike the OsmAndMapCreator desktop viewer below, which shows a blank map on
+some Windows PCs ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)). Browser
+maps cover the **US** only; for other countries, use the OsmAndMapCreator viewer or a phone.
 
 1. Open the `Maps-Browser\` folder.
 2. **Windows:** double-click `OPEN-MAPS.bat`. **macOS / Linux:** run `bash OPEN-MAPS.sh` in a terminal.
@@ -71,9 +76,12 @@ Notes:
 
 ---
 
-## Option 1 — On a computer (no phone) ✅ recommended if you have no phone
+## Option 1 — On a computer with the OsmAndMapCreator viewer
 
-Everything you need is bundled — **no separate install, no Java to set up.**
+Best for **non-US regions** on a computer, or on **macOS/Linux**. On **Windows**, prefer the
+**browser maps** above — this viewer renders a blank map on some Windows PCs
+([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)). Everything you need is
+bundled — **no separate install, no Java to set up.**
 
 1. Open `OsmAnd\MapViewer-Desktop\`.
 2. **Windows:** double-click **`VIEW-MAPS-ON-PC.bat`**.
@@ -88,12 +96,13 @@ Everything you need is bundled — **no separate install, no Java to set up.**
 and the **OsmAndMapCreator** app (`app\`). Nothing else is required to launch it — offline,
 on a 64-bit PC.
 
-> **Known limitation on Windows (being worked on — [#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)):**
+> **Known limitation on Windows ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)):**
 > on some Windows setups the OsmAndMapCreator window opens but the **map area stays blank**.
 > The bundled build ships a Linux native renderer and no Windows one, which is the likely
-> cause. If this happens to you, use the maps on an **Android phone/tablet** (Option 2
-> below) — that path is fully tested — or the opt-in **browser maps** if your kit was built
-> with them. We're working on a desktop viewer that renders reliably on Windows.
+> cause. **The fix for Windows is the browser maps at the top of this guide** — they render
+> reliably in any browser (US maps; re-run the installer with `-BrowserMaps` to add them).
+> For non-US regions on Windows, use the maps on an **Android phone/tablet** (Option 2 below),
+> which is fully tested.
 
 > **Space note:** the maps download as compressed `.obf.zip` (~17 GB). Desktop viewing
 > needs them **unzipped** to `.obf` (~30 GB), so the first run roughly doubles the map
@@ -137,7 +146,8 @@ This is an Apple platform limitation — there's no offline sideloading like And
 
 | You have… | Use | Dependency status |
 |---|---|---|
-| A computer, no phone | **Option 1** (desktop viewer) | ✅ bundled (Java + app); ⚠️ blank map on some Windows setups — see note ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)) |
+| A Windows PC (US maps) | **Browser maps** (recommended) | ✅ renders reliably; opt-in `-BrowserMaps` (US only) |
+| A computer, non-US maps or macOS/Linux | **Option 1** (desktop viewer) | ✅ bundled (Java + app); ⚠️ blank map on some Windows setups — see note ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)) |
 | An Android phone/tablet | **Option 2** (bundled APK) | ✅ bundled APK |
 | An iPhone/iPad | **Option 3** (App Store) | ⚠️ install the app while online |
 

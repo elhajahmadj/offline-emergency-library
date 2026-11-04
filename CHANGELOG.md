@@ -134,7 +134,16 @@ hardware.
 - **Manuals-first AI framing.** The guides now treat the bundled manuals as the authority and the AI as the assistant: START-HERE opens with how the kit is meant to be used, spells out the three ways to read and use things (fixing the GPT4All pointer to `AI-Offline\DocReader-GPT4All\`), and points safety-critical answers at the manual itself; HOW-TO-RUN-OFFLINE-AI gains a "How to use the AI well" note (GPT4All LocalDocs shows the sources it used, so medical and survival answers can be checked against the book). Every generated AI launcher now also prints a one-line reminder (the AI is a helper, follow the manuals for anything safety-critical) before the engine starts. Resolves #20. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #42._
 
 ### Fixed
-- **Interrupted aria2 download could be kept as a corrupt file.** On Ctrl+C (or any aria2
+- **Blank desktop map on Windows now has a working path.** The bundled OsmAndMapCreator
+  viewer ships a Linux-only native renderer, so on some Windows PCs the window opens with a
+  blank map. Rather than patch that Java build, the kit now steers Windows users to the
+  cross-platform **browser maps** (added in #38) as the recommended computer viewer:
+  HOW-TO-VIEW-MAPS leads with browser maps and reframes the OsmAndMapCreator viewer as the
+  option for non-US regions / macOS / Linux; the Windows desktop launcher (`VIEW-MAPS-ON-PC.bat`)
+  now prints what to do if the map is blank; and a Windows install that includes maps without
+  `-BrowserMaps` prints a tip to add them. Browser maps are US-only, so non-US Windows users
+  are pointed to the tested Android path. Addresses #15. _Reported by
+  [@EnragedAntelope](https://github.com/EnragedAntelope) — issue #15._
   failure that left a `.aria2` control file), `fetch()` fell back to `curl -C -`; because
   aria2 preallocates the full file size, curl saw a "complete" file and kept it — a drive of
   gaps/metalink XML that passed the non-empty check and let the install finish silently. Both
@@ -168,9 +177,10 @@ hardware.
   _Reported by [@boostedchaos](https://github.com/boostedchaos) (issue #1)._
 
 ### Known issues
-- On some Windows setups the bundled OsmAndMapCreator desktop viewer opens with a blank map
-  (the build ships a Linux native renderer only). Documented in HOW-TO-VIEW-MAPS with
-  tested alternatives; a cross-platform browser-maps viewer is in progress.
+- The bundled OsmAndMapCreator desktop viewer itself still renders a blank map on some Windows
+  setups (Linux-only native renderer). The **browser maps** are now the recommended Windows
+  computer viewer and render reliably (US maps); non-US Windows users use the Android path. See
+  the "Blank desktop map on Windows" entry above. Tracking in issue #15 until re-tested.
   _Reported by [@EnragedAntelope](https://github.com/EnragedAntelope) — issue #15._
 
 ## [v1.4] — 2026-11-02 — faster downloads (aria2)

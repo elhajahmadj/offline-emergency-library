@@ -449,6 +449,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0prepare-maps.ps1"
 echo.
 echo Launching the desktop map viewer...
 echo In the app, your maps are the .obf files in the  OsmAnd\obf  folder.
+echo.
+echo If the map area stays BLANK (a known OsmAndMapCreator issue on some Windows PCs):
+echo   - best: use the browser maps - run  Maps-Browser\OPEN-MAPS.bat  (if you built the
+echo     drive with -BrowserMaps; US street maps, renders reliably on Windows), or
+echo   - use the maps on an Android phone/tablet (see OsmAnd\HOW-TO-VIEW-MAPS.html).
 cd /d "%~dp0app"
 call OsmAndMapCreator.bat
 pause
@@ -537,7 +542,10 @@ if((-not $SkipMaps) -and $BrowserMaps){
     Remove-Item (Join-Path $mb '_OPEN-MAPS.sh'),(Join-Path $mb '_OPEN-MAPS.bat') -Force
     Log 'browser maps: run Maps-Browser\OPEN-MAPS (.bat on Windows, .sh on macOS/Linux)'
   }catch{ Log "browser maps ERROR: $($_.Exception.Message)" }
-} else { Log "=== [8c] Browser maps not selected - add -BrowserMaps to include (~16.5 GB for the US) ===" }
+} else {
+  Log "=== [8c] Browser maps not selected - add -BrowserMaps to include (~16.5 GB for the US) ==="
+  if(-not $SkipMaps){ Log "  Tip (Windows): browser maps is the reliable desktop viewer - the bundled OsmAndMapCreator can render a blank map on some Windows PCs (#15). Re-run with -BrowserMaps to add US street maps that open in any browser." }
+}
 
 # ================================================================ phone apps
 Log '=== Phone apps (port the library to a phone) ==='
