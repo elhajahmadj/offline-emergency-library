@@ -10,8 +10,18 @@
 #   opt-in: --extra-zims     Wikivoyage travel guide + Wikibooks textbooks (Kiwix ZIM, ~5.8 GB)
 #   opt-in: --translate      offline translator (Qwen3 4B model on the AI engine, ~2.5 GB)
 #   opt-in: --medlineplus    MedlinePlus plain-language health topics (public domain, ~30 MB)
+#   add to a finished drive: --only <piece>[,<piece>...] -d <drive>   (#74)
+#     pieces: translate medlineplus extra-zims browser-maps education kolibri wikipedia
+#     downloads only those pieces; stops with a plain message if one needs something missing
+#     (translate needs the AI engine). --region / --edu-lang still apply.
 
 REPO_RAW="https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main"
+# Pieces --only can add to a finished drive (#74). A piece that needs something on the drive
+# lists it in piece_needs as "file under OfflineLibrary|what it is called". When the component
+# table (#67) lands, read both from it.
+ONLY_PIECES="translate medlineplus extra-zims browser-maps education kolibri wikipedia"
+piece_needs(){ case "$1" in translate) echo "AI-Offline/engine/BUILD.txt|the AI engine (the translator runs on it)";; esac; }
+ONLY=""; ONLY_SET=0; BM_ONLY=0
 DEST=""; SKIP_WIKI=0; SKIP_MAPS=0; SKIP_MODELS=0; LITE=0
 REGION="US"; LISTREGIONS=0; FILTER=""
 EDU=0; EDULANG="en"; KOLIBRI=0; BROWSER_MAPS=0; EXTRA_ZIMS=0; TRANSLATE=0; MEDLINEPLUS=0
@@ -77,9 +87,28 @@ while [ $# -gt 0 ]; do
     --skip-maps)      SKIP_MAPS=1; shift;;
     --skip-models)    SKIP_MODELS=1; shift;;
     --no-aria)        NO_ARIA=1; shift;;
+    --only)           ONLY_SET=1; shift; while [ $# -gt 0 ] && [ "${1#-}" = "$1" ]; do ONLY="$ONLY $1"; shift; done;;
     *) shift;;
   esac
 done
+# ---- --only: add pieces to a finished drive (#74) ----
+# Everything else the installer does (engine, models, manuals, maps, docs) is off; only the
+# named pieces run. Checked here, before anything is created or downloaded.
+if [ "$ONLY_SET" = 1 ]; then
+  ONLY="$(printf '%s' "$ONLY" | tr 'A-Z,;' 'a-z  ' | xargs)"
+  [ -n "$ONLY" ] || { echo "ERROR: --only needs at least one piece. Pieces: $ONLY_PIECES"; exit 1; }
+  [ "$LITE$SKIP_WIKI$SKIP_MAPS$SKIP_MODELS$EDU$KOLIBRI$EXTRA_ZIMS$TRANSLATE$MEDLINEPLUS$BROWSER_MAPS" = 0000000000 ] ||
+    { echo "ERROR: --only cannot be combined with --lite, --skip-* or a piece flag. Name the pieces after --only instead. Pieces: $ONLY_PIECES"; exit 1; }
+  for p in $ONLY; do
+    case " $ONLY_PIECES " in *" $p "*) ;; *) echo "ERROR: unknown piece '$p'. Pieces: $ONLY_PIECES"; exit 1;; esac
+    case "$p" in
+      translate) TRANSLATE=1;; medlineplus) MEDLINEPLUS=1;; extra-zims) EXTRA_ZIMS=1;;
+      browser-maps) BROWSER_MAPS=1; BM_ONLY=1;; education) EDU=1;; kolibri) KOLIBRI=1;;
+    esac
+  done
+  SKIP_MODELS=1; SKIP_MAPS=1; SKIP_WIKI=1
+  case " $ONLY " in *" wikipedia "*) SKIP_WIKI=0;; esac
+fi
 if [ "$LITE" = 1 ]; then SKIP_WIKI=1; SKIP_MODELS=1; fi
 
 command -v curl >/dev/null 2>&1 || { echo "ERROR: 'curl' is required."; exit 1; }
@@ -123,7 +152,8 @@ if [ -z "$DEST" ]; then
     echo ""
     echo "  Offline Emergency Library installer"
     echo "  -----------------------------------"
-    printf "Where would you like to save these files? "
+    if [ "$ONLY_SET" = 1 ]; then printf "Where is the drive you want to add to (the folder that holds OfflineLibrary)? "
+    else printf "Where would you like to save these files? "; fi
     read -r DEST < /dev/tty
   else
     echo "No destination given and no terminal to prompt."
@@ -133,6 +163,14 @@ if [ -z "$DEST" ]; then
 fi
 [ -z "$DEST" ] && { echo "No destination given. Exiting."; exit 1; }
 ROOT="$DEST/OfflineLibrary"
+if [ "$ONLY_SET" = 1 ]; then
+  # A finished drive has CHECKSUMS-SHA256.txt (the installer's last step). Never build a new one here.
+  [ -f "$ROOT/CHECKSUMS-SHA256.txt" ] || { echo "ERROR: no finished library found at $ROOT."; echo "  --only adds to a drive the installer has already filled. Run the installer without --only first, or fix -d."; exit 1; }
+  for p in $ONLY; do
+    need="$(piece_needs "$p")"; [ -n "$need" ] || continue
+    [ -f "$ROOT/${need%%|*}" ] || { echo "ERROR: '$p' needs ${need#*|}, which is not on this drive (missing: ${need%%|*})."; echo "  Nothing was downloaded. Run the installer without --only to add it first."; exit 1; }
+  done
+fi
 mkdir -p "$ROOT" || { echo "Cannot create $ROOT"; exit 1; }
 LOG="$ROOT/_download.log"
 log(){ printf '%s  %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" | tee -a "$LOG"; }
@@ -199,17 +237,19 @@ log "Platform: $PLAT/$CPU   Destination: $ROOT"
 [ "$HAVE_UNZIP" = 0 ] && log "NOTE: 'unzip' not found — the desktop map viewer needs it (install it to enable maps-on-PC)."
 
 # ---- folder tree ----
+[ -n "$ONLY" ] && log "Adding to the finished library: $ONLY (nothing else is downloaded)"
 for d in AI-Offline AI-Offline/engine AI-Offline/models AI-Offline/DocReader-GPT4All \
          Manuals Manuals/ArmyFieldManuals Manuals/Repair-iFixit Manuals/DIY-Appropedia \
          Manuals/Survival-Water-Food Manuals/Radio-Communications Manuals/Food-Preservation/USDA-Complete-Guide-to-Home-Canning-2015 \
          Medical Medical/WikiMed Medical/zimgit-medicine Medical/Manuals-PDF \
          Wikipedia OsmAnd Kiwix-Reader Phone-Apps Education; do
-  mkdir -p "$ROOT/$d"
+  [ -z "$ONLY" ] && mkdir -p "$ROOT/$d"
 done
 
 # ---- OsmAnd map files for --region, picked now so the space estimate below knows their size ----
 MAP_MB=0
-if [ "$SKIP_MAPS" = 0 ]; then
+if [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; then   # --only browser-maps needs the sizes for its estimate, not the maps
+  mkdir -p "$ROOT/OsmAnd"
   curl -sL "https://download.osmand.net/get_indexes" -o "$ROOT/OsmAnd/_index.xml"
   allnames="$(grep -oE 'name="[^"]+\.obf\.zip"' "$ROOT/OsmAnd/_index.xml" | sed -E 's/name="([^"]+)"/\1/' | grep -viE 'wiki|srtm|depth|road|hillshade|heightmap')"
   : > "$ROOT/OsmAnd/_filelist.txt"
@@ -234,22 +274,20 @@ fi
 # Get-OfflineLibrary.ps1 so both installers agree.
 EST=""; est(){ EST="$EST$1|$2
 "; }
-est 6.3 "core (AI engine, 3B model, medical, survival, manuals, Kiwix, phone apps)"
+[ -z "$ONLY" ] && est 6.3 "core (AI engine, 3B model, medical, survival, manuals, Kiwix, phone apps)"
 [ "$SKIP_MODELS" = 0 ] && est 8.9 "8B + 7B AI models"
-[ "$LITE" = 0 ] && est 4.5 "GPT4All, iFixit, Appropedia"
+[ "$LITE" = 0 ] && [ -z "$ONLY" ] && est 4.5 "GPT4All, iFixit, Appropedia"
 [ "$SKIP_WIKI" = 0 ] && est 49.1 "Wikipedia"
-if [ "$SKIP_MAPS" = 0 ]; then
-  est "$(awk -v m="$MAP_MB" 'BEGIN{printf "%.1f", m/1024 + 0.5}')" "maps for '$REGION' + desktop viewer"
-  if [ "$BROWSER_MAPS" = 1 ]; then
-    # all of the US ~15.4 GB; single states roughly match their OsmAnd size; always + the world map
-    bm=0
-    for tok in $(printf '%s' "$REGION" | tr ',;' '  '); do
-      tl="$(alias_region "$tok" | tr 'A-Z' 'a-z')"
-      case "$tl" in us|world|northamerica) bm=all ;; us_*) [ "$bm" = all ] || bm=state ;; esac
-    done
-    case "$bm" in all) bmgb=15.4 ;; state) bmgb="$(awk -v m="$MAP_MB" 'BEGIN{print m/1024}')" ;; *) bmgb=0 ;; esac
-    est "$(awk -v b="$bmgb" 'BEGIN{printf "%.1f", b + 0.2}')" "browser maps"
-  fi
+[ "$SKIP_MAPS" = 0 ] && est "$(awk -v m="$MAP_MB" 'BEGIN{printf "%.1f", m/1024 + 0.5}')" "maps for '$REGION' + desktop viewer"
+if [ "$BROWSER_MAPS" = 1 ] && { [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; }; then
+  # all of the US ~15.4 GB; single states roughly match their OsmAnd size; always + the world map
+  bm=0
+  for tok in $(printf '%s' "$REGION" | tr ',;' '  '); do
+    tl="$(alias_region "$tok" | tr 'A-Z' 'a-z')"
+    case "$tl" in us|world|northamerica) bm=all ;; us_*) [ "$bm" = all ] || bm=state ;; esac
+  done
+  case "$bm" in all) bmgb=15.4 ;; state) bmgb="$(awk -v m="$MAP_MB" 'BEGIN{print m/1024}')" ;; *) bmgb=0 ;; esac
+  est "$(awk -v b="$bmgb" 'BEGIN{printf "%.1f", b + 0.2}')" "browser maps"
 fi
 [ "$EDU" = 1 ] && est 168 "Khan Academy"
 [ "$EXTRA_ZIMS" = 1 ] && est 5.8 "Wikivoyage + Wikibooks"
@@ -258,6 +296,7 @@ fi
 EST_GB="$(printf '%s' "$EST" | awk -F'|' '{s+=$1} END{printf "%.1f", s}')"
 FREE_GB="$(df -Pk "$ROOT" 2>/dev/null | awk 'NR==2{printf "%.1f", $4/1048576}')"
 HAVE_GB="$(du -sk "$ROOT" 2>/dev/null | awk '{printf "%.1f", $1/1048576}')"
+[ -n "$ONLY" ] && HAVE_GB=0   # the rest of the drive is not part of this estimate
 NEED_GB="$(awk -v e="$EST_GB" -v h="${HAVE_GB:-0}" 'BEGIN{n=e-h; if(n<0)n=0; printf "%.1f", n}')"
 log "Space estimate for this selection: about $EST_GB GB"
 printf '%s' "$EST" | while IFS='|' read -r g n; do log "$(awk -v g="$g" -v n="$n" 'BEGIN{printf "  %6.1f GB  %s", g, n}')"; done
@@ -297,7 +336,9 @@ untar_real(){
   tar -xzf "$1" -C "$t" && cp -RL "$t/." "$2/"; rc=$?
   rm -rf "$t"; return $rc
 }
-if [ "$HAVE_TAR" = 1 ]; then
+if [ -n "${ONLY:-}" ]; then   # --only adds pieces to a finished drive: no engine download (#74)
+  log "engine: not touched (--only)"
+elif [ "$HAVE_TAR" = 1 ]; then
   rels="$(curl -sL -H "User-Agent: oel" "https://api.github.com/repos/ggml-org/llama.cpp/releases?per_page=20")"
   urls="$(printf '%s' "$rels" | grep -oE '"browser_download_url"[ ]*:[ ]*"[^"]+"' | sed -E 's/.*"(https[^"]+)"/\1/')"
   LT=""
@@ -343,8 +384,7 @@ MQ7="$HF/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q4_K_M.gguf"
 TR_MODEL="Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
 MTR="$HF/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TR_MODEL"
 GGUF_URLS="$M3B $M8B $MQ7 $MTR"   # for the self-check (only files on the drive are checked)
-fetch "$M3B" "$ROOT/AI-Offline/models/${M3B##*/}"
-log "model: Llama-3.2-3B done"
+if [ -z "$ONLY" ]; then fetch "$M3B" "$ROOT/AI-Offline/models/${M3B##*/}"; log "model: Llama-3.2-3B done"; fi
 if [ "$SKIP_MODELS" = 0 ]; then
   fetch "$M8B" "$ROOT/AI-Offline/models/${M8B##*/}"; log "model: Llama-3.1-8B done"
   fetch "$MQ7" "$ROOT/AI-Offline/models/${MQ7##*/}"; log "model: Qwen2.5-7B done"
@@ -360,7 +400,8 @@ fi
 
 # ================================================================ 3. GPT4All
 log "=== [3/8] GPT4All (offline document Q&A) ==="
-if [ "$LITE" = 0 ]; then
+if [ -n "$ONLY" ]; then log "gpt4all: not touched (--only)"
+elif [ "$LITE" = 0 ]; then
 if [ "$PLAT" = mac ]; then
   u="$(gh_asset_latest nomic-ai/gpt4all 'installer-macos-v.*\.dmg$')"
   [ -n "$u" ] && { log "gpt4all: $(basename "$u")"; fetch "$u" "$ROOT/AI-Offline/DocReader-GPT4All/$(basename "$u")"; }
@@ -386,7 +427,8 @@ fi
 
 # ================================================================ 4. Kiwix reader
 log "=== [4/8] Kiwix reader ==="
-if [ "$PLAT" = linux ] && [ "$CPU" = x64 ]; then
+if [ -n "$ONLY" ]; then log "kiwix: not touched (--only)"
+elif [ "$PLAT" = linux ] && [ "$CPU" = x64 ]; then
   ai="$(curl -sL -A "$UA" https://download.kiwix.org/release/kiwix-desktop/ | grep -oE 'kiwix-desktop_x86_64_[0-9][^\"]*\.appimage' | sort -u | tail -n1)"
   if [ -n "$ai" ]; then log "kiwix: $ai"; fetch "https://download.kiwix.org/release/kiwix-desktop/$ai" "$ROOT/Kiwix-Reader/$ai"; chmod +x "$ROOT/Kiwix-Reader/$ai" 2>/dev/null; fi
 else
@@ -396,6 +438,7 @@ fi
 # ================================================================ 5. ZIM archives
 log "=== [5/8] Offline archives (Kiwix ZIM) ==="
 add_zim(){ n="$(latest_zim "$1" "$2")"; [ -n "$n" ] && { log "zim: $n"; fetch "$1$n" "$3/$n"; } || log "zim: not found ($2)"; }
+if [ -n "$ONLY" ]; then log "zim: core archives not touched (--only)"; else
 if [ "$LITE" = 0 ]; then
   add_zim "https://download.kiwix.org/zim/ifixit/"    "ifixit_en_all_"            "$ROOT/Manuals/Repair-iFixit"
   add_zim "https://download.kiwix.org/zim/other/"     "appropedia_en_all_maxi_"   "$ROOT/Manuals/DIY-Appropedia"
@@ -406,6 +449,7 @@ add_zim "https://download.kiwix.org/zim/other/"     "zimgit-food-preparation_en_
 add_zim "https://download.kiwix.org/zim/other/"     "zimgit-knots_en_"          "$ROOT/Manuals/Survival-Water-Food"
 add_zim "https://download.kiwix.org/zim/wikipedia/" "wikipedia_en_medicine_maxi_" "$ROOT/Medical/WikiMed"
 add_zim "https://download.kiwix.org/zim/other/"     "zimgit-medicine_en_"       "$ROOT/Medical/zimgit-medicine"
+fi
 
 # ================================================================ 5b. Education (opt-in)
 if [ "$EDU" = 1 ]; then
@@ -498,6 +542,7 @@ get_pdf_url(){ # url  localname  destdir   (direct link)
   else log "  WARN: $2 failed to download"; fi
 }
 AFM="$ROOT/Manuals/ArmyFieldManuals"; MPDF="$ROOT/Medical/Manuals-PDF"
+if [ -n "$ONLY" ]; then log "pdf: manuals not touched (--only)"; else
 get_pdf "fm-21-76-us-army-survival-manual"                    "FM 21-76 Army Survival Manual.pdf" "$AFM"
 get_pdf "fm-3-05.70-survival-2002"                            "FM 3-05.70 Survival (2002).pdf" "$AFM"
 get_pdf "105-page-survival-field-manual"                      "105-Page Survival Field Manual.pdf" "$AFM"
@@ -527,10 +572,12 @@ get_pdf_url "https://nchfp.uga.edu/papers/guide/GUIDE04_HomeCan_rev0715.pdf" "4 
 get_pdf_url "https://nchfp.uga.edu/papers/guide/GUIDE05_HomeCan_rev0715.pdf" "5 Poultry, Red Meats, and Seafoods.pdf" "$CAN"
 get_pdf_url "https://nchfp.uga.edu/papers/guide/GUIDE06_HomeCan_rev0715.pdf" "6 Fermented Foods and Pickled Vegetables.pdf" "$CAN"
 get_pdf_url "https://nchfp.uga.edu/papers/guide/GUIDE07_HomeCan_rev0715.pdf" "7 Jams and Jellies.pdf" "$CAN"
+fi
 
 # ================================================================ 7. Wikipedia + Maps
 if [ "$SKIP_WIKI" = 0 ]; then
   log "=== [7/8] Wikipedia (full, no images - Kiwix ZIM, ~49 GB) ==="
+  mkdir -p "$ROOT/Wikipedia"
   wk="$(latest_zim 'https://download.kiwix.org/zim/wikipedia/' 'wikipedia_en_all_nopic_')"
   if [ -n "$wk" ]; then log "zim: $wk"; fetch "https://download.kiwix.org/zim/wikipedia/$wk" "$ROOT/Wikipedia/$wk"
   else log "Wikipedia: ZIM not found"; fi
@@ -608,7 +655,7 @@ else log "=== [8/8] Maps SKIPPED ==="; fi
 # state maps made by Project NOMAD (MIT; map data (c) OpenStreetMap contributors, ODbL),
 # NOMAD's style/fonts/symbols, the MapLibre GL JS viewer (BSD-3) and Caddy (Apache-2.0) as a
 # local web server. NOMAD has US states only; any region also gets a low-detail world map.
-if [ "$SKIP_MAPS" = 0 ] && [ "$BROWSER_MAPS" = 1 ]; then
+if { [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; } && [ "$BROWSER_MAPS" = 1 ]; then
   log "=== [8c] Browser maps (Project NOMAD / Protomaps + MapLibre + Caddy) ==="
   MB="$ROOT/Maps-Browser"; mkdir -p "$MB/pmtiles" "$MB/viewer/lib" "$MB/server"
   NM="https://github.com/Crosstalk-Solutions/project-nomad-maps/raw/refs/heads/master"
@@ -688,9 +735,11 @@ fi
 # ================================================================ phone apps
 log "=== Phone apps (port the library to a phone) ==="
 PA="$ROOT/Phone-Apps"
+if [ -n "$ONLY" ]; then log "phone apps: not touched (--only)"; else
 ku="$(gh_asset_latest kiwix/kiwix-android 'universal-standalone\.apk$')"
 [ -z "$ku" ] && ku="$(gh_asset_latest kiwix/kiwix-android '\.apk$')"
 [ -n "$ku" ] && { log "phone app: Kiwix $(basename "$ku")"; fetch "$ku" "$PA/$(basename "$ku")"; }
+fi
 if [ "$SKIP_MAPS" = 0 ]; then
   vc="$(curl -sL -A "$UA" https://f-droid.org/api/v1/packages/net.osmand.plus | grep -oE '"suggestedVersionCode":[0-9]+' | grep -oE '[0-9]+' | head -n1)"
   [ -n "$vc" ] && { log "phone app: OsmAnd~ $vc"; fetch "https://f-droid.org/repo/net.osmand.plus_$vc.apk" "$PA/OsmAnd-$vc.apk"; }
@@ -725,12 +774,14 @@ EOS
 sed -i.bak -e "s|__TOOL__|$2|" -e "s|__MODEL__|$3|" -e "s|__GPU__|$4|" -e "s|__ARGS__|$5|" -e "s|__NOTE__|$6|" "$AO/$1" && rm -f "$AO/$1.bak"
 chmod +x "$AO/$1" 2>/dev/null
 }
+if [ -z "${ONLY:-}" ]; then   # --only writes just the launchers of the piece it adds (#74)
 make_sh "chat-3B-light.sh"   llama-cli    "Llama-3.2-3B-Instruct-Q4_K_M.gguf"      0 "-c 4096" "Offline AI - Llama 3.2 3B (light). Ctrl+C to quit."
 if [ "$LITE" = 0 ]; then
 make_sh "chat-8B-smart.sh"   llama-cli    "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf" 0 "-c 4096" "Offline AI - Llama 3.1 8B (smart). Ctrl+C to quit."
 make_sh "chat-GPU-Qwen7B.sh" llama-cli    "Qwen2.5-7B-Instruct-Q4_K_M.gguf"        1 "-c 4096 -ngl 99" "Offline AI - Qwen2.5 7B on the GPU (Metal on a Mac, Vulkan on Linux)."
 fi
 make_sh "web-ui.sh"          llama-server "Llama-3.2-3B-Instruct-Q4_K_M.gguf"      0 "-c 4096 --host 127.0.0.1 --port 8080" "Open http://127.0.0.1:8080 when it says 'server is listening'."
+fi
 # .bat launchers: same text as Get-OfflineLibrary.ps1 writes, with Windows (CRLF) line ends.
 make_bat(){ # file  title  exe  model  args  [note]
   { echo "@echo off"; echo "title $2"; echo 'cd /d "%~dp0"'
@@ -738,6 +789,7 @@ make_bat(){ # file  title  exe  model  args  [note]
     echo 'echo The AI is a helper for finding and summarizing info - for anything safety-critical, follow the bundled manuals.'
     echo "\"%~dp0$3\" -m \"%~dp0models\\$4\" $5"; echo "pause"; } | sed 's/$/\r/' > "$AO/$1"
 }
+if [ -z "${ONLY:-}" ]; then
 make_bat "CHAT-3B-light.bat"   "Offline AI - Llama 3.2 3B (light)" 'engine\x64\llama-cli.exe' "Llama-3.2-3B-Instruct-Q4_K_M.gguf" "-c 4096"
 if [ "$LITE" = 0 ]; then
 make_bat "CHAT-8B-smart.bat"   "Offline AI - Llama 3.1 8B (smart)" 'engine\x64\llama-cli.exe' "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf" "-c 4096"
@@ -745,6 +797,7 @@ make_bat "CHAT-GPU-Qwen7B.bat" "Offline AI - Qwen2.5 7B (GPU)"     'engine\vulka
 echo number (e.g. -ngl 20) or use a CPU launcher instead.'
 fi
 make_bat "WEB-UI.bat"          "Offline AI - Web UI"               'engine\x64\llama-server.exe' "Llama-3.2-3B-Instruct-Q4_K_M.gguf" "-c 4096 --host 127.0.0.1 --port 8080" 'echo When it says "server listening", open a browser to http://127.0.0.1:8080'
+fi
 if [ "$TRANSLATE" = 1 ]; then
 # Same text as Get-OfflineLibrary.ps1. No batch special characters, and no | & or \ (sed) in the prompt or notes.
 TR_ARGS='-c 4096 --temp 0.2 -sys "You are an interpreter between two people. Their first message names two languages: reply only with Ready. After that, for every message: if it is written in the first language, translate it into the second language; if it is written in the second language, translate it into the first language. Never repeat a message in the language it was written in. Write only the translation, with no notes. Keep names, numbers, doses and times exactly as written."'
@@ -766,6 +819,7 @@ place_doc(){ # base  destpath
     fi
   done
 }
+if [ -n "$ONLY" ]; then log "docs: already on the drive (not placed again by --only)"; else
 place_doc "START-HERE"            "$ROOT/START-HERE"
 place_doc "I-NEED-TO"             "$ROOT/I-NEED-TO"
 place_doc "EMERGENCY-ESSENTIALS"  "$ROOT/EMERGENCY-ESSENTIALS"
@@ -784,6 +838,7 @@ place_doc "MAP-AND-COMPASS"       "$ROOT/OsmAnd/MAP-AND-COMPASS"
 place_doc "USE-ON-PHONE"          "$ROOT/Phone-Apps/USE-ON-PHONE"
 place_doc "Education-READ-ME-FIRST" "$ROOT/Education/READ-ME-FIRST"
 place_doc "HOW-TO-KOLIBRI"          "$ROOT/Education/HOW-TO-KOLIBRI"
+fi
 
 # CHECK-DRIVE scripts (#28), placed before the index so README.html lists them.
 for f in CHECK-DRIVE.sh check-drive.ps1 CHECK-DRIVE.bat; do

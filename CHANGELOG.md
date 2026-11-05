@@ -22,6 +22,14 @@ hardware.
   results. It preserves the model lineup and states the limits of the quality
   assessment, including the need for independent language review. Resolves #76.
   _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #121._
+- **Add one piece to a finished drive: `-Only` / `--only`.** `-Only translate,medlineplus` (or
+  `--only ...`) downloads just those pieces into an existing library instead of re-running the
+  whole install: `translate`, `medlineplus`, `extra-zims`, `browser-maps`, `education`,
+  `kolibri`, `wikipedia`. It stops with a plain message, before downloading anything, when the
+  folder is not a finished library or a piece needs something missing (the translator needs the
+  AI engine), then rebuilds `README.html` and `CHECKSUMS-SHA256.txt` and runs the self-check.
+  The CI smoke test covers the stop messages on every OS. Resolves #74.
+  _[@EnragedAntelope](https://github.com/EnragedAntelope)._
 - **README: "Start here" install steps first.** The README now opens with the steps for each
   OS (Windows: download the ZIP, double-click `install.bat`; Mac/Linux: paste one line in
   Terminal) and the one question the installer asks. The flags table moves under "Advanced:

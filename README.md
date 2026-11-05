@@ -400,9 +400,27 @@ None of them are needed for a normal install.
 | `-SkipWikipedia` / `--skip-wikipedia` | Don't download the 24 GB Wikipedia dump (~24 GB saved) |
 | `-SkipMaps` / `--skip-maps` | Don't download the maps (~17 GB saved for US) |
 | `-SkipModels` / `--skip-models` | Skip the large 8B/7B AI models, keep the small 3B (~9 GB saved) |
+| `-Only <piece>[,<piece>]` / `--only <piece>[,<piece>]` | **Add just these pieces to a drive you already made** (see below). Pieces: `translate`, `medlineplus`, `extra-zims`, `browser-maps`, `education`, `kolibri`, `wikipedia`. Cannot be combined with `-Lite`, the `-Skip` options or the piece switches above |
 | `-NoAria` / `--no-aria` | Force `curl` even if `aria2c` is installed |
 
 Example: `./Get-OfflineLibrary.ps1 -Destination "F:\" -SkipWikipedia -SkipMaps`
+
+### Add one piece to a finished drive
+
+To add something later without re-running the whole install, point the installer at the same
+destination with `-Only` (Windows) or `--only` (macOS/Linux):
+
+```
+.\Get-OfflineLibrary.ps1 -Destination "F:\" -Only translate
+./get-offline-library.sh -d /mnt/usb --only translate,medlineplus
+```
+
+It downloads only those pieces, then rebuilds `README.html`, `CHECKSUMS-SHA256.txt` (a full
+read of the drive, so it takes a while on a big drive) and runs the self-check. It stops with a
+plain message, before downloading anything, if the folder is not a finished library or a piece
+needs something the drive lacks: `translate` needs the AI engine. Nothing is installed for you
+in that case. `browser-maps` follows `-Region` / `--region` and `education` follows
+`-EduLang` / `--edu-lang`, as in a full install.
 
 ---
 

@@ -99,4 +99,21 @@ for c in CHECK-DRIVE.sh CHECK-DRIVE.command; do
 $out"
   echo "  ok: $c: $(echo "$out" | grep -m1 RESULT)"
 done
+echo "== --only (#74) stops with a plain message before it downloads or creates anything"
+O="$T/only-test"
+chk(){ # text args...: the installer must exit 1 and say text
+  want="$1"; shift
+  out="$(bash get-offline-library.sh "$@" 2>&1 </dev/null)"; rc=$?
+  [ "$rc" = 1 ] && printf '%s' "$out" | grep -qF -- "$want" || die "get-offline-library.sh $*: expected exit 1 and '$want', got exit $rc:
+$out"
+  echo "  ok: $*"
+}
+chk "needs at least one piece" --only -d "$O"
+chk "unknown piece" --only bogus -d "$O"
+chk "cannot be combined" --only translate --lite -d "$O"
+chk "no finished library" --only translate -d "$O"
+[ ! -e "$O" ] || die "--only created $O although there was no finished library there"
+mkdir -p "$O/OfflineLibrary"; echo "x  ./a" > "$O/OfflineLibrary/CHECKSUMS-SHA256.txt"
+chk "needs the AI engine" --only translate -d "$O"
+[ "$(find "$O" -type f | wc -l | tr -d ' ')" = 1 ] || die "--only translate wrote files although the AI engine is missing"
 echo "Smoke test: OK ($(uname -s) $(uname -m), llama.cpp $TAG)"

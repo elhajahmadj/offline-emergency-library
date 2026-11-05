@@ -117,6 +117,21 @@ try {
   Remove-Item $cp
   if($rc -ne 0 -or $out -notmatch 'RESULT: ALL [1-9][0-9]* FILES OK'){ Fail "CHECK-DRIVE.bat failed (exit ${rc}):`n$out" }
   Write-Host "  ok: CHECK-DRIVE.bat: $(([regex]::Match($out, 'RESULT:.*')).Value.Trim())"
+  Write-Host '== -Only (#74) stops with a plain message before it downloads or creates anything'
+  $od = Join-Path $tmp 'only-test'
+  function Chk($text, [string[]]$argv){
+    $out = (& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $repo 'Get-OfflineLibrary.ps1') @argv 2>&1 | Out-String); $rc = $LASTEXITCODE
+    if($rc -ne 1 -or $out -notlike "*$text*"){ Fail "Get-OfflineLibrary.ps1 $($argv -join ' '): expected exit 1 and '$text', got exit ${rc}:`n$out" }
+    Write-Host "  ok: $($argv -join ' ')"
+  }
+  Chk 'unknown piece' @('-Only','bogus','-Destination',$od)
+  Chk 'cannot be combined' @('-Only','translate','-Lite','-Destination',$od)
+  Chk 'no finished library' @('-Only','translate','-Destination',$od)
+  if(Test-Path $od){ Fail "-Only created $od although there was no finished library there" }
+  New-Item -ItemType Directory -Force (Join-Path $od 'OfflineLibrary') | Out-Null
+  Set-Content -Path (Join-Path $od 'OfflineLibrary\CHECKSUMS-SHA256.txt') -Value 'x  ./a' -Encoding ascii
+  Chk 'needs the AI engine' @('-Only','translate','-Destination',$od)
+  if(@(Get-ChildItem -LiteralPath $od -Recurse -File).Count -ne 1){ Fail '-Only translate wrote files although the AI engine is missing' }
   Write-Host "Smoke test: OK (Windows $($env:PROCESSOR_ARCHITECTURE), llama.cpp $tag)"
 }
 finally { Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue }
