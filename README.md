@@ -386,11 +386,3 @@ everyone who has tested the installers on real hardware and reported what broke.
 Code and documentation in this repo: **MIT** (see `LICENSE`). Downloaded content retains
 its original licenses (open-weight model licenses, CC licenses for Kiwix content, public
 domain for US-government works).
-
-> **Reselling a drive?** Some bundled content is **non-commercial (CC BY-NC-SA)** and a drive
-> that includes it **cannot be sold** — on a default drive that's the **iFixit** repair archive
-> (CC BY-NC-SA 3.0), the *Prolonged Casualty Care* guide (CC BY-NC-SA 4.0), and the WHO
-> childbirth references (CC BY-NC-SA 3.0 IGO); the opt-in **Khan Academy** archive
-> (`-Education`) is non-commercial too. **Giving copies away for free is fine.** If you need a
-> drive you can sell, leave those pieces off. (Wikipedia, Appropedia, the Wikivoyage/Wikibooks
-> extras and the OpenStreetMap maps are share-alike but *do* allow commercial use.)
