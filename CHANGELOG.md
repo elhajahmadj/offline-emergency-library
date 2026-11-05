@@ -17,6 +17,11 @@ hardware.
   GitHub first when the file is on its own. It waits for Return before it exits. README
   "Start here" now gives the Mac steps as a double-click, with the one-time Gatekeeper step for
   a downloaded zip. Resolves #81. _[@boostedchaos](https://github.com/boostedchaos) - PR #96._
+- **CPU model comparison.** `evaluations/issue-76/` records a fixed emergency
+  question set, a replayable Windows CPU runner, raw answers, and RAM/timing
+  results. It preserves the model lineup and states the limits of the quality
+  assessment, including the need for independent language review. Resolves #76.
+  _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #121._
 - **README: "Start here" install steps first.** The README now opens with the steps for each
   OS (Windows: download the ZIP, double-click `install.bat`; Mac/Linux: paste one line in
   Terminal) and the one question the installer asks. The flags table moves under "Advanced:
