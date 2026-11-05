@@ -154,12 +154,62 @@ function Fetch-Sized($url,$out,$bytes){
 if($UseAria){ Log 'Downloader: aria2 (fast, multi-connection)' } else { Log "Downloader: curl (tip: install 'aria2' for much faster downloads)" }
 if($Lite){ Log "Lite preset: 3B AI, medical/survival references and maps for '$Region' (unless skipped). Size depends on region; use -Region for a small area or -SkipMaps. Re-run without -Lite to add the full library." }
 
-# free-space check (needs roughly 60 GB for everything)
+# OsmAnd map files for -Region, picked now so the space estimate below knows their size.
+$sel = @(); $osmErr = $null
+if(-not $SkipMaps){
+  try{
+    $idxFile = Join-Path $env:TEMP 'osmand_idx.xml'
+    curl.exe -sL 'https://download.osmand.net/get_indexes' -o $idxFile
+    [xml]$idx = Get-Content $idxFile
+    $allmaps = $idx.osmand_regions.region | Where-Object { $_.type -eq 'map' }
+    # resolve the -Region tokens (comma/space separated) to a file set
+    $tokens = ($Region -split '[,; ]') | ForEach-Object { $_.Trim() } | Where-Object { $_ } | ForEach-Object { Resolve-RegionToken $_ }
+    foreach($t in $tokens){
+      if($t -ieq 'world'){ $sel = $allmaps; break }
+      elseif($Continents -contains $t.ToLower()){ $sel += $allmaps | Where-Object { $_.name -match ('_' + [regex]::Escape($t.ToLower()) + '_') } }
+      else { $sel += $allmaps | Where-Object { $_.name -match ('^' + [regex]::Escape($t) + '_') } }
+    }
+    $sel = @($sel | Sort-Object name -Unique)
+  }catch{ $osmErr = $_.Exception.Message }
+}
+
+# Space estimate for the chosen flags (#68). Sizes in GB (1024^3 bytes), measured on a full
+# drive; keep them the same as in get-offline-library.sh so both installers agree.
+$est = [ordered]@{ 'core (AI engine, 3B model, medical, survival, manuals, Kiwix, phone apps)' = 6.3 }
+if(-not $SkipModels){ $est['8B + 7B AI models'] = 8.9 }
+if(-not $Lite){ $est['GPT4All, iFixit, Appropedia'] = 4.5 }
+if(-not $SkipWikipedia){ $est['Wikipedia'] = 49.1 }
+$mapGB = 0
+if(-not $SkipMaps){
+  $mapGB = [double](($sel | ForEach-Object { [double]$_.containerSize } | Measure-Object -Sum).Sum) / 1GB
+  $est["maps for '$Region' + desktop viewer"] = [math]::Round($mapGB + 0.5, 1)
+  if($BrowserMaps){
+    $rt = @(($Region -split '[,; ]') | Where-Object { $_ } | ForEach-Object { (Resolve-RegionToken $_.Trim()).ToLower() })
+    # all of the US ~15.4 GB; single states roughly match their OsmAnd size; always + the world map
+    $bm = if(@($rt | Where-Object { $_ -in 'us','world','northamerica' }).Count){ 15.4 } elseif(@($rt | Where-Object { $_.StartsWith('us_') }).Count){ $mapGB } else { 0 }
+    $est['browser maps'] = [math]::Round($bm + 0.2, 1)
+  }
+}
+if($Education){ $est['Khan Academy'] = 168 }
+if($ExtraZims){ $est['Wikivoyage + Wikibooks'] = 5.8 }
+if($Translate){ $est['translator model'] = 2.3 }
+$estGB = [math]::Round(($est.Values | Measure-Object -Sum).Sum, 1)
 try {
   $drive = (Get-Item $Root).PSDrive
   $freeGB = [math]::Round((Get-PSDrive $drive.Name).Free/1GB,1)
-  Log "Destination: $Root   (free space: $freeGB GB)"
-  if (-not $Lite -and $freeGB -lt 65) { Log "WARNING: ~65 GB recommended for the full library. You have $freeGB GB free. Consider -SkipWikipedia / -SkipMaps / -SkipModels." }
+  $haveGB = [math]::Round(((Get-ChildItem -LiteralPath $Root -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum)/1GB,1)
+  $needGB = [math]::Round([math]::Max(0.0, $estGB - $haveGB), 1)
+  function Gb($x){ ([double]$x).ToString('0.0', [cultureinfo]::InvariantCulture) }   # same text on every locale
+  Log "Destination: $Root   (free space: $(Gb $freeGB) GB)"
+  Log "Space estimate for this selection: about $(Gb $estGB) GB"
+  foreach($k in $est.Keys){ Log ("  {0,6} GB  {1}" -f (Gb $est[$k]), $k) }
+  if($Kolibri){ Log '     (Kolibri content is not counted: you pick it in the app)' }
+  Log "Already in the folder: $(Gb $haveGB) GB. Still to download: about $(Gb $needGB) GB. Free: $(Gb $freeGB) GB."
+  if($needGB -gt $freeGB){
+    Log "WARNING: NOT ENOUGH SPACE. This needs about $(Gb $needGB) GB more, but only $(Gb $freeGB) GB is free."
+    Log '  Use a bigger drive, free up space, or choose less: -Lite, -SkipWikipedia (49 GB), -SkipModels (9 GB),'
+    Log '  a smaller -Region, -SkipMaps, or leave off an opt-in. Press Ctrl+C now to stop and re-run.'
+  }
 } catch {}
 
 # ---------------------------------------------------------------- folder tree
@@ -454,20 +504,9 @@ if(-not $SkipWikipedia){
 if(-not $SkipMaps){
   Log "=== [8/8] Offline maps (OsmAnd) - region: $Region ==="
   try{
-    $idxFile = Join-Path $env:TEMP 'osmand_idx.xml'
-    curl.exe -sL 'https://download.osmand.net/get_indexes' -o $idxFile
-    [xml]$idx = Get-Content $idxFile
-    $allmaps = $idx.osmand_regions.region | Where-Object { $_.type -eq 'map' }
-    # resolve the -Region tokens (comma/space separated) to a file set
-    $tokens = ($Region -split '[,; ]') | ForEach-Object { $_.Trim() } | Where-Object { $_ } | ForEach-Object { Resolve-RegionToken $_ }
-    $sel = @()
-    foreach($t in $tokens){
-      if($t -ieq 'world'){ $sel = $allmaps; break }
-      elseif($Continents -contains $t.ToLower()){ $sel += $allmaps | Where-Object { $_.name -match ('_' + [regex]::Escape($t.ToLower()) + '_') } }
-      else { $sel += $allmaps | Where-Object { $_.name -match ('^' + [regex]::Escape($t) + '_') } }
-    }
-    $sel = $sel | Sort-Object name -Unique
-    if(-not $sel){
+    if($osmErr){
+      Log "osmand ERROR: $osmErr"
+    } elseif(-not $sel){
       Log "osmand: no maps matched region '$Region'. Run with -ListRegions to see valid names. Skipping maps."
     } else {
       $mb = ($sel | Measure-Object -Property size -Sum).Sum

@@ -207,6 +207,69 @@ for d in AI-Offline AI-Offline/engine AI-Offline/models AI-Offline/DocReader-GPT
   mkdir -p "$ROOT/$d"
 done
 
+# ---- OsmAnd map files for --region, picked now so the space estimate below knows their size ----
+MAP_MB=0
+if [ "$SKIP_MAPS" = 0 ]; then
+  curl -sL "https://download.osmand.net/get_indexes" -o "$ROOT/OsmAnd/_index.xml"
+  allnames="$(grep -oE 'name="[^"]+\.obf\.zip"' "$ROOT/OsmAnd/_index.xml" | sed -E 's/name="([^"]+)"/\1/' | grep -viE 'wiki|srtm|depth|road|hillshade|heightmap')"
+  : > "$ROOT/OsmAnd/_filelist.txt"
+  # '%s\n': without a final newline, read skips the last name (default "US" got 0 maps)
+  printf '%s\n' "$REGION" | tr ',;' '  ' | tr ' ' '\n' | while IFS= read -r tok; do
+    [ -z "$tok" ] && continue
+    tok="$(alias_region "$tok")"
+    tl="$(printf '%s' "$tok" | tr 'A-Z' 'a-z')"
+    if [ "$tl" = world ]; then printf '%s\n' "$allnames" >> "$ROOT/OsmAnd/_filelist.txt"
+    elif echo "$CONTINENTS" | grep -qw "$tl"; then printf '%s\n' "$allnames" | grep -iE "_${tl}_" >> "$ROOT/OsmAnd/_filelist.txt"
+    else printf '%s\n' "$allnames" | grep -iE "^${tok}_" >> "$ROOT/OsmAnd/_filelist.txt"
+    fi
+  done
+  sort -u "$ROOT/OsmAnd/_filelist.txt" -o "$ROOT/OsmAnd/_filelist.txt"
+  # sum containerSize (bytes) of the picked files; one <region .../> per line in the index
+  MAP_MB="$(sed -nE 's/.*containerSize="([0-9]+)".* name="([^"]+\.obf\.zip)".*/\2 \1/p' "$ROOT/OsmAnd/_index.xml" |
+    awk 'NR==FNR{w[$1]=1; next} ($1 in w){s+=$2} END{printf "%d", s/1048576}' "$ROOT/OsmAnd/_filelist.txt" -)"
+fi
+
+# ---- space estimate for the chosen flags (#68) ----
+# Sizes in GB (1024^3 bytes), measured on a full drive; keep them the same as in
+# Get-OfflineLibrary.ps1 so both installers agree.
+EST=""; est(){ EST="$EST$1|$2
+"; }
+est 6.3 "core (AI engine, 3B model, medical, survival, manuals, Kiwix, phone apps)"
+[ "$SKIP_MODELS" = 0 ] && est 8.9 "8B + 7B AI models"
+[ "$LITE" = 0 ] && est 4.5 "GPT4All, iFixit, Appropedia"
+[ "$SKIP_WIKI" = 0 ] && est 49.1 "Wikipedia"
+if [ "$SKIP_MAPS" = 0 ]; then
+  est "$(awk -v m="$MAP_MB" 'BEGIN{printf "%.1f", m/1024 + 0.5}')" "maps for '$REGION' + desktop viewer"
+  if [ "$BROWSER_MAPS" = 1 ]; then
+    # all of the US ~15.4 GB; single states roughly match their OsmAnd size; always + the world map
+    bm=0
+    for tok in $(printf '%s' "$REGION" | tr ',;' '  '); do
+      tl="$(alias_region "$tok" | tr 'A-Z' 'a-z')"
+      case "$tl" in us|world|northamerica) bm=all ;; us_*) [ "$bm" = all ] || bm=state ;; esac
+    done
+    case "$bm" in all) bmgb=15.4 ;; state) bmgb="$(awk -v m="$MAP_MB" 'BEGIN{print m/1024}')" ;; *) bmgb=0 ;; esac
+    est "$(awk -v b="$bmgb" 'BEGIN{printf "%.1f", b + 0.2}')" "browser maps"
+  fi
+fi
+[ "$EDU" = 1 ] && est 168 "Khan Academy"
+[ "$EXTRA_ZIMS" = 1 ] && est 5.8 "Wikivoyage + Wikibooks"
+[ "$TRANSLATE" = 1 ] && est 2.3 "translator model"
+EST_GB="$(printf '%s' "$EST" | awk -F'|' '{s+=$1} END{printf "%.1f", s}')"
+FREE_GB="$(df -Pk "$ROOT" 2>/dev/null | awk 'NR==2{printf "%.1f", $4/1048576}')"
+HAVE_GB="$(du -sk "$ROOT" 2>/dev/null | awk '{printf "%.1f", $1/1048576}')"
+NEED_GB="$(awk -v e="$EST_GB" -v h="${HAVE_GB:-0}" 'BEGIN{n=e-h; if(n<0)n=0; printf "%.1f", n}')"
+log "Space estimate for this selection: about $EST_GB GB"
+printf '%s' "$EST" | while IFS='|' read -r g n; do log "$(awk -v g="$g" -v n="$n" 'BEGIN{printf "  %6.1f GB  %s", g, n}')"; done
+[ "$KOLIBRI" = 1 ] && log "     (Kolibri content is not counted: you pick it in the app)"
+if [ -n "$FREE_GB" ]; then
+  log "Already in the folder: ${HAVE_GB:-0} GB. Still to download: about $NEED_GB GB. Free: $FREE_GB GB."
+  if awk -v n="$NEED_GB" -v f="$FREE_GB" 'BEGIN{exit !(n>f)}'; then
+    log "WARNING: NOT ENOUGH SPACE. This needs about $NEED_GB GB more, but only $FREE_GB GB is free."
+    log "  Use a bigger drive, free up space, or choose less: --lite, --skip-wikipedia (49 GB), --skip-models (9 GB),"
+    log "  a smaller --region, --skip-maps, or leave off an opt-in. Press Ctrl+C now to stop and re-run."
+  fi
+fi
+
 # ---- helpers ----
 gh_asset(){ # repo regex  -> first matching asset url across recent releases
   curl -s -H "User-Agent: oel" "https://api.github.com/repos/$1/releases?per_page=20" \
@@ -474,20 +537,6 @@ else log "=== [7/8] Wikipedia SKIPPED ==="; fi
 
 if [ "$SKIP_MAPS" = 0 ]; then
   log "=== [8/8] Offline maps (OsmAnd) - region: $REGION ==="
-  curl -sL "https://download.osmand.net/get_indexes" -o "$ROOT/OsmAnd/_index.xml"
-  allnames="$(grep -oE 'name="[^"]+\.obf\.zip"' "$ROOT/OsmAnd/_index.xml" | sed -E 's/name="([^"]+)"/\1/' | grep -viE 'wiki|srtm|depth|road|hillshade|heightmap')"
-  : > "$ROOT/OsmAnd/_filelist.txt"
-  # '%s\n': without a final newline, read skips the last name (default "US" got 0 maps)
-  printf '%s\n' "$REGION" | tr ',;' '  ' | tr ' ' '\n' | while IFS= read -r tok; do
-    [ -z "$tok" ] && continue
-    tok="$(alias_region "$tok")"
-    tl="$(printf '%s' "$tok" | tr 'A-Z' 'a-z')"
-    if [ "$tl" = world ]; then printf '%s\n' "$allnames" >> "$ROOT/OsmAnd/_filelist.txt"
-    elif echo "$CONTINENTS" | grep -qw "$tl"; then printf '%s\n' "$allnames" | grep -iE "_${tl}_" >> "$ROOT/OsmAnd/_filelist.txt"
-    else printf '%s\n' "$allnames" | grep -iE "^${tok}_" >> "$ROOT/OsmAnd/_filelist.txt"
-    fi
-  done
-  sort -u "$ROOT/OsmAnd/_filelist.txt" -o "$ROOT/OsmAnd/_filelist.txt"
   n=$(grep -c . "$ROOT/OsmAnd/_filelist.txt" 2>/dev/null || echo 0)
   if [ "$n" = "0" ]; then
     log "osmand: no maps matched region '$REGION'. Run with --list-regions to see valid names. Skipping maps."

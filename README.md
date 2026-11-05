@@ -54,6 +54,10 @@ Kiwix archives and guides, and public-domain US-government manuals. **No piracy.
 The full library is **~85 GB**. Always leave headroom (for the AI's temp files, GPT4All
 install, and future updates), so plan for more than 60 GB.
 
+Before the first download, the installer prints a size estimate for the options you chose
+(maps for your region and every opt-in included) next to the free space, and warns if it
+will not fit.
+
 | Drive | Recommendation |
 |---|---|
 | **Minimum** | **128 GB** drive (full library + working room) |
