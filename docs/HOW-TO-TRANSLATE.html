@@ -15,6 +15,7 @@
 <li><strong>Type the two languages first</strong>, for example <code>English and Spanish</code>, and press Enter. It answers <code>Ready</code>.</li>
 <li><strong>Take turns.</strong> Each person types in their own language and presses Enter. The answer is the same message in the other language. Turn the screen so the other person can read it.</li>
 <li>To switch to other languages, type <code>/clear</code> and press Enter, then type the two new languages. To quit, type <code>/exit</code> or press Ctrl+C.</li>
+<li>If it stops answering after a long talk, type <code>/clear</code> and name the two languages again.</li>
 </ol>
 <pre><code>&gt; English and Spanish
 Ready
@@ -32,14 +33,16 @@ Yes, to penicillin.</code></pre>
 <li>If an answer comes back in the <strong>same language you typed</strong>, it did not translate: type it again, or type <code>/clear</code> and say the two languages again.</li>
 </ul>
 <h2>4. Which languages work</h2>
-<p>The model was tested on sentences from a public translation test set, in both directions with English:</p>
+<p>The model was tested on 30 sentences per direction from NTREX-128, a public translation test set, in both directions with English. That is a small test, so treat the groups as a rough guide:</p>
 <table><thead><tr><th>How well it did</th><th>Languages tested</th></tr></thead><tbody>
 <tr><td><strong>Good</strong> - usually understandable and accurate</td><td>Spanish, French, Vietnamese</td></tr>
-<tr><td><strong>Fair</strong> - often right, check carefully</td><td>Arabic, Hindi, Ukrainian, Chinese</td></tr>
+<tr><td><strong>Fair</strong> - often right, check carefully</td><td>Arabic, Hindi, Ukrainian</td></tr>
+<tr><td><strong>Fair into English, weaker from English</strong></td><td>Chinese</td></tr>
 <tr><td><strong>Rough into English, mostly wrong from English</strong></td><td>Swahili</td></tr>
 <tr><td><strong>Do not rely on it</strong> - mostly wrong</td><td>Somali, Amharic</td></tr>
 </tbody></table>
-<p>Other widely spoken languages (for example Portuguese, German, Italian, Russian, Japanese, Korean, Indonesian) are likely to be in the good or fair group but were not tested. Less widely spoken languages are likely to be weak. When in doubt, translate back and compare.</p>
+<p>For Swahili, the 3B chat (<code>CHAT-3B-light</code>) did better in testing. Ask it to translate one sentence at a time.</p>
+<p>Other widely spoken languages (for example Portuguese, German, Italian, Russian, Japanese, Korean, Indonesian) were not tested. Translate back to check. Less widely spoken languages are likely to be weak.</p>
 <h2>5. Privacy</h2>
 <p>Everything stays on this computer. The translator does not use the internet and does not save the conversation; closing the window clears it.</p>
 <h2>6. Where it comes from</h2>

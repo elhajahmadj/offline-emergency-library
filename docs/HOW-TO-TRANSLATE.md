@@ -33,6 +33,7 @@ No graphics card is needed. Close other programs, especially web browsers, if it
    the same message in the other language. Turn the screen so the other person can read it.
 3. To switch to other languages, type `/clear` and press Enter, then type the two new
    languages. To quit, type `/exit` or press Ctrl+C.
+4. If it stops answering after a long talk, type `/clear` and name the two languages again.
 
 ```text
 > English and Spanish
@@ -59,19 +60,24 @@ Yes, to penicillin.
 
 ## 4. Which languages work
 
-The model was tested on sentences from a public translation test set, in both directions
-with English:
+The model was tested on 30 sentences per direction from NTREX-128, a public translation
+test set, in both directions with English. That is a small test, so treat the groups as a
+rough guide:
 
 | How well it did | Languages tested |
 |---|---|
 | **Good** - usually understandable and accurate | Spanish, French, Vietnamese |
-| **Fair** - often right, check carefully | Arabic, Hindi, Ukrainian, Chinese |
+| **Fair** - often right, check carefully | Arabic, Hindi, Ukrainian |
+| **Fair into English, weaker from English** | Chinese |
 | **Rough into English, mostly wrong from English** | Swahili |
 | **Do not rely on it** - mostly wrong | Somali, Amharic |
 
+For Swahili, the 3B chat (`CHAT-3B-light`) did better in testing. Ask it to translate one
+sentence at a time.
+
 Other widely spoken languages (for example Portuguese, German, Italian, Russian, Japanese,
-Korean, Indonesian) are likely to be in the good or fair group but were not tested. Less
-widely spoken languages are likely to be weak. When in doubt, translate back and compare.
+Korean, Indonesian) were not tested. Translate back to check. Less widely spoken languages
+are likely to be weak.
 
 ## 5. Privacy
 
