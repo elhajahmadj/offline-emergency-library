@@ -423,11 +423,34 @@ everyone who has tested the installers on real hardware and reported what broke.
 
 ## License
 Code and documentation in this repo: **MIT** (see `LICENSE`). Downloaded content retains
-its original licenses (open-weight model licenses, CC licenses for Kiwix content, public
-domain for US-government works).
+its original licenses. The table below lists each bundled source, its license, and whether
+it may be redistributed **commercially** (i.e. whether you could sell a loaded drive). Where
+each source is downloaded from is in [Trust & verification](#-trust--verification) above.
 
-**Do not sell a drive made with this kit; giving copies away is fine.** Some of what it
-downloads is non-commercial: the iFixit repair archive (CC BY-NC-SA 3.0), *A Practical Guide
-to Prolonged Casualty Care* (CC BY-NC-SA 4.0), the WHO childbirth references (CC BY-NC-SA 3.0
-IGO), *Where There Is No Doctor* and *Where There Is No Dentist* (Hesperian: copies must be
-free or at cost, not for profit), and the opt-in Khan Academy archive (CC BY-NC-SA).
+| Source | License | Commercial reuse? |
+|---|---|---|
+| Offline AI models — Llama 3.2 3B, Llama 3.1 8B | [Llama Community License](https://www.llama.com/llama3_1/license/) | Yes, under the license terms (incl. the >700M-MAU clause) |
+| Offline AI model — Qwen2.5 7B, and translator Qwen3 4B | Apache-2.0 | Yes |
+| AI engine (llama.cpp), GPT4All, Kolibri app, project-nomad-maps repo | MIT | Yes |
+| MapLibre GL JS, pmtiles.js | BSD-3-Clause | Yes |
+| Caddy web server | Apache-2.0 | Yes |
+| Portable Java (Eclipse Temurin / OpenJDK) | GPL-2.0 WITH Classpath-exception | Yes |
+| Kiwix reader; OsmAnd maps viewer; Kiwix / OsmAnd~ phone apps | GPL-3.0 | Yes |
+| Map data (OpenStreetMap; OsmAnd + Protomaps basemap) | [ODbL-1.0](https://opendatacommons.org/licenses/odbl/1-0/) | Yes (attribution + share-alike) |
+| Wikipedia, WikiMed medical; Appropedia DIY; Wikivoyage + Wikibooks (opt-in) | CC BY-SA | Yes (attribution + share-alike) |
+| US Army field/technical manuals | Public domain (US government) | Yes |
+| MedlinePlus health topics (opt-in) | Public domain (US NLM) — **summaries only** | Yes |
+| iFixit repair archive | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) | **No — non-commercial** |
+| *A Practical Guide to Prolonged Casualty Care* | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) | **No — non-commercial** |
+| WHO childbirth / maternal-health references | [CC BY-NC-SA 3.0 IGO](https://creativecommons.org/licenses/by-nc-sa/3.0/igo/) | **No — non-commercial** |
+| *Where There Is No Doctor* / *No Dentist* (Hesperian) | Non-commercial (copies free or at cost, not for profit) | **No — non-commercial** |
+| Khan Academy archive (opt-in) | CC BY-NC-SA | **No — non-commercial** |
+
+> **MedlinePlus caveat:** only the **public-domain topic summaries** are bundled. The
+> A.D.A.M. medical encyclopedia and ASHP drug pages inside the full MedlinePlus data are
+> **copyrighted** and are **not** included.
+
+**In short: do not sell a drive made with this kit; giving copies away is fine.** Several
+sources above are non-commercial (iFixit, Prolonged Casualty Care, the WHO references,
+the Hesperian books, and the opt-in Khan Academy archive), which blocks reselling a loaded
+drive even though giving copies away is allowed.
