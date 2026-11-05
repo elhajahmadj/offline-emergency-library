@@ -12,6 +12,10 @@ Contributor-driven reliability and portability work, from people running the kit
 hardware.
 
 ### Added
+- **README: "Start here" install steps first.** The README now opens with the steps for each
+  OS (Windows: download the ZIP, double-click `install.bat`; Mac/Linux: paste one line in
+  Terminal) and the one question the installer asks. The flags table moves under "Advanced:
+  options and flags". Resolves #82. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #95._
 - **README: resale note.** The License section now says a drive made with this kit cannot be
   sold (giving copies away is fine) and names the non-commercial content: iFixit, the
   *Prolonged Casualty Care* guide, the WHO childbirth references, the two Hesperian books and
