@@ -12,6 +12,10 @@ Contributor-driven reliability and portability work, from people running the kit
 hardware.
 
 ### Added
+- **README: "Start here" install steps first.** The README now opens with the steps for each
+  OS (Windows: download the ZIP, double-click `install.bat`; Mac/Linux: paste one line in
+  Terminal) and the one question the installer asks. The flags table moves under "Advanced:
+  options and flags". Resolves #82. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #95._
 - **README: resale note.** The License section now says a drive made with this kit cannot be
   sold (giving copies away is fine) and names the non-commercial content: iFixit, the
   *Prolonged Casualty Care* guide, the WHO childbirth references, the two Hesperian books and
@@ -179,6 +183,12 @@ hardware.
   lite section spells out the no-citation consequence. Resolves #31.
 - **Manuals-first AI framing.** The guides now treat the bundled manuals as the authority and the AI as the assistant: START-HERE opens with how the kit is meant to be used, spells out the three ways to read and use things (fixing the GPT4All pointer to `AI-Offline\DocReader-GPT4All\`), and points safety-critical answers at the manual itself; HOW-TO-RUN-OFFLINE-AI gains a "How to use the AI well" note (GPT4All LocalDocs shows the sources it used, so medical and survival answers can be checked against the book). Every generated AI launcher now also prints a one-line reminder (the AI is a helper, follow the manuals for anything safety-critical) before the engine starts. Resolves #20. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #42._
 - **Browser maps: total map size stated.** HOW-TO-VIEW-MAPS, the README options table and the skill now say that browser maps come on top of the OsmAnd maps, so a full US drive with `-BrowserMaps` needs about 34 GB for maps (16.5 + 17.8 GB, measured on a real install). Suggested in #15. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #58._
+- **MedlinePlus page: inline script allowed by hash, not `'unsafe-inline'`.** The page's
+  Content-Security-Policy now allows only its own script, by its `sha256-` hash, so no other
+  inline script can run in it. The installers splice the topic data into the inert
+  `<script type="text/xml">` block only, so the hash still matches on the built page. A new CI
+  step (`.github/scripts/check-csp-hash.sh`) fails when the script changes and the hash in the
+  page is not updated. Resolves #91. _[@boostedchaos](https://github.com/boostedchaos) - PR #97._
 
 ### Fixed
 - **Desktop viewer needs internet on Windows and macOS: the docs and launchers now say so.** The bundled OsmAndMapCreator has only the Linux offline renderer, so on Windows and macOS it draws online tiles from `tile.osmand.net` and shows a blank map with no internet (reproduced on Windows 11 and macOS). HOW-TO-VIEW-MAPS, the README, START-HERE, POWER-AND-DEVICES and both viewer launchers no longer call it an offline viewer; they point to browser maps (US) or an Android phone. `VIEW-MAPS-ON-PC.sh` also launched a second viewer when the first exited non-zero (`sh ... || bash ...`); it now launches once. Addresses #15. _Tested by [@boostedchaos](https://github.com/boostedchaos) - issue #15._
