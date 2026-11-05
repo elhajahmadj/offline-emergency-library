@@ -371,7 +371,7 @@ macOS also writes small `._*` files on exFAT drives; CHECK-DRIVE ignores them.
 
 ## Advanced: options and flags
 
-Add these to the PowerShell or Bash command in [Other ways to install](#-other-ways-to-install).
+Add these to the commands in [E) Clone and run](#e-clone-and-run) (see the [Quick start](#quick-start-with-a-smaller-download) examples). The one-liners in C and D cannot take flags as written.
 None of them are needed for a normal install.
 
 | Flag | Effect |
