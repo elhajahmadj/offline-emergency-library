@@ -50,6 +50,29 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 
 ---
 
+## Launchers on this drive (double-click to run)
+
+Every clickable launcher the installer wrote, and what it does. Which ones are present
+depends on what you installed (a **lite** drive has only the 3B chat; **browser maps** are
+opt-in).
+
+| Launcher | What it does | On a full drive? |
+|---|---|---|
+| `CHAT-3B-light.bat` | Offline AI chat, small **3B** model — ~4 GB RAM, CPU only; best on a weak PC | always |
+| `CHAT-8B-smart.bat` | Offline AI chat, larger **8B** model — ~8 GB RAM, smarter answers | full install |
+| `CHAT-GPU-Qwen7B.bat` | Offline AI chat on a **GPU** (Qwen 7B, ~6 GB VRAM) for a big speed-up | full install |
+| `WEB-UI.bat` | Offline AI in your **browser** — starts a local server, then open `http://127.0.0.1:8080` | always |
+| `OsmAnd\MapViewer-Desktop\VIEW-MAPS-ON-PC.bat` | Open the **desktop map viewer** (OsmAndMapCreator); first run unzips the maps | with maps |
+| `Maps-Browser\OPEN-MAPS.bat` | **Street maps in a web browser** (opt-in browser maps); opens `http://localhost:8097` | with `-BrowserMaps` |
+| `CHECK-DRIVE.bat` | **Re-check every file** on the drive for damage and print only the problems | always |
+
+> **Windows vs macOS/Linux:** the map and CHECK-DRIVE launchers also ship as `.sh`
+> (and `CHECK-DRIVE.command` for a macOS double-click). The **AI chat / Web-UI** launchers
+> are Windows `.bat` files; on macOS/Linux, run the AI with the one-line command in
+> `AI-Offline\HOW-TO-RUN-OFFLINE-AI.html`.
+
+---
+
 ## Quick start by need
 
 - **Prepare for a dead battery:** print `EMERGENCY-ESSENTIALS.html` (one page of critical
