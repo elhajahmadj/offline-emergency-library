@@ -123,6 +123,7 @@ try {
     $out = (& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $repo 'Get-OfflineLibrary.ps1') @argv 2>&1 | Out-String); $rc = $LASTEXITCODE
     if($rc -ne 1 -or $out -notlike "*$text*"){ Fail "Get-OfflineLibrary.ps1 $($argv -join ' '): expected exit 1 and '$text', got exit ${rc}:`n$out" }
     Write-Host "  ok: $($argv -join ' ')"
+    $global:LASTEXITCODE = 0   # the expected exit 1 above must not become this script's exit code
   }
   Chk 'unknown piece' @('-Only','bogus','-Destination',$od)
   Chk 'cannot be combined' @('-Only','translate','-Lite','-Destination',$od)
