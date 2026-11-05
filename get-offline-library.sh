@@ -589,7 +589,8 @@ for z in "$MAPS"/*.obf.zip; do
 done
 echo "Maps ready in: $OBF"
 echo "If the map area stays BLANK: on macOS this viewer draws online map tiles, not the"
-echo "drive's maps, so it is blank with no internet (issue 15). Offline: use the browser maps"
+echo "drive's maps, so it is blank with no internet (issue 15; Linux may work offline, untested)."
+echo "Offline: use the browser maps"
 echo "(Maps-Browser/OPEN-MAPS.sh, if built with --browser-maps; US only) or an Android phone."
 # one launch only (bash runs both sh and bash scripts); the old "sh || bash" started a 2nd viewer when the 1st exited non-zero
 bash "$DIR/app/OsmAndMapCreator.sh"
