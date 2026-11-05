@@ -389,3 +389,9 @@ everyone who has tested the installers on real hardware and reported what broke.
 Code and documentation in this repo: **MIT** (see `LICENSE`). Downloaded content retains
 its original licenses (open-weight model licenses, CC licenses for Kiwix content, public
 domain for US-government works).
+
+**Do not sell a drive made with this kit; giving copies away is fine.** Some of what it
+downloads is non-commercial: the iFixit repair archive (CC BY-NC-SA 3.0), *A Practical Guide
+to Prolonged Casualty Care* (CC BY-NC-SA 4.0), the WHO childbirth references (CC BY-NC-SA 3.0
+IGO), *Where There Is No Doctor* and *Where There Is No Dentist* (Hesperian: copies must be
+free or at cost, not for profit), and the opt-in Khan Academy archive (CC BY-NC-SA).
