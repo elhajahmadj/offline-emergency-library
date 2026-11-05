@@ -353,6 +353,7 @@ if($MedlinePlus){
     $page = [System.IO.File]::ReadAllText($tpl, [System.Text.Encoding]::UTF8)
     $mark = '<script type="text/xml" id="data"></script>'
     if(-not $page.Contains($mark)){ Log 'ERROR: medlineplus/MedlinePlus.html has no data marker. Re-run the installer.'; exit 1 }
+    if(-not $xt.EndsWith("`n")){ $xt += "`n" }  # match the Bash awk splice, which always ends the data with a newline
     $out = Join-Path $md 'MedlinePlus-Health-Topics.html'
     [System.IO.File]::WriteAllText($out, $page.Replace($mark, '<script type="text/xml" id="data">' + $xt + '</script>'), [System.Text.UTF8Encoding]::new($false))
     # The page holds all the data: drop the XML (and any older day's copy) and the template.
