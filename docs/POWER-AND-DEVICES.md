@@ -163,8 +163,10 @@ the port on an internet router. Account for local network equipment's power.
 A preconfigured Pi + library drive + battery + suitably sized panel can serve
 light reading through a phone, without powering a laptop display. Count the
 client phone and local Wi-Fi too; local networking does not require internet.
-**Browser maps are proposed in PR #10, not shipped in the current main kit.**
-If using that opt-in version, prepare maps/viewer assets and test the whole
+Browser maps are shipped (PR #38) and are available as an opt-in flag
+(`-BrowserMaps` on Windows / `--browser-maps` on Linux/macOS). Note that they are
+US-only and require about 16.5 GB of additional disk space on top of the OsmAnd
+maps. If using that opt-in version, prepare maps/viewer assets and test the whole
 setup offline first; do not assume it supports every region or Pi configuration.
 The current bundled desktop Java map viewer also has a known Windows rendering
 limitation (issue #15). A phone with tested offline maps is a simpler fallback.

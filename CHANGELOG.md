@@ -181,6 +181,7 @@ hardware.
 - **Browser maps: total map size stated.** HOW-TO-VIEW-MAPS, the README options table and the skill now say that browser maps come on top of the OsmAnd maps, so a full US drive with `-BrowserMaps` needs about 34 GB for maps (16.5 + 17.8 GB, measured on a real install). Suggested in #15. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #58._
 
 ### Fixed
+- Fix outdated browser-maps note in POWER-AND-DEVICES guide (PR #109) (@imsurya26)
 - **A re-run no longer keeps or corrupts downloads whose name stays the same.** OsmAnd maps,
   OsmAndMapCreator (nightly), the portable Java runtime and the browser-maps style archive
   keep their file name when the source publishes a new edition, so a re-run resumed the new
