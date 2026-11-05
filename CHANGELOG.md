@@ -181,6 +181,11 @@ hardware.
 - **Browser maps: total map size stated.** HOW-TO-VIEW-MAPS, the README options table and the skill now say that browser maps come on top of the OsmAnd maps, so a full US drive with `-BrowserMaps` needs about 34 GB for maps (16.5 + 17.8 GB, measured on a real install). Suggested in #15. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #58._
 
 ### Fixed
+- **The upstream link check no longer fails on one-off errors.** `check-links.sh` retries a
+  failed URL up to 3 times (5xx, timeouts, resets) before counting it as dead, and sends the
+  `GITHUB_TOKEN` on every `api.github.com` URL, not only the release-asset checks, so the
+  pmtiles `contents` URL no longer hits the unauthenticated rate limit (403). A real dead link
+  (for example a 404) still fails the job at once. Resolves #103. _[@EnragedAntelope](https://github.com/EnragedAntelope)._
 - **A re-run no longer keeps or corrupts downloads whose name stays the same.** OsmAnd maps,
   OsmAndMapCreator (nightly), the portable Java runtime and the browser-maps style archive
   keep their file name when the source publishes a new edition, so a re-run resumed the new
