@@ -22,6 +22,12 @@ hardware.
   failing later when someone tries to chat. The hash is taken from `CHECKSUMS-SHA256.txt`, so
   the models are not read twice; an unfinished aria2 download also fails, and no answer from
   Hugging Face is only a warning. Resolves #71. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #88._
+- **Space estimate before any download.** Both installers now add up what the chosen flags
+  will download (the real size of the region's maps from the OsmAnd index, plus each part and
+  opt-in), subtract what is already in the folder, and show it next to the free space before
+  the first download, with a clear warning and what to drop if it will not fit. The Bash
+  installer had no free-space check before; the PowerShell one only warned below a fixed
+  65 GB. Resolves #68. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #93._
 - **WHO childbirth and maternal-health references.** Both installers now download two WHO
   PDFs from `iris.who.int` into `Medical/Manuals-PDF/` (~9 MB), each checked to start with
   `%PDF`: *Managing complications in pregnancy and childbirth* (2nd ed., 2017) and *WHO
