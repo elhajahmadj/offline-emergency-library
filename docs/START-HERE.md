@@ -42,7 +42,7 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 | `Wikipedia\` | Full Wikipedia (all articles, no images) | Kiwix | — |
 | `Education\` | Courses + videos (opt-in): Khan Academy archive (Kiwix) **or** Kolibri app (pick subjects) | Kiwix / Kolibri | `Education\READ-ME-FIRST.html`, `Education\HOW-TO-KOLIBRI.html` |
 | `Extra-Archives\` | Travel guide (Wikivoyage) + open textbooks (Wikibooks) (opt-in) | Kiwix | `Kiwix-Reader\HOW-TO-USE-KIWIX.html` |
-| `OsmAnd\` | Offline maps (your chosen region; default US) — view on **PC (no phone)** or phone | PC: `MapViewer-Desktop\VIEW-MAPS-ON-PC.bat`; phone: bundled APK | `OsmAnd\HOW-TO-VIEW-MAPS.html` |
+| `OsmAnd\` | Offline maps (your chosen region; default US) — view on a PC or phone | PC: `Maps-Browser\OPEN-MAPS.bat` (US, if built with `-BrowserMaps`); `MapViewer-Desktop\VIEW-MAPS-ON-PC.bat` needs internet on Windows/macOS; phone: bundled APK | `OsmAnd\HOW-TO-VIEW-MAPS.html` |
 | `OsmAnd\MAP-AND-COMPASS.html` | Paper-map, compass and natural navigation | Print the guide and carry a paper topo map and compass | `OsmAnd\MAP-AND-COMPASS.html` |
 | `Kiwix-Reader\` | The reader for all `.zim` archives | Portable app | `Kiwix-Reader\HOW-TO-USE-KIWIX.html` |
 | `Maps-Browser\` | Street maps in a web browser (opt-in, US) | `OPEN-MAPS.bat` / `OPEN-MAPS.sh` | `OsmAnd\HOW-TO-VIEW-MAPS.html` |
@@ -99,6 +99,12 @@ are opt-in).
 - **Communicate by radio:** read `Manuals\Radio-Communications\RADIO-GUIDE.html`.
 - **Learn / study (courses + video):** open `Education\` in Kiwix (if you added Khan Academy
   with `-Education` / `--education`; see `Education\READ-ME-FIRST.html`).
+- **Talk with someone who speaks another language:** run `AI-Offline\TRANSLATE.bat` (Windows)
+  or `translate.sh` (macOS/Linux), if you added it with `-Translate` / `--translate`; see
+  `AI-Offline\HOW-TO-TRANSLATE.html` first.
+- **What is this illness, symptom or test?** open
+  `Medical\MedlinePlus\MedlinePlus-Health-Topics.html` in a browser (if you added it with
+  `-MedlinePlus` / `--medlineplus`).
 - **Travel guide / textbooks:** open `Extra-Archives\` in Kiwix (if you added them with
   `-ExtraZims` / `--extra-zims`).
 - **Look something up:** Wikipedia (via Kiwix) and the maps (`OsmAnd\HOW-TO-VIEW-MAPS.html`
@@ -114,7 +120,7 @@ are opt-in).
 | `.zim` archives | **Kiwix** (portable, no install) | ✅ `E:\Kiwix-Reader\app` |
 | Offline AI chat | Nothing extra (self-contained engine) | ✅ `E:\AI-Offline\engine` |
 | AI doc-Q&A | **GPT4All** (one-time install; self-contained, CPU) | ✅ installer in `DocReader-GPT4All` |
-| Maps on a computer | Bundled desktop viewer + portable Java (no phone needed) | ✅ `OsmAnd\MapViewer-Desktop` |
+| Maps on a computer | Bundled desktop viewer + portable Java (needs internet on Windows/macOS; offline use `Maps-Browser` or a phone, #15) | ⚠️ `OsmAnd\MapViewer-Desktop` |
 | Maps on Android | Bundled **OsmAnd~ APK** (sideload offline) | ✅ `OsmAnd\PhoneApp-Android` |
 | Maps on iPhone/iPad | OsmAnd from the App Store | app store (get while online) |
 

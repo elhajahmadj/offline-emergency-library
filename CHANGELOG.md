@@ -12,6 +12,31 @@ Contributor-driven reliability and portability work, from people running the kit
 hardware.
 
 ### Added
+- **macOS double-click starter: `install.command`.** The Mac twin of `install.bat`: double-click
+  it in Finder and it runs `get-offline-library.sh` from the same folder, or downloads it from
+  GitHub first when the file is on its own. It waits for Return before it exits. README
+  "Start here" now gives the Mac steps as a double-click, with the one-time Gatekeeper step for
+  a downloaded zip. Resolves #81. _[@boostedchaos](https://github.com/boostedchaos) - PR #96._
+- **README: "Start here" install steps first.** The README now opens with the steps for each
+  OS (Windows: download the ZIP, double-click `install.bat`; Mac/Linux: paste one line in
+  Terminal) and the one question the installer asks. The flags table moves under "Advanced:
+  options and flags". Resolves #82. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #95._
+- **README: resale note.** The License section now says a drive made with this kit cannot be
+  sold (giving copies away is fine) and names the non-commercial content: iFixit, the
+  *Prolonged Casualty Care* guide, the WHO childbirth references, the two Hesperian books and
+  the opt-in Khan Academy archive. Resolves #70. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #89._
+- **Self-check verifies the AI models.** Both installers now compare every `.gguf` model on
+  the drive with the size and SHA-256 that Hugging Face publishes, so a cut-off or damaged
+  model download ends the run with FINISHED WITH PROBLEMS and names the file, instead of
+  failing later when someone tries to chat. The hash is taken from `CHECKSUMS-SHA256.txt`, so
+  the models are not read twice; an unfinished aria2 download also fails, and no answer from
+  Hugging Face is only a warning. Resolves #71. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #88._
+- **Space estimate before any download.** Both installers now add up what the chosen flags
+  will download (the real size of the region's maps from the OsmAnd index, plus each part and
+  opt-in), subtract what is already in the folder, and show it next to the free space before
+  the first download, with a clear warning and what to drop if it will not fit. The Bash
+  installer had no free-space check before; the PowerShell one only warned below a fixed
+  65 GB. Resolves #68. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #93._
 - **WHO childbirth and maternal-health references.** Both installers now download two WHO
   PDFs from `iris.who.int` into `Medical/Manuals-PDF/` (~9 MB), each checked to start with
   `%PDF`: *Managing complications in pregnancy and childbirth* (2nd ed., 2017) and *WHO
@@ -135,6 +160,21 @@ hardware.
   included:** download.kiwix.org no longer lists it (the newest copy is a 2023 archive build of
   ~51 GB), and wikiHow stopped licensing new user content under CC BY-NC-SA 3.0 on
   24 March 2025. The CI link check now covers the two new Kiwix folders.
+- **Offline translator (opt-in): `-Translate` / `--translate`.** Both installers can add
+  Qwen3-4B-Instruct-2507 (Q4_K_M, ~2.5 GB, Apache 2.0) and `AI-Offline/TRANSLATE.bat` /
+  `translate.sh`, a two-way text translator for talking with someone who speaks another
+  language. It runs on the bundled llama.cpp engine, so no Python or other runtime is added;
+  it needs about 6 GB RAM. Off by default. The new `HOW-TO-TRANSLATE` guide covers the checks
+  that catch mistakes and which languages worked in testing (weak for Swahili, Somali and
+  Amharic). Resolves #21. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #62._
+- **MedlinePlus health topics (opt-in): `-MedlinePlus` / `--medlineplus`.** Both installers can
+  add the MedlinePlus health topic summaries from the US National Library of Medicine (public
+  domain), English and Spanish, as one searchable page that opens offline in any browser:
+  `Medical/MedlinePlus/MedlinePlus-Health-Topics.html` (~30 MB). It is built from NLM's
+  official XML file, not the Kiwix MedlinePlus ZIM, because the ZIM also contains the
+  copyrighted A.D.A.M. encyclopedia and ASHP drug pages; those are not included. The page
+  makes no network requests. Off by default. Resolves #64.
+  _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #87._
 
 ### Changed
 - **Lite no longer leaves the AI's trust gap silent.** `--lite` / `-Lite` still omits GPT4All
@@ -148,8 +188,33 @@ hardware.
   lite section spells out the no-citation consequence. Resolves #31.
 - **Manuals-first AI framing.** The guides now treat the bundled manuals as the authority and the AI as the assistant: START-HERE opens with how the kit is meant to be used, spells out the three ways to read and use things (fixing the GPT4All pointer to `AI-Offline\DocReader-GPT4All\`), and points safety-critical answers at the manual itself; HOW-TO-RUN-OFFLINE-AI gains a "How to use the AI well" note (GPT4All LocalDocs shows the sources it used, so medical and survival answers can be checked against the book). Every generated AI launcher now also prints a one-line reminder (the AI is a helper, follow the manuals for anything safety-critical) before the engine starts. Resolves #20. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #42._
 - **Browser maps: total map size stated.** HOW-TO-VIEW-MAPS, the README options table and the skill now say that browser maps come on top of the OsmAnd maps, so a full US drive with `-BrowserMaps` needs about 34 GB for maps (16.5 + 17.8 GB, measured on a real install). Suggested in #15. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #58._
+- **MedlinePlus page: inline script allowed by hash, not `'unsafe-inline'`.** The page's
+  Content-Security-Policy now allows only its own script, by its `sha256-` hash, so no other
+  inline script can run in it. The installers splice the topic data into the inert
+  `<script type="text/xml">` block only, so the hash still matches on the built page. A new CI
+  step (`.github/scripts/check-csp-hash.sh`) fails when the script changes and the hash in the
+  page is not updated. Resolves #91. _[@boostedchaos](https://github.com/boostedchaos) - PR #97._
 
 ### Fixed
+- **Desktop viewer needs internet on Windows and macOS: the docs and launchers now say so.** The bundled OsmAndMapCreator has only the Linux offline renderer, so on Windows and macOS it draws online tiles from `tile.osmand.net` and shows a blank map with no internet (reproduced on Windows 11 and macOS). HOW-TO-VIEW-MAPS, the README, START-HERE, POWER-AND-DEVICES and both viewer launchers no longer call it an offline viewer; they point to browser maps (US) or an Android phone. `VIEW-MAPS-ON-PC.sh` also launched a second viewer when the first exited non-zero (`sh ... || bash ...`); it now launches once. Addresses #15. _Tested by [@boostedchaos](https://github.com/boostedchaos) - issue #15._
+- **The upstream link check no longer fails on one-off errors.** `check-links.sh` retries a
+  failed URL up to 3 times (5xx, timeouts, resets) before counting it as dead, and sends the
+  `GITHUB_TOKEN` on every `api.github.com` URL, not only the release-asset checks, so the
+  pmtiles `contents` URL no longer hits the unauthenticated rate limit (403). A real dead link
+  (for example a 404) still fails the job at once. Resolves #103. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #105._
+- **A re-run no longer keeps or corrupts downloads whose name stays the same.** OsmAnd maps,
+  OsmAndMapCreator (nightly), the portable Java runtime and the browser-maps style archive
+  keep their file name when the source publishes a new edition, so a re-run resumed the new
+  edition into the old file (`curl -C -` / `aria2 -c`): a smaller old copy became a spliced,
+  corrupt file, and a larger one was kept as "complete". Both installers now compare the
+  file on disk with the source's size (OsmAnd's `containerSize` from `get_indexes` for maps,
+  the server's `Content-Length` for the "latest" URLs). A file of the right size is kept;
+  otherwise the new edition downloads to `<name>.<bytes>.part`, so a resume never mixes
+  editions, and it replaces the old file only once it is complete and the right size. The
+  desktop viewer and its Java runtime now unpack to a new folder and replace the working
+  copy only if the unpack worked, so a bad archive no longer leaves a half-overwritten
+  viewer. If a server gives no size, the download behaves as before. Resolves #57, the same
+  class of bug as #35. _Reported by [@EnragedAntelope](https://github.com/EnragedAntelope) — issue #57._
 - **Blank desktop map on Windows now has a working path.** The bundled OsmAndMapCreator
   viewer ships a Linux-only native renderer, so on some Windows PCs the window opens with a
   blank map. Rather than patch that Java build, the kit now steers Windows users to the
@@ -193,10 +258,11 @@ hardware.
   _Reported by [@boostedchaos](https://github.com/boostedchaos) (issue #1)._
 
 ### Known issues
-- The bundled OsmAndMapCreator desktop viewer itself still renders a blank map on some Windows
-  setups (Linux-only native renderer). The **browser maps** are now the recommended Windows
-  computer viewer and render reliably (US maps); non-US Windows users use the Android path. See
-  the "Blank desktop map on Windows" entry above. Tracking in issue #15 until re-tested.
+- The bundled OsmAndMapCreator desktop viewer cannot draw the drive's maps on Windows or macOS
+  (Linux-only native renderer); it shows online tiles, so it is blank with no internet. The
+  **browser maps** are the offline computer viewer (US maps); non-US users use the Android path.
+  Linux x64 is untested. See the "Desktop viewer needs internet" entry under Fixed. Tracking in
+  issue #15.
   _Reported by [@EnragedAntelope](https://github.com/EnragedAntelope) — issue #15._
 
 ## [v1.4] — 2026-11-02 — faster downloads (aria2)

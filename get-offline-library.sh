@@ -8,11 +8,13 @@
 #   flags: --lite  --skip-wikipedia  --skip-maps  --skip-models
 #   opt-in: --browser-maps   street maps in any web browser (US states, ~16.5 GB for all of the US)
 #   opt-in: --extra-zims     Wikivoyage travel guide + Wikibooks textbooks (Kiwix ZIM, ~5.8 GB)
+#   opt-in: --translate      offline translator (Qwen3 4B model on the AI engine, ~2.5 GB)
+#   opt-in: --medlineplus    MedlinePlus plain-language health topics (public domain, ~30 MB)
 
 REPO_RAW="https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main"
 DEST=""; SKIP_WIKI=0; SKIP_MAPS=0; SKIP_MODELS=0; LITE=0
 REGION="US"; LISTREGIONS=0; FILTER=""
-EDU=0; EDULANG="en"; KOLIBRI=0; BROWSER_MAPS=0; EXTRA_ZIMS=0
+EDU=0; EDULANG="en"; KOLIBRI=0; BROWSER_MAPS=0; EXTRA_ZIMS=0; TRANSLATE=0; MEDLINEPLUS=0
 CONTINENTS="africa asia australia-oceania centralamerica europe northamerica southamerica"
 # Map common names / ISO codes to the OsmAnd region token. Unknown input passes through.
 alias_region(){
@@ -67,6 +69,8 @@ while [ $# -gt 0 ]; do
     --edu-lang)       EDULANG="$2"; shift 2;;
     --kolibri)        KOLIBRI=1; shift;;
     --extra-zims)     EXTRA_ZIMS=1; shift;;
+    --translate)      TRANSLATE=1; shift;;
+    --medlineplus)    MEDLINEPLUS=1; shift;;
     --lite)           LITE=1; shift;;
     --browser-maps)   BROWSER_MAPS=1; shift;;
     --skip-wikipedia) SKIP_WIKI=1; shift;;
@@ -165,6 +169,24 @@ fetch(){ # url out
   }
   [ -s "$2" ] || { log "ERROR: download is missing or empty: $2"; exit 1; }
 }
+# Size of a remote file in bytes after redirects (empty if the server does not say).
+remote_size(){ curl -sIL -A "${UA:-Mozilla/5.0}" "$1" 2>/dev/null | tr -d '\r' | awk 'tolower($1)=="content-length:"{n=$2} END{if(n>0)print n}'; }
+# fetch_sized url out bytes: for a file whose name stays the same when the source
+# publishes a new edition (#57). A file of the right size is kept. Otherwise the new
+# edition goes to a part file whose name carries its size, so a re-run never resumes
+# one edition into another, and it replaces the old file only once it is complete.
+# With no size known, this is a plain fetch.
+fetch_sized(){ # url out bytes
+  [ -n "$3" ] || { fetch "$1" "$2"; return; }
+  if [ -f "$2" ] && [ ! -e "$2.aria2" ] && [ "$(wc -c < "$2" | tr -d ' ')" = "$3" ]; then return 0; fi
+  part="$2.$3.part"
+  for o in "$2".*.part; do [ -e "$o" ] && [ "$o" != "$part" ] && rm -f "$o" "$o.aria2"; done
+  [ -f "$2" ] && log "  re-download: $(basename "$2") (size on disk is not the source's $3 bytes)"
+  fetch "$1" "$part"
+  got="$(wc -c < "$part" | tr -d ' ')"
+  [ "$got" = "$3" ] || { rm -f "$part" "$part.aria2"; log "ERROR: $(basename "$2"): got $got bytes, expected $3. Re-run the installer."; exit 1; }
+  rm -f "$2.aria2"; mv -f "$part" "$2"
+}
 if [ "$USE_ARIA" = 1 ]; then log "Downloader: aria2 (fast, multi-connection)"; else log "Downloader: curl (tip: install 'aria2' for much faster downloads)"; fi
 if [ "$LITE" = 1 ]; then log "Lite preset: 3B AI, medical/survival references and maps for '$REGION' (unless skipped). Size depends on region; use --region for a small area or --skip-maps. Re-run without --lite to add the full library."; fi
 UA="Mozilla/5.0"
@@ -184,6 +206,70 @@ for d in AI-Offline AI-Offline/engine AI-Offline/models AI-Offline/DocReader-GPT
          Wikipedia OsmAnd Kiwix-Reader Phone-Apps Education; do
   mkdir -p "$ROOT/$d"
 done
+
+# ---- OsmAnd map files for --region, picked now so the space estimate below knows their size ----
+MAP_MB=0
+if [ "$SKIP_MAPS" = 0 ]; then
+  curl -sL "https://download.osmand.net/get_indexes" -o "$ROOT/OsmAnd/_index.xml"
+  allnames="$(grep -oE 'name="[^"]+\.obf\.zip"' "$ROOT/OsmAnd/_index.xml" | sed -E 's/name="([^"]+)"/\1/' | grep -viE 'wiki|srtm|depth|road|hillshade|heightmap')"
+  : > "$ROOT/OsmAnd/_filelist.txt"
+  # '%s\n': without a final newline, read skips the last name (default "US" got 0 maps)
+  printf '%s\n' "$REGION" | tr ',;' '  ' | tr ' ' '\n' | while IFS= read -r tok; do
+    [ -z "$tok" ] && continue
+    tok="$(alias_region "$tok")"
+    tl="$(printf '%s' "$tok" | tr 'A-Z' 'a-z')"
+    if [ "$tl" = world ]; then printf '%s\n' "$allnames" >> "$ROOT/OsmAnd/_filelist.txt"
+    elif echo "$CONTINENTS" | grep -qw "$tl"; then printf '%s\n' "$allnames" | grep -iE "_${tl}_" >> "$ROOT/OsmAnd/_filelist.txt"
+    else printf '%s\n' "$allnames" | grep -iE "^${tok}_" >> "$ROOT/OsmAnd/_filelist.txt"
+    fi
+  done
+  sort -u "$ROOT/OsmAnd/_filelist.txt" -o "$ROOT/OsmAnd/_filelist.txt"
+  # sum containerSize (bytes) of the picked files; one <region .../> per line in the index
+  MAP_MB="$(sed -nE 's/.*containerSize="([0-9]+)".* name="([^"]+\.obf\.zip)".*/\2 \1/p' "$ROOT/OsmAnd/_index.xml" |
+    awk 'NR==FNR{w[$1]=1; next} ($1 in w){s+=$2} END{printf "%d", s/1048576}' "$ROOT/OsmAnd/_filelist.txt" -)"
+fi
+
+# ---- space estimate for the chosen flags (#68) ----
+# Sizes in GB (1024^3 bytes), measured on a full drive; keep them the same as in
+# Get-OfflineLibrary.ps1 so both installers agree.
+EST=""; est(){ EST="$EST$1|$2
+"; }
+est 6.3 "core (AI engine, 3B model, medical, survival, manuals, Kiwix, phone apps)"
+[ "$SKIP_MODELS" = 0 ] && est 8.9 "8B + 7B AI models"
+[ "$LITE" = 0 ] && est 4.5 "GPT4All, iFixit, Appropedia"
+[ "$SKIP_WIKI" = 0 ] && est 49.1 "Wikipedia"
+if [ "$SKIP_MAPS" = 0 ]; then
+  est "$(awk -v m="$MAP_MB" 'BEGIN{printf "%.1f", m/1024 + 0.5}')" "maps for '$REGION' + desktop viewer"
+  if [ "$BROWSER_MAPS" = 1 ]; then
+    # all of the US ~15.4 GB; single states roughly match their OsmAnd size; always + the world map
+    bm=0
+    for tok in $(printf '%s' "$REGION" | tr ',;' '  '); do
+      tl="$(alias_region "$tok" | tr 'A-Z' 'a-z')"
+      case "$tl" in us|world|northamerica) bm=all ;; us_*) [ "$bm" = all ] || bm=state ;; esac
+    done
+    case "$bm" in all) bmgb=15.4 ;; state) bmgb="$(awk -v m="$MAP_MB" 'BEGIN{print m/1024}')" ;; *) bmgb=0 ;; esac
+    est "$(awk -v b="$bmgb" 'BEGIN{printf "%.1f", b + 0.2}')" "browser maps"
+  fi
+fi
+[ "$EDU" = 1 ] && est 168 "Khan Academy"
+[ "$EXTRA_ZIMS" = 1 ] && est 5.8 "Wikivoyage + Wikibooks"
+[ "$TRANSLATE" = 1 ] && est 2.3 "translator model"
+[ "$MEDLINEPLUS" = 1 ] && est 0.1 "MedlinePlus health topics"
+EST_GB="$(printf '%s' "$EST" | awk -F'|' '{s+=$1} END{printf "%.1f", s}')"
+FREE_GB="$(df -Pk "$ROOT" 2>/dev/null | awk 'NR==2{printf "%.1f", $4/1048576}')"
+HAVE_GB="$(du -sk "$ROOT" 2>/dev/null | awk '{printf "%.1f", $1/1048576}')"
+NEED_GB="$(awk -v e="$EST_GB" -v h="${HAVE_GB:-0}" 'BEGIN{n=e-h; if(n<0)n=0; printf "%.1f", n}')"
+log "Space estimate for this selection: about $EST_GB GB"
+printf '%s' "$EST" | while IFS='|' read -r g n; do log "$(awk -v g="$g" -v n="$n" 'BEGIN{printf "  %6.1f GB  %s", g, n}')"; done
+[ "$KOLIBRI" = 1 ] && log "     (Kolibri content is not counted: you pick it in the app)"
+if [ -n "$FREE_GB" ]; then
+  log "Already in the folder: ${HAVE_GB:-0} GB. Still to download: about $NEED_GB GB. Free: $FREE_GB GB."
+  if awk -v n="$NEED_GB" -v f="$FREE_GB" 'BEGIN{exit !(n>f)}'; then
+    log "WARNING: NOT ENOUGH SPACE. This needs about $NEED_GB GB more, but only $FREE_GB GB is free."
+    log "  Use a bigger drive, free up space, or choose less: --lite, --skip-wikipedia (49 GB), --skip-models (9 GB),"
+    log "  a smaller --region, --skip-maps, or leave off an opt-in. Press Ctrl+C now to stop and re-run."
+  fi
+fi
 
 # ---- helpers ----
 gh_asset(){ # repo regex  -> first matching asset url across recent releases
@@ -250,13 +336,26 @@ fi
 
 # ================================================================ 2. AI models
 log "=== [2/8] AI chat models (GGUF) ==="
-fetch "https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF/resolve/main/Llama-3.2-3B-Instruct-Q4_K_M.gguf" "$ROOT/AI-Offline/models/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
+HF="https://huggingface.co/bartowski"
+M3B="$HF/Llama-3.2-3B-Instruct-GGUF/resolve/main/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
+M8B="$HF/Meta-Llama-3.1-8B-Instruct-GGUF/resolve/main/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf"
+MQ7="$HF/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q4_K_M.gguf"
+TR_MODEL="Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
+MTR="$HF/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TR_MODEL"
+GGUF_URLS="$M3B $M8B $MQ7 $MTR"   # for the self-check (only files on the drive are checked)
+fetch "$M3B" "$ROOT/AI-Offline/models/${M3B##*/}"
 log "model: Llama-3.2-3B done"
 if [ "$SKIP_MODELS" = 0 ]; then
-  fetch "https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF/resolve/main/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf" "$ROOT/AI-Offline/models/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf"; log "model: Llama-3.1-8B done"
-  fetch "https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q4_K_M.gguf" "$ROOT/AI-Offline/models/Qwen2.5-7B-Instruct-Q4_K_M.gguf"; log "model: Qwen2.5-7B done"
+  fetch "$M8B" "$ROOT/AI-Offline/models/${M8B##*/}"; log "model: Llama-3.1-8B done"
+  fetch "$MQ7" "$ROOT/AI-Offline/models/${MQ7##*/}"; log "model: Qwen2.5-7B done"
 else
   log "models: large models skipped"
+fi
+# Translator (opt-in): one small multilingual model run by the same engine, so no new runtime.
+if [ "$TRANSLATE" = 1 ]; then
+  fetch "$MTR" "$ROOT/AI-Offline/models/$TR_MODEL"; log "model (translator): $TR_MODEL done"
+else
+  log "=== Translator not selected - add --translate to include (~2.5 GB) ==="
 fi
 
 # ================================================================ 3. GPT4All
@@ -345,6 +444,41 @@ else
   log "=== [5d] Extra archives (Wikivoyage + Wikibooks) not selected - add --extra-zims to include (~5.8 GB) ==="
 fi
 
+# ================================================================ 5e. MedlinePlus (opt-in)
+# Plain-language health topic summaries (English + Spanish) from the US National Library of
+# Medicine's daily XML file: public domain. Only the summaries: the MedlinePlus encyclopedia
+# (A.D.A.M.) and drug pages (ASHP) are copyrighted, so the Kiwix MedlinePlus ZIM is not used.
+# The XML goes inside one offline page (medlineplus/MedlinePlus.html) that lists and searches it.
+if [ "$MEDLINEPLUS" = 1 ]; then
+  log "=== [5e] MedlinePlus health topics (public domain, ~30 MB) ==="
+  md="$ROOT/Medical/MedlinePlus"; mkdir -p "$md"
+  mx="$(curl -sL -A "$UA" 'https://medlineplus.gov/xml.html' | grep -oE 'mplus_topics_[0-9]{4}-[0-9]{2}-[0-9]{2}\.xml' | sort -u | tail -n1)"
+  if [ -n "$mx" ]; then
+    log "medlineplus: $mx"; fetch "https://medlineplus.gov/xml/$mx" "$md/$mx"
+    # '</script' would end the data block early; real topic XML never has it (all HTML is escaped).
+    if [ "$(head -c 5 "$md/$mx")" != "<?xml" ] || ! grep -q '<health-topics' "$md/$mx" || grep -qi '</script' "$md/$mx"; then
+      rm -f "$md/$mx"; log "ERROR: $mx is not MedlinePlus topic XML (removed). Re-run the installer."; exit 1
+    fi
+    SD="$(cd "$(dirname "$0")" && pwd)"; tpl="$md/_MedlinePlus.html"
+    if [ -f "$SD/medlineplus/MedlinePlus.html" ]; then cp "$SD/medlineplus/MedlinePlus.html" "$tpl"
+    else curl -fLsS -A "$UA" "$REPO_RAW/medlineplus/MedlinePlus.html" -o "$tpl" || { log "ERROR: download failed: medlineplus/MedlinePlus.html"; exit 1; }; fi
+    mark='<script type="text/xml" id="data"></script>'
+    grep -qF "$mark" "$tpl" || { log "ERROR: medlineplus/MedlinePlus.html has no data marker. Re-run the installer."; exit 1; }
+    awk -v mark="$mark" -v xf="$md/$mx" '{ i = index($0, mark)
+      if (!i) { print; next }
+      printf "%s<script type=\"text/xml\" id=\"data\">", substr($0, 1, i - 1)
+      while ((getline l < xf) > 0) print l
+      printf "</script>%s\n", substr($0, i + length(mark)) }' "$tpl" > "$md/MedlinePlus-Health-Topics.html"
+    # The page holds all the data: drop the XML (and any older day's copy) and the template.
+    rm -f "$md"/mplus_topics_* "$tpl"
+    log "medlineplus: Medical/MedlinePlus/MedlinePlus-Health-Topics.html ($(( ($(wc -c < "$md/MedlinePlus-Health-Topics.html") + 524288) / 1048576 )) MB)"
+  else
+    log "medlineplus: NOT FOUND (no topic file listed on medlineplus.gov/xml.html)"
+  fi
+else
+  log "=== [5e] MedlinePlus health topics not selected - add --medlineplus to include (~30 MB) ==="
+fi
+
 # ================================================================ 6. PDFs
 log "=== [6/8] Public-domain manuals (PDF) ==="
 ia_pdf(){ curl -sL -A "$UA" "https://archive.org/metadata/$1" | grep -oE '"name":"[^"]+\.pdf"' | sed -E 's/"name":"([^"]+)"/\1/' | grep -vE '_text\.pdf$' | head -n1; }
@@ -404,39 +538,42 @@ else log "=== [7/8] Wikipedia SKIPPED ==="; fi
 
 if [ "$SKIP_MAPS" = 0 ]; then
   log "=== [8/8] Offline maps (OsmAnd) - region: $REGION ==="
-  curl -sL "https://download.osmand.net/get_indexes" -o "$ROOT/OsmAnd/_index.xml"
-  allnames="$(grep -oE 'name="[^"]+\.obf\.zip"' "$ROOT/OsmAnd/_index.xml" | sed -E 's/name="([^"]+)"/\1/' | grep -viE 'wiki|srtm|depth|road|hillshade|heightmap')"
-  : > "$ROOT/OsmAnd/_filelist.txt"
-  # '%s\n': without a final newline, read skips the last name (default "US" got 0 maps)
-  printf '%s\n' "$REGION" | tr ',;' '  ' | tr ' ' '\n' | while IFS= read -r tok; do
-    [ -z "$tok" ] && continue
-    tok="$(alias_region "$tok")"
-    tl="$(printf '%s' "$tok" | tr 'A-Z' 'a-z')"
-    if [ "$tl" = world ]; then printf '%s\n' "$allnames" >> "$ROOT/OsmAnd/_filelist.txt"
-    elif echo "$CONTINENTS" | grep -qw "$tl"; then printf '%s\n' "$allnames" | grep -iE "_${tl}_" >> "$ROOT/OsmAnd/_filelist.txt"
-    else printf '%s\n' "$allnames" | grep -iE "^${tok}_" >> "$ROOT/OsmAnd/_filelist.txt"
-    fi
-  done
-  sort -u "$ROOT/OsmAnd/_filelist.txt" -o "$ROOT/OsmAnd/_filelist.txt"
   n=$(grep -c . "$ROOT/OsmAnd/_filelist.txt" 2>/dev/null || echo 0)
   if [ "$n" = "0" ]; then
     log "osmand: no maps matched region '$REGION'. Run with --list-regions to see valid names. Skipping maps."
   else
   log "osmand: $n map files for '$REGION'"
-  while IFS= read -r fn; do [ -n "$fn" ] && fetch "https://download.osmand.net/download.php?standard=yes&file=$fn" "$ROOT/OsmAnd/$fn"; done < "$ROOT/OsmAnd/_filelist.txt"
+  # OsmAnd republishes maps under the same name: the index's containerSize (bytes) tells
+  # a current copy from an older edition (#57).
+  while IFS= read -r fn; do
+    [ -n "$fn" ] || continue
+    cs="$(grep -oE "<region [^>]*name=\"$fn\"[^>]*>" "$ROOT/OsmAnd/_index.xml" | head -n1 | grep -oE 'containerSize="[0-9]+"' | grep -oE '[0-9]+')"
+    fetch_sized "https://download.osmand.net/download.php?standard=yes&file=$fn" "$ROOT/OsmAnd/$fn" "$cs"
+  done < "$ROOT/OsmAnd/_filelist.txt"
   fi
 
   # desktop map viewer (OsmAndMapCreator + portable Java) — use maps on a PC, no phone
   log "=== [8b] Desktop map viewer (OsmAndMapCreator + portable Java) ==="
   MVD="$ROOT/OsmAnd/MapViewer-Desktop"; mkdir -p "$MVD/app"
   if [ "$HAVE_UNZIP" = 1 ]; then
-    fetch "https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip" "$MVD/OsmAndMapCreator.zip"
-    unzip -o -q "$MVD/OsmAndMapCreator.zip" -d "$MVD/app"
+    # "latest" URLs keep their file name across new editions: fetch by remote size (#57)
+    mcu="https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip"
+    fetch_sized "$mcu" "$MVD/OsmAndMapCreator.zip" "$(remote_size "$mcu")"
+    # unpack to a new folder; replace the working viewer only if the unpack worked
+    rm -rf "$MVD/app.new"
+    if unzip -o -q "$MVD/OsmAndMapCreator.zip" -d "$MVD/app.new" && [ -f "$MVD/app.new/OsmAndMapCreator.sh" ]; then
+      rm -rf "$MVD/app"; mv "$MVD/app.new" "$MVD/app"
+    else
+      rm -rf "$MVD/app.new"; log "  mapviewer ERROR: could not unpack OsmAndMapCreator.zip (old viewer kept). Delete it and re-run."
+    fi
     jreurl="https://api.adoptium.net/v3/binary/latest/21/ga/${PLAT}/${JARCH}/jre/hotspot/normal/eclipse"
     [ "$PLAT" = mac ] && jreurl="https://api.adoptium.net/v3/binary/latest/21/ga/mac/${JARCH}/jre/hotspot/normal/eclipse"
-    fetch "$jreurl" "$MVD/jre.tar.gz"
-    mkdir -p "$MVD/_jre"; tar -xf "$MVD/jre.tar.gz" -C "$MVD/_jre" 2>/dev/null
-    rm -rf "$MVD/jre"; mv "$MVD/_jre"/*/ "$MVD/jre" 2>/dev/null; rm -rf "$MVD/_jre"
+    fetch_sized "$jreurl" "$MVD/jre.tar.gz" "$(remote_size "$jreurl")"
+    rm -rf "$MVD/_jre"; mkdir -p "$MVD/_jre"; tar -xf "$MVD/jre.tar.gz" -C "$MVD/_jre" 2>/dev/null
+    if [ -n "$(find "$MVD/_jre" -name java -type f 2>/dev/null | head -n1)" ]; then
+      rm -rf "$MVD/jre"; mv "$MVD/_jre"/*/ "$MVD/jre" 2>/dev/null
+    else log "  mapviewer ERROR: could not unpack jre.tar.gz (old Java kept). Delete it and re-run."; fi
+    rm -rf "$MVD/_jre"
     cat > "$MVD/VIEW-MAPS-ON-PC.sh" <<'EOS'
 #!/usr/bin/env bash
 DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -451,7 +588,12 @@ for z in "$MAPS"/*.obf.zip; do
   [ -e "$OBF/$base" ] || unzip -o -q "$z" -d "$OBF"
 done
 echo "Maps ready in: $OBF"
-sh "$DIR/app/OsmAndMapCreator.sh" 2>/dev/null || bash "$DIR/app/OsmAndMapCreator.sh"
+echo "If the map area stays BLANK: on macOS this viewer draws online map tiles, not the"
+echo "drive's maps, so it is blank with no internet (issue 15; Linux may work offline, untested)."
+echo "Offline: use the browser maps"
+echo "(Maps-Browser/OPEN-MAPS.sh, if built with --browser-maps; US only) or an Android phone."
+# one launch only (bash runs both sh and bash scripts); the old "sh || bash" started a 2nd viewer when the 1st exited non-zero
+bash "$DIR/app/OsmAndMapCreator.sh"
 EOS
     chmod +x "$MVD/VIEW-MAPS-ON-PC.sh" 2>/dev/null
     find "$MVD/app" -name "*.sh" -exec chmod +x {} \; 2>/dev/null
@@ -504,7 +646,7 @@ if [ "$SKIP_MAPS" = 0 ] && [ "$BROWSER_MAPS" = 1 ]; then
   if [ -s "$MB/_ok.txt" ]; then printf '[%s]\n' "$(sed 's/.*/"&"/' "$MB/_ok.txt" | paste -sd, -)" > "$MB/regions.json"; fi
   rm -f "$MB/_ok.txt"
   # map style, fonts and symbols (one archive, no symlinks inside)
-  fetch "$NM/base-assets.tar.gz" "$MB/base-assets.tar.gz"
+  fetch_sized "$NM/base-assets.tar.gz" "$MB/base-assets.tar.gz" "$(remote_size "$NM/base-assets.tar.gz")"   # same name on every update (#57)
   rm -rf "$MB/assets-new"; mkdir -p "$MB/assets-new"
   if tar -xzf "$MB/base-assets.tar.gz" -C "$MB/assets-new" 2>/dev/null && [ -f "$MB/assets-new/tozip/nomad-base-styles.json" ]; then
     rm -rf "$MB/assets"; mv "$MB/assets-new/tozip" "$MB/assets"
@@ -603,6 +745,13 @@ make_bat "CHAT-GPU-Qwen7B.bat" "Offline AI - Qwen2.5 7B (GPU)"     'engine\vulka
 echo number (e.g. -ngl 20) or use a CPU launcher instead.'
 fi
 make_bat "WEB-UI.bat"          "Offline AI - Web UI"               'engine\x64\llama-server.exe' "Llama-3.2-3B-Instruct-Q4_K_M.gguf" "-c 4096 --host 127.0.0.1 --port 8080" 'echo When it says "server listening", open a browser to http://127.0.0.1:8080'
+if [ "$TRANSLATE" = 1 ]; then
+# Same text as Get-OfflineLibrary.ps1. No batch special characters, and no | & or \ (sed) in the prompt or notes.
+TR_ARGS='-c 4096 --temp 0.2 -sys "You are an interpreter between two people. Their first message names two languages: reply only with Ready. After that, for every message: if it is written in the first language, translate it into the second language; if it is written in the second language, translate it into the first language. Never repeat a message in the language it was written in. Write only the translation, with no notes. Keep names, numbers, doses and times exactly as written."'
+make_bat "TRANSLATE.bat" "Offline translator - Qwen3 4B" 'engine\x64\llama-cli.exe' "$TR_MODEL" "$TR_ARGS" 'echo Offline translator. First type the two languages, for example: English and Spanish. Then type what to translate.
+echo Check anything about medicine, doses or safety by translating it back. Use short, simple sentences.'
+make_sh "translate.sh" llama-cli "$TR_MODEL" 0 "$TR_ARGS" "Offline translator. First type the two languages, for example: English and Spanish. Check anything about medicine, doses or safety by translating it back. Ctrl+C to quit."
+fi
 
 # ================================================================ documentation
 log "=== Documentation (Markdown + HTML) ==="
@@ -623,6 +772,7 @@ place_doc "EMERGENCY-ESSENTIALS"  "$ROOT/EMERGENCY-ESSENTIALS"
 place_doc "POWER-AND-DEVICES"     "$ROOT/POWER-AND-DEVICES"
 place_doc "HOW-TO-RUN-OFFLINE-AI" "$ROOT/AI-Offline/HOW-TO-RUN-OFFLINE-AI"
 place_doc "HOW-TO-ASK-YOUR-DOCS"  "$ROOT/AI-Offline/DocReader-GPT4All/HOW-TO-ASK-YOUR-DOCS"
+place_doc "HOW-TO-TRANSLATE"      "$ROOT/AI-Offline/HOW-TO-TRANSLATE"
 place_doc "HOW-TO-USE-KIWIX"      "$ROOT/Kiwix-Reader/HOW-TO-USE-KIWIX"
 place_doc "Manuals-READ-ME-FIRST" "$ROOT/Manuals/READ-ME-FIRST"
 place_doc "Medical-READ-ME-FIRST" "$ROOT/Medical/READ-ME-FIRST"
@@ -797,6 +947,30 @@ PEOF
 if [ "$pt" = 0 ]; then sc_warn "no PDF manuals found"
 elif [ -z "$pbad" ]; then sc_pass "$pt PDF files: all start with %PDF"
 else sc_fail "file(s) named .pdf that are not PDFs - delete each one and re-run the installer:$pbad"; fi
+# 5. Every AI model (.gguf) has the size and SHA-256 that Hugging Face publishes, so a cut-off
+#    download is caught (#71). The hash is the one just written to CHECKSUMS-SHA256.txt: no extra read.
+gt=0; gbad=""; gwarn=""
+for u in $GGUF_URLS; do
+  n="${u##*/}"; f="$ROOT/AI-Offline/models/$n"
+  [ -f "$f" ] || continue; gt=$((gt+1))
+  if [ -e "$f.aria2" ]; then gbad="$gbad
+        AI-Offline/models/$n (download not finished)"; continue; fi
+  hd="$(curl -sI --max-time 30 "$u" 2>/dev/null | tr -d '\r')"
+  want="$(printf '%s\n' "$hd" | grep -i '^x-linked-size:' | head -n1 | tr -dc '0-9')"
+  wsha="$(printf '%s\n' "$hd" | grep -i '^x-linked-etag:' | head -n1 | grep -oE '[0-9a-f]{64}')"
+  have="$(awk -v p="./AI-Offline/models/$n" 'substr($0,67)==p{print substr($0,1,64); exit}' "$ROOT/CHECKSUMS-SHA256.txt")"
+  sz="$(wc -c < "$f" | tr -d ' ')"
+  if [ -z "$want" ]; then gwarn="$gwarn $n"
+  elif [ "$sz" != "$want" ]; then gbad="$gbad
+        AI-Offline/models/$n ($sz of $want bytes)"
+  elif [ -n "$wsha" ] && [ "$have" != "$wsha" ]; then gbad="$gbad
+        AI-Offline/models/$n (SHA-256 does not match Hugging Face)"
+  fi
+done
+if [ "$gt" = 0 ]; then sc_warn "no AI models (.gguf) found"
+elif [ -n "$gbad" ]; then sc_fail "AI model(s) not complete or damaged - delete each one and re-run the installer:$gbad"
+elif [ -n "$gwarn" ]; then sc_warn "could not reach Hugging Face to check these AI models (not verified):$gwarn"
+else sc_pass "$gt AI models (.gguf): size and SHA-256 match Hugging Face"; fi
 
 if [ "$SC_FAIL" = 0 ]; then
   log "=== DONE. Open README.html (full index) or START-HERE.html ==="

@@ -28,6 +28,8 @@ param(
   [switch]$Kolibri,          # OPT-IN: add the Kolibri learning app (pick subjects/low-res in-app)
   [switch]$BrowserMaps,      # OPT-IN: street maps in any web browser (US states, ~16.5 GB for all of the US)
   [switch]$ExtraZims,        # OPT-IN: add Wikivoyage travel guide + Wikibooks textbooks (Kiwix ZIM, ~5.8 GB)
+  [switch]$Translate,        # OPT-IN: offline translator (Qwen3 4B model on the AI engine, ~2.5 GB)
+  [switch]$MedlinePlus,      # OPT-IN: MedlinePlus plain-language health topics (public domain, ~30 MB)
   [switch]$NoAria            # force curl even if aria2c is installed
 )
 
@@ -120,15 +122,95 @@ function Fetch($url,$out){
   }
 }
 function UA(){ 'Mozilla/5.0' }
+# Size of a remote file in bytes after redirects ('' if the server does not say).
+function Remote-Size($url){
+  $n = ''
+  foreach($l in (curl.exe -sIL -A (UA) $url 2>$null)){ if("$l" -match '^\s*content-length:\s*(\d+)'){ $n = $Matches[1] } }
+  if($n -and [int64]$n -gt 0){ $n } else { '' }
+}
+# Fetch-Sized url out bytes: for a file whose name stays the same when the source
+# publishes a new edition (#57). A file of the right size is kept. Otherwise the new
+# edition goes to a part file whose name carries its size, so a re-run never resumes
+# one edition into another, and it replaces the old file only once it is complete.
+# With no size known, this is a plain Fetch.
+function Fetch-Sized($url,$out,$bytes){
+  if(-not $bytes){ Fetch $url $out; return }
+  if((Test-Path $out -PathType Leaf) -and -not (Test-Path "$out.aria2") -and (Get-Item $out).Length -eq [int64]$bytes){ return }
+  $part = "$out.$bytes.part"
+  Get-ChildItem -Path (Split-Path $out -Parent) -Filter ((Split-Path $out -Leaf) + '.*.part') -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -ne $part } |
+    ForEach-Object { Remove-Item -LiteralPath $_.FullName -Force -ErrorAction SilentlyContinue; Remove-Item -LiteralPath ($_.FullName + '.aria2') -Force -ErrorAction SilentlyContinue }
+  if(Test-Path $out -PathType Leaf){ Log "  re-download: $(Split-Path $out -Leaf) (size on disk is not the source's $bytes bytes)" }
+  Fetch $url $part
+  $got = (Get-Item $part).Length
+  if($got -ne [int64]$bytes){
+    Remove-Item -LiteralPath $part -Force -ErrorAction SilentlyContinue; Remove-Item -LiteralPath "$part.aria2" -Force -ErrorAction SilentlyContinue
+    Log "ERROR: $(Split-Path $out -Leaf): got $got bytes, expected $bytes. Re-run the installer."
+    exit 1
+  }
+  Remove-Item -LiteralPath "$out.aria2" -Force -ErrorAction SilentlyContinue
+  Move-Item -LiteralPath $part -Destination $out -Force
+}
 if($UseAria){ Log 'Downloader: aria2 (fast, multi-connection)' } else { Log "Downloader: curl (tip: install 'aria2' for much faster downloads)" }
 if($Lite){ Log "Lite preset: 3B AI, medical/survival references and maps for '$Region' (unless skipped). Size depends on region; use -Region for a small area or -SkipMaps. Re-run without -Lite to add the full library." }
 
-# free-space check (needs roughly 60 GB for everything)
+# OsmAnd map files for -Region, picked now so the space estimate below knows their size.
+$sel = @(); $osmErr = $null
+if(-not $SkipMaps){
+  try{
+    $idxFile = Join-Path $env:TEMP 'osmand_idx.xml'
+    curl.exe -sL 'https://download.osmand.net/get_indexes' -o $idxFile
+    [xml]$idx = Get-Content $idxFile
+    $allmaps = $idx.osmand_regions.region | Where-Object { $_.type -eq 'map' }
+    # resolve the -Region tokens (comma/space separated) to a file set
+    $tokens = ($Region -split '[,; ]') | ForEach-Object { $_.Trim() } | Where-Object { $_ } | ForEach-Object { Resolve-RegionToken $_ }
+    foreach($t in $tokens){
+      if($t -ieq 'world'){ $sel = $allmaps; break }
+      elseif($Continents -contains $t.ToLower()){ $sel += $allmaps | Where-Object { $_.name -match ('_' + [regex]::Escape($t.ToLower()) + '_') } }
+      else { $sel += $allmaps | Where-Object { $_.name -match ('^' + [regex]::Escape($t) + '_') } }
+    }
+    $sel = @($sel | Sort-Object name -Unique)
+  }catch{ $osmErr = $_.Exception.Message }
+}
+
+# Space estimate for the chosen flags (#68). Sizes in GB (1024^3 bytes), measured on a full
+# drive; keep them the same as in get-offline-library.sh so both installers agree.
+$est = [ordered]@{ 'core (AI engine, 3B model, medical, survival, manuals, Kiwix, phone apps)' = 6.3 }
+if(-not $SkipModels){ $est['8B + 7B AI models'] = 8.9 }
+if(-not $Lite){ $est['GPT4All, iFixit, Appropedia'] = 4.5 }
+if(-not $SkipWikipedia){ $est['Wikipedia'] = 49.1 }
+$mapGB = 0
+if(-not $SkipMaps){
+  $mapGB = [double](($sel | ForEach-Object { [double]$_.containerSize } | Measure-Object -Sum).Sum) / 1GB
+  $est["maps for '$Region' + desktop viewer"] = [math]::Round($mapGB + 0.5, 1)
+  if($BrowserMaps){
+    $rt = @(($Region -split '[,; ]') | Where-Object { $_ } | ForEach-Object { (Resolve-RegionToken $_.Trim()).ToLower() })
+    # all of the US ~15.4 GB; single states roughly match their OsmAnd size; always + the world map
+    $bm = if(@($rt | Where-Object { $_ -in 'us','world','northamerica' }).Count){ 15.4 } elseif(@($rt | Where-Object { $_.StartsWith('us_') }).Count){ $mapGB } else { 0 }
+    $est['browser maps'] = [math]::Round($bm + 0.2, 1)
+  }
+}
+if($Education){ $est['Khan Academy'] = 168 }
+if($ExtraZims){ $est['Wikivoyage + Wikibooks'] = 5.8 }
+if($Translate){ $est['translator model'] = 2.3 }
+if($MedlinePlus){ $est['MedlinePlus health topics'] = 0.1 }
+$estGB = [math]::Round(($est.Values | Measure-Object -Sum).Sum, 1)
 try {
   $drive = (Get-Item $Root).PSDrive
   $freeGB = [math]::Round((Get-PSDrive $drive.Name).Free/1GB,1)
-  Log "Destination: $Root   (free space: $freeGB GB)"
-  if (-not $Lite -and $freeGB -lt 65) { Log "WARNING: ~65 GB recommended for the full library. You have $freeGB GB free. Consider -SkipWikipedia / -SkipMaps / -SkipModels." }
+  $haveGB = [math]::Round(((Get-ChildItem -LiteralPath $Root -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum)/1GB,1)
+  $needGB = [math]::Round([math]::Max(0.0, $estGB - $haveGB), 1)
+  function Gb($x){ ([double]$x).ToString('0.0', [cultureinfo]::InvariantCulture) }   # same text on every locale
+  Log "Destination: $Root   (free space: $(Gb $freeGB) GB)"
+  Log "Space estimate for this selection: about $(Gb $estGB) GB"
+  foreach($k in $est.Keys){ Log ("  {0,6} GB  {1}" -f (Gb $est[$k]), $k) }
+  if($Kolibri){ Log '     (Kolibri content is not counted: you pick it in the app)' }
+  Log "Already in the folder: $(Gb $haveGB) GB. Still to download: about $(Gb $needGB) GB. Free: $(Gb $freeGB) GB."
+  if($needGB -gt $freeGB){
+    Log "WARNING: NOT ENOUGH SPACE. This needs about $(Gb $needGB) GB more, but only $(Gb $freeGB) GB is free."
+    Log '  Use a bigger drive, free up space, or choose less: -Lite, -SkipWikipedia (49 GB), -SkipModels (9 GB),'
+    Log '  a smaller -Region, -SkipMaps, or leave off an opt-in. Press Ctrl+C now to stop and re-run.'
+  }
 } catch {}
 
 # ---------------------------------------------------------------- folder tree
@@ -223,6 +305,14 @@ foreach($m in $models){
   if($SkipModels -and $m.big){ Log "model (skipped): $($m.n)"; continue }
   Log "model: $($m.n)"; Fetch $m.u (Join-Path $Root "AI-Offline\models\$($m.n)")
 }
+# Translator (opt-in): one small multilingual model run by the same engine, so no new runtime.
+$TrModel = 'Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf'
+if($Translate){
+  Log "model (translator): $TrModel"
+  Fetch "https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TrModel" (Join-Path $Root "AI-Offline\models\$TrModel")
+} else { Log '=== Translator not selected - add -Translate to include (~2.5 GB) ===' }
+# Every model the installer can download, for the self-check (only files on the drive are checked).
+$GgufUrls = @($models | ForEach-Object { $_.u }) + "https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TrModel"
 
 # ================================================================ 3. GPT4All
 Log '=== [3/8] GPT4All (offline document Q&A) ==='
@@ -321,6 +411,39 @@ if($ExtraZims){
   }
 } else { Log "=== [5d] Extra archives (Wikivoyage + Wikibooks) not selected - add -ExtraZims to include (~5.8 GB) ===" }
 
+# ================================================================ 5e. MedlinePlus (opt-in)
+# Plain-language health topic summaries (English + Spanish) from the US National Library of
+# Medicine's daily XML file: public domain. Only the summaries: the MedlinePlus encyclopedia
+# (A.D.A.M.) and drug pages (ASHP) are copyrighted, so the Kiwix MedlinePlus ZIM is not used.
+# The XML goes inside one offline page (medlineplus\MedlinePlus.html) that lists and searches it.
+if($MedlinePlus){
+  Log '=== [5e] MedlinePlus health topics (public domain, ~30 MB) ==='
+  $md = Join-Path $Root 'Medical\MedlinePlus'; New-Item -ItemType Directory -Force $md | Out-Null
+  $mx = [regex]::Matches((curl.exe -sL -A (UA) 'https://medlineplus.gov/xml.html' | Out-String), 'mplus_topics_\d{4}-\d{2}-\d{2}\.xml') | ForEach-Object {$_.Value} | Sort-Object -Unique | Select-Object -Last 1
+  if($mx){
+    $xf = Join-Path $md $mx
+    Log "medlineplus: $mx"; Fetch "https://medlineplus.gov/xml/$mx" $xf
+    $xt = [System.IO.File]::ReadAllText($xf, [System.Text.Encoding]::UTF8)
+    # '</script' would end the data block early; real topic XML never has it (all HTML is escaped).
+    if(-not $xt.StartsWith('<?xml', [StringComparison]::Ordinal) -or -not $xt.Contains('<health-topics') -or $xt -match '(?i)</script'){
+      Remove-Item -LiteralPath $xf -Force; Log "ERROR: $mx is not MedlinePlus topic XML (removed). Re-run the installer."; exit 1 }
+    $sd = if($PSScriptRoot){$PSScriptRoot}else{(Get-Location).Path}
+    $lp = Join-Path $sd 'medlineplus\MedlinePlus.html'; $tpl = Join-Path $md '_MedlinePlus.html'
+    if(Test-Path $lp){ Copy-Item $lp $tpl -Force }
+    else { curl.exe -fLsS "$RepoRaw/medlineplus/MedlinePlus.html" -A (UA) -o $tpl
+      if($LASTEXITCODE -ne 0){ Log 'ERROR: download failed: medlineplus/MedlinePlus.html'; exit 1 } }
+    $page = [System.IO.File]::ReadAllText($tpl, [System.Text.Encoding]::UTF8)
+    $mark = '<script type="text/xml" id="data"></script>'
+    if(-not $page.Contains($mark)){ Log 'ERROR: medlineplus/MedlinePlus.html has no data marker. Re-run the installer.'; exit 1 }
+    if(-not $xt.EndsWith("`n")){ $xt += "`n" }  # match the Bash awk splice, which always ends the data with a newline
+    $out = Join-Path $md 'MedlinePlus-Health-Topics.html'
+    [System.IO.File]::WriteAllText($out, $page.Replace($mark, '<script type="text/xml" id="data">' + $xt + '</script>'), [System.Text.UTF8Encoding]::new($false))
+    # The page holds all the data: drop the XML (and any older day's copy) and the template.
+    Get-ChildItem -LiteralPath $md -File | Where-Object { $_.Name -like 'mplus_topics_*' -or $_.Name -eq '_MedlinePlus.html' } | Remove-Item -Force
+    Log ("medlineplus: Medical\MedlinePlus\MedlinePlus-Health-Topics.html ({0:N0} MB)" -f ((Get-Item $out).Length/1MB))
+  } else { Log 'medlineplus: NOT FOUND (no topic file listed on medlineplus.gov/xml.html)' }
+} else { Log '=== [5e] MedlinePlus health topics not selected - add -MedlinePlus to include (~30 MB) ===' }
+
 # ================================================================ 6. PDFs (Internet Archive)
 Log '=== [6/8] Public-domain manuals (PDF) ==='
 $pdfs = @(
@@ -382,28 +505,19 @@ if(-not $SkipWikipedia){
 if(-not $SkipMaps){
   Log "=== [8/8] Offline maps (OsmAnd) - region: $Region ==="
   try{
-    $idxFile = Join-Path $env:TEMP 'osmand_idx.xml'
-    curl.exe -sL 'https://download.osmand.net/get_indexes' -o $idxFile
-    [xml]$idx = Get-Content $idxFile
-    $allmaps = $idx.osmand_regions.region | Where-Object { $_.type -eq 'map' }
-    # resolve the -Region tokens (comma/space separated) to a file set
-    $tokens = ($Region -split '[,; ]') | ForEach-Object { $_.Trim() } | Where-Object { $_ } | ForEach-Object { Resolve-RegionToken $_ }
-    $sel = @()
-    foreach($t in $tokens){
-      if($t -ieq 'world'){ $sel = $allmaps; break }
-      elseif($Continents -contains $t.ToLower()){ $sel += $allmaps | Where-Object { $_.name -match ('_' + [regex]::Escape($t.ToLower()) + '_') } }
-      else { $sel += $allmaps | Where-Object { $_.name -match ('^' + [regex]::Escape($t) + '_') } }
-    }
-    $sel = $sel | Sort-Object name -Unique
-    if(-not $sel){
+    if($osmErr){
+      Log "osmand ERROR: $osmErr"
+    } elseif(-not $sel){
       Log "osmand: no maps matched region '$Region'. Run with -ListRegions to see valid names. Skipping maps."
     } else {
       $mb = ($sel | Measure-Object -Property size -Sum).Sum
       Log ("osmand: {0} map files for '{1}' (~{2:N1} GB download)" -f $sel.Count, $Region, ($mb/1024))
       if($mb -gt 40000){ Log ("WARNING: that's ~{0:N0} GB of maps - make sure you have room (and time)." -f ($mb/1024)) }
+      # OsmAnd republishes maps under the same name: the index's containerSize (bytes)
+      # tells a current copy from an older edition (#57).
       foreach($r in $sel){
         $out = Join-Path $Root "OsmAnd\$($r.name)"
-        Fetch "https://download.osmand.net/download.php?standard=yes&file=$($r.name)" $out
+        Fetch-Sized "https://download.osmand.net/download.php?standard=yes&file=$($r.name)" $out $r.containerSize
       }
     }
   }catch{ Log "osmand ERROR: $($_.Exception.Message)" }
@@ -417,25 +531,41 @@ if(-not $SkipMaps){
   try{
     $mc = Join-Path $mvd 'OsmAndMapCreator.zip'
     Log 'mapviewer: OsmAndMapCreator'
-    Fetch 'https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip' $mc
-    Expand-Archive $mc -DestinationPath (Join-Path $mvd 'app') -Force
-    # if the zip nested everything in a single subfolder, pull it up to \app
-    if(-not (Test-Path (Join-Path $mvd 'app\OsmAndMapCreator.bat'))){
-      $inner = Get-ChildItem (Join-Path $mvd 'app') -Directory | Select-Object -First 1
+    # "latest" URLs keep their file name across new editions: fetch by remote size (#57)
+    $mcu = 'https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip'
+    Fetch-Sized $mcu $mc (Remote-Size $mcu)
+    # unpack to a new folder; replace the working viewer only if the unpack worked.
+    # (PowerShell 5.1 Expand-Archive can "succeed" on a damaged zip with 0 files, so check the file.)
+    $appNew = Join-Path $mvd 'app.new'
+    if(Test-Path $appNew){ Remove-Item $appNew -Recurse -Force }
+    try{ Expand-Archive $mc -DestinationPath $appNew -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
+    # if the zip nested everything in a single subfolder, pull it up to \app.new
+    if((Test-Path $appNew) -and -not (Test-Path (Join-Path $appNew 'OsmAndMapCreator.bat'))){
+      $inner = Get-ChildItem $appNew -Directory | Select-Object -First 1
       if($inner -and (Test-Path (Join-Path $inner.FullName 'OsmAndMapCreator.bat'))){
-        Get-ChildItem $inner.FullName -Force | Move-Item -Destination (Join-Path $mvd 'app') -Force
+        Get-ChildItem $inner.FullName -Force | Move-Item -Destination $appNew -Force
       }
+    }
+    if(Test-Path (Join-Path $appNew 'OsmAndMapCreator.bat')){
+      $app = Join-Path $mvd 'app'; if(Test-Path $app){ Remove-Item $app -Recurse -Force }
+      Move-Item $appNew $app
+    } else {
+      Remove-Item $appNew -Recurse -Force -ErrorAction SilentlyContinue
+      Log '  mapviewer ERROR: could not unpack OsmAndMapCreator.zip (old viewer kept). Delete it and re-run.'
     }
     $jz = Join-Path $mvd 'jre.zip'
     Log 'mapviewer: portable Java runtime'
-    Fetch 'https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jre/hotspot/normal/eclipse' $jz
+    $jru = 'https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jre/hotspot/normal/eclipse'
+    Fetch-Sized $jru $jz (Remote-Size $jru)
     $tmp = Join-Path $mvd '_jre_tmp'
     if(Test-Path $tmp){ Remove-Item $tmp -Recurse -Force }
-    Expand-Archive $jz -DestinationPath $tmp -Force
-    $jreSrc = Get-ChildItem $tmp -Directory | Select-Object -First 1
-    $jreDst = Join-Path $mvd 'jre'
-    if(Test-Path $jreDst){ Remove-Item $jreDst -Recurse -Force }
-    if($jreSrc){ Move-Item $jreSrc.FullName $jreDst }
+    try{ Expand-Archive $jz -DestinationPath $tmp -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
+    $jreSrc = Get-ChildItem $tmp -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
+    if($jreSrc -and (Test-Path (Join-Path $jreSrc.FullName 'bin\java.exe'))){
+      $jreDst = Join-Path $mvd 'jre'
+      if(Test-Path $jreDst){ Remove-Item $jreDst -Recurse -Force }
+      Move-Item $jreSrc.FullName $jreDst
+    } else { Log '  mapviewer ERROR: could not unpack jre.zip (old Java kept). Delete it and re-run.' }
     Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
   }catch{ Log "mapviewer ERROR: $($_.Exception.Message)" }
 
@@ -471,9 +601,10 @@ echo.
 echo Launching the desktop map viewer...
 echo In the app, your maps are the .obf files in the  OsmAnd\obf  folder.
 echo.
-echo If the map area stays BLANK (a known OsmAndMapCreator issue on some Windows PCs):
+echo If the map area stays BLANK: on Windows this viewer draws online map tiles, not the
+echo drive's maps, so it is blank with no internet (issue 15). Offline:
 echo   - best: use the browser maps - run  Maps-Browser\OPEN-MAPS.bat  (if you built the
-echo     drive with -BrowserMaps; US street maps, renders reliably on Windows), or
+echo     drive with -BrowserMaps; US street maps, work with no internet), or
 echo   - use the maps on an Android phone/tablet (see OsmAnd\HOW-TO-VIEW-MAPS.html).
 cd /d "%~dp0app"
 call OsmAndMapCreator.bat
@@ -522,7 +653,7 @@ if((-not $SkipMaps) -and $BrowserMaps){
     }
     if($ok.Count){ [System.IO.File]::WriteAllText((Join-Path $mb 'regions.json'), ('[' + (($ok | ForEach-Object { '"' + $_ + '"' }) -join ',') + "]`n"), [System.Text.UTF8Encoding]::new($false)) }
     # map style, fonts and symbols (one archive, no symlinks inside)
-    $ba = Join-Path $mb 'base-assets.tar.gz'; Fetch "$nm/base-assets.tar.gz" $ba
+    $ba = Join-Path $mb 'base-assets.tar.gz'; Fetch-Sized "$nm/base-assets.tar.gz" $ba (Remote-Size "$nm/base-assets.tar.gz")   # same name on every update (#57)
     $new = Join-Path $mb 'assets-new'; if(Test-Path $new){ Remove-Item $new -Recurse -Force }; New-Item -ItemType Directory -Force $new | Out-Null
     $tarExe = if(Get-Command tar.exe -ErrorAction SilentlyContinue){ 'tar.exe' } else { 'tar' }
     & $tarExe -xzf $ba -C $new 2>$null
@@ -565,7 +696,7 @@ if((-not $SkipMaps) -and $BrowserMaps){
   }catch{ Log "browser maps ERROR: $($_.Exception.Message)" }
 } else {
   Log "=== [8c] Browser maps not selected - add -BrowserMaps to include (~16.5 GB for the US) ==="
-  if(-not $SkipMaps){ Log "  Tip (Windows): browser maps is the reliable desktop viewer - the bundled OsmAndMapCreator can render a blank map on some Windows PCs (#15). Re-run with -BrowserMaps to add US street maps that open in any browser." }
+  if(-not $SkipMaps){ Log "  Tip (Windows): browser maps is the offline desktop viewer - the bundled OsmAndMapCreator draws online tiles on Windows, so its map is blank with no internet (#15). Re-run with -BrowserMaps to add US street maps that open in any browser." }
 }
 
 # ================================================================ phone apps
@@ -664,6 +795,21 @@ WriteSh 'chat-8B-smart.sh'   'llama-cli'    'Meta-Llama-3.1-8B-Instruct-Q4_K_M.g
 WriteSh 'chat-GPU-Qwen7B.sh' 'llama-cli'    'Qwen2.5-7B-Instruct-Q4_K_M.gguf'        '1' '-c 4096 -ngl 99' 'Offline AI - Qwen2.5 7B on the GPU (Metal on a Mac, Vulkan on Linux).'
 }
 WriteSh 'web-ui.sh'          'llama-server' 'Llama-3.2-3B-Instruct-Q4_K_M.gguf'      '0' '-c 4096 --host 127.0.0.1 --port 8080' "Open http://127.0.0.1:8080 when it says 'server is listening'."
+if($Translate){
+# Same text as get-offline-library.sh. No batch special characters in the prompt or notes.
+$TrArgs = '-c 4096 --temp 0.2 -sys "You are an interpreter between two people. Their first message names two languages: reply only with Ready. After that, for every message: if it is written in the first language, translate it into the second language; if it is written in the second language, translate it into the first language. Never repeat a message in the language it was written in. Write only the translation, with no notes. Keep names, numbers, doses and times exactly as written."'
+WriteBat (Join-Path $ao 'TRANSLATE.bat') @"
+@echo off
+title Offline translator - Qwen3 4B
+cd /d "%~dp0"
+echo Offline translator. First type the two languages, for example: English and Spanish. Then type what to translate.
+echo Check anything about medicine, doses or safety by translating it back. Use short, simple sentences.
+echo The AI is a helper for finding and summarizing info - for anything safety-critical, follow the bundled manuals.
+"%~dp0engine\x64\llama-cli.exe" -m "%~dp0models\$TrModel" $TrArgs
+pause
+"@
+WriteSh 'translate.sh' 'llama-cli' $TrModel '0' $TrArgs 'Offline translator. First type the two languages, for example: English and Spanish. Check anything about medicine, doses or safety by translating it back. Ctrl+C to quit.'
+}
 
 # ================================================================ documentation
 Log '=== Documentation (Markdown + HTML) ==='
@@ -689,6 +835,7 @@ PlaceDoc 'EMERGENCY-ESSENTIALS.md'  (Join-Path $Root 'EMERGENCY-ESSENTIALS')    
 PlaceDoc 'POWER-AND-DEVICES.md'     (Join-Path $Root 'POWER-AND-DEVICES')                           'Power and devices'
 PlaceDoc 'HOW-TO-RUN-OFFLINE-AI.md' (Join-Path $Root 'AI-Offline\HOW-TO-RUN-OFFLINE-AI')            'Offline AI - How To Run'
 PlaceDoc 'HOW-TO-ASK-YOUR-DOCS.md'  (Join-Path $Root 'AI-Offline\DocReader-GPT4All\HOW-TO-ASK-YOUR-DOCS') 'Ask Your Documents - GPT4All'
+PlaceDoc 'HOW-TO-TRANSLATE.md'      (Join-Path $Root 'AI-Offline\HOW-TO-TRANSLATE')                 'Offline translator - How To'
 PlaceDoc 'HOW-TO-USE-KIWIX.md'      (Join-Path $Root 'Kiwix-Reader\HOW-TO-USE-KIWIX')               'How to Use Kiwix'
 PlaceDoc 'Manuals-READ-ME-FIRST.md' (Join-Path $Root 'Manuals\READ-ME-FIRST')                       'Manuals - Read Me First'
 PlaceDoc 'Medical-READ-ME-FIRST.md' (Join-Path $Root 'Medical\READ-ME-FIRST')                       'Medical - Read Me First'
@@ -842,6 +989,27 @@ foreach($f in $pdfs){
 if(-not $pdfs){ ScWarn 'no PDF manuals found' }
 elseif(-not $pbad){ ScPass "$($pdfs.Count) PDF files: all start with %PDF" }
 else { ScFail ("file(s) named .pdf that are not PDFs - delete each one and re-run the installer:`n        " + ($pbad -join "`n        ")) }
+# 5. Every AI model (.gguf) has the size and SHA-256 that Hugging Face publishes, so a cut-off
+#    download is caught (#71). The hash is the one just written to CHECKSUMS-SHA256.txt: no extra read.
+$sums = @{}; foreach($l in $arr){ $sums[$l.Substring(66)] = $l.Substring(0,64) }
+$gn = 0; $gbad = @(); $gwarn = @()
+foreach($u in $GgufUrls){
+  $n = Split-Path $u -Leaf; $p = Join-Path $Root "AI-Offline\models\$n"
+  if(-not (Test-Path -LiteralPath $p -PathType Leaf)){ continue }
+  $gn++
+  if(Test-Path -LiteralPath "$p.aria2"){ $gbad += "AI-Offline/models/$n (download not finished)"; continue }
+  $hd = @(curl.exe -sI --max-time 30 $u 2>$null)
+  $want = ($hd | Where-Object { $_ -match '^x-linked-size:\s*(\d+)' } | Select-Object -First 1) -replace '[^\d]',''
+  $wsha = ''; foreach($h in $hd){ if($h -match '^x-linked-etag:\s*"?([0-9a-f]{64})'){ $wsha = $Matches[1]; break } }
+  $len = (Get-Item -LiteralPath $p).Length
+  if(-not $want){ $gwarn += $n }
+  elseif([int64]$want -ne $len){ $gbad += "AI-Offline/models/$n ($len of $want bytes)" }
+  elseif($wsha -and $sums["./AI-Offline/models/$n"] -ne $wsha){ $gbad += "AI-Offline/models/$n (SHA-256 does not match Hugging Face)" }
+}
+if(-not $gn){ ScWarn 'no AI models (.gguf) found' }
+elseif($gbad){ ScFail ("AI model(s) not complete or damaged - delete each one and re-run the installer:`n        " + ($gbad -join "`n        ")) }
+elseif($gwarn){ ScWarn ("could not reach Hugging Face to check these AI models (not verified): " + ($gwarn -join ' ')) }
+else { ScPass "$gn AI models (.gguf): size and SHA-256 match Hugging Face" }
 
 if($scFail -eq 0){
   Log '=== DONE. Open README.html (full index) or START-HERE.html ==='

@@ -15,6 +15,41 @@ One command asks you **only one thing — where to save the files — then downl
 everything** and writes all the documentation (Markdown **and** HTML). After that, it all
 works with **no internet**.
 
+## Start here
+
+You need a computer with internet and a drive with **128 GB or more free** (an external SSD
+is best). The download is about 85 GB and can take several hours.
+
+**Windows**
+1. [Download this project as a ZIP](https://github.com/elhajahmadj/offline-emergency-library/archive/refs/heads/main.zip),
+   right-click it and choose **Extract All**.
+2. In the extracted folder, double-click **`install.bat`**. If Windows says "Windows
+   protected your PC", click **More info**, then **Run anyway**.
+3. Type where to save the files, for example `E:\`, and press Enter.
+
+**Mac**
+1. [Download this project as a ZIP](https://github.com/elhajahmadj/offline-emergency-library/archive/refs/heads/main.zip).
+   If the Mac does not open it for you, double-click it in Downloads.
+2. In the folder, double-click **`install.command`**. The first time, the Mac says
+   *"install.command" Not Opened*: click **Done**, open **System Settings > Privacy & Security**,
+   click **Open Anyway** (twice), and type your password.
+3. Type where to save the files, for example `/Volumes/MyDrive`, and press Return.
+
+**Linux**
+1. Open a terminal.
+2. Paste this line and press Enter:
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/get-offline-library.sh | bash
+   ```
+3. Type where to save the files, for example `/media/you/MyDrive`, and press Enter.
+
+That is the only question. Leave the window open until it says **Finished**, then open
+**`START-HERE.html`** in the `OfflineLibrary` folder it made there. If the download stops, run it again the same
+way: it carries on where it left off.
+
+Smaller drive, another country's maps, or extra content? See
+[Advanced: options and flags](#advanced-options-and-flags).
+
 ---
 
 ## What you get
@@ -25,13 +60,15 @@ works with **no internet**.
 | **Offline doc-Q&A** | GPT4All — ask an AI questions about your PDFs, with citations | ~0.7 GB | CPU, one-time install |
 | **Wikipedia** | Full English Wikipedia (all articles, no images) — Kiwix-readable | ~49 GB | Kiwix |
 | **Browser maps** *(opt-in)* | US street maps that open in **any web browser** (Project NOMAD / Protomaps + MapLibre viewer + Caddy), `-BrowserMaps` / `--browser-maps` | US ≈16.5 GB (one state: less) | **Any computer** with a browser |
-| **Offline maps** | Maps for the region you pick (**default US**; any country/region/continent — see below) + **bundled desktop viewer** (OsmAndMapCreator + portable Java) + **bundled Android app (APK)** | US ≈17 GB; varies by region (+~0.4 GB tools) | **PC (no phone) or phone** |
+| **Offline maps** | Maps for the region you pick (**default US**; any country/region/continent — see below) + **bundled desktop viewer** (OsmAndMapCreator + portable Java; needs internet on Windows/macOS, see below) + **bundled Android app (APK)** | US ≈17 GB; varies by region (+~0.4 GB tools) | **PC (no phone) or phone** |
 | **Repair archive** | iFixit — cars, appliances, electronics, phones | ~3.4 GB | Kiwix |
 | **DIY archive** | Appropedia — plumbing, electrical, construction, energy, water, food | ~0.6 GB | Kiwix |
 | **Medical** | Offline medical Wikipedia (WikiMed) + curated medical guide | ~1.8 GB | Kiwix |
 | **Survival** | Post-disaster, water, food prep, knots (zimgit) | ~0.8 GB | Kiwix |
 | **Education** *(opt-in)* | Khan Academy archive (one file, all videos) **or** Kolibri app (pick subjects/low-res) | KA ZIM ~168 GB; Kolibri = your choice | Kiwix / Kolibri app |
+| **Offline translator** *(opt-in)* | Two-way text translator for talking with someone who speaks another language; a small multilingual AI model (Qwen3 4B, Apache 2.0) on the bundled llama.cpp engine, `-Translate` / `--translate`. Good for widely spoken languages, weak or unusable for some others ([guide](docs/HOW-TO-TRANSLATE.md)) | ~2.5 GB | CPU, ~6 GB RAM |
 | **Extra archives** *(opt-in)* | Wikivoyage travel guide + Wikibooks open textbooks (English, with images), `-ExtraZims` / `--extra-zims` | ~5.8 GB | Kiwix |
+| **Health topics** *(opt-in)* | MedlinePlus plain-language health topic summaries (US National Library of Medicine, public domain), English + Spanish, one searchable page for any browser, `-MedlinePlus` / `--medlineplus`; see the [medical guide](docs/Medical-READ-ME-FIRST.md) | ~30 MB | Any browser |
 | **Army manuals** | Public-domain US Army field/technical manuals (survival, first aid, hand tools, carpentry, auto mechanics, rigging, field cooking) | ~0.2 GB | Any browser (PDF) |
 | **Medical books** | *Where There Is No Doctor / No Dentist* (Hesperian) | ~60 MB | Any browser (PDF) |
 | **Delayed-care guide** | *A Practical Guide to Prolonged Casualty Care* (USUHS + Henry M. Jackson Foundation, 2025; CC BY-NC-SA 4.0) — advanced care when help is hours or days away; not a substitute for a clinician | ~15 MB | Any browser (PDF) |
@@ -51,6 +88,10 @@ Kiwix archives and guides, and public-domain US-government manuals. **No piracy.
 
 The full library is **~85 GB**. Always leave headroom (for the AI's temp files, GPT4All
 install, and future updates), so plan for more than 60 GB.
+
+Before the first download, the installer prints a size estimate for the options you chose
+(maps for your region and every opt-in included) next to the free space, and warns if it
+will not fit.
 
 | Drive | Recommendation |
 |---|---|
@@ -94,8 +135,9 @@ Downloading ~85 GB can take several hours.
 | **Offline AI — small model (3B)** | Any 64-bit PC, **~4 GB RAM**. Works on CPU; no graphics card needed. |
 | **Offline AI — big model (8B)** | **~8 GB RAM** recommended. CPU only. |
 | **Offline AI — GPU model (Qwen 7B)** | A graphics card with **~6 GB VRAM** (NVIDIA/AMD/Intel) for a big speed boost. Optional. |
+| **Offline translator** *(opt-in)* | 64-bit PC, **~6 GB RAM** (about 4.8 GB in use while it runs). CPU only. |
 | **GPT4All doc-Q&A** | 64-bit PC, ~8 GB RAM recommended. CPU only. Self-contained (no Python/CUDA). |
-| **Maps on a computer** | **No phone needed** — bundled desktop viewer (OsmAndMapCreator) + bundled portable Java. First use unzips maps (~30 GB). |
+| **Maps on a computer** | **No phone needed.** Offline: browser maps (US, `-BrowserMaps`). The bundled desktop viewer (OsmAndMapCreator + portable Java) draws online tiles on Windows and macOS, so it is blank with no internet ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)); use an Android phone for non-US offline maps. First use of the desktop viewer unzips maps (~30 GB). |
 | **Maps on a phone** | Android: bundled **OsmAnd~ APK** (sideload offline). iPhone/iPad: install **OsmAnd** from the App Store while online. |
 
 **Key points:**
@@ -107,12 +149,10 @@ Downloading ~85 GB can take several hours.
 
 ---
 
-## 🚀 How to download (pick one)
+## 🚀 Other ways to install
 
-### A) Easiest — double-click `install.bat`
-Download/clone the repo, then **double-click `install.bat`**. It opens a window, asks you
-where to save, and downloads everything. No commands, no PowerShell knowledge needed.
-(If Windows SmartScreen warns, click **More info → Run anyway**.)
+### A) Double-click `install.bat` (Windows) or `install.command` (Mac)
+The steps are in [Start here](#start-here) at the top of this page.
 
 ### B) In Claude Code (one prompt)
 Install this repo's skill, then say:
@@ -151,11 +191,11 @@ and it continues where it left off.
 ### Platform support
 | | Windows | macOS | Linux |
 |---|---|---|---|
-| Installer | `Get-OfflineLibrary.ps1` / `install.bat` | `get-offline-library.sh` | `get-offline-library.sh` |
+| Installer | `Get-OfflineLibrary.ps1` / `install.bat` | `get-offline-library.sh` / `install.command` | `get-offline-library.sh` |
 | Offline AI chat | ✅ (x64/ARM + Vulkan GPU) | ✅ (Metal GPU) | ✅ (x64/ARM + Vulkan GPU) |
 | GPT4All doc-Q&A | ✅ `.exe` | ✅ `.dmg` | ✅ `.run` |
 | Kiwix desktop | ✅ bundled portable | App Store / kiwix.org | ✅ bundled AppImage (x64) |
-| Maps on PC | ✅ bundled viewer+Java | ✅ bundled viewer+Java | ✅ bundled viewer+Java |
+| Maps on PC | ⚠️ viewer needs internet; offline: browser maps (US) | ⚠️ viewer needs internet; offline: browser maps (US) | viewer bundled (offline untested); browser maps (US) |
 | All content (Wikipedia, ZIM, PDF, maps, APKs) | ✅ | ✅ | ✅ |
 
 ### Quick start with a smaller download
@@ -213,6 +253,7 @@ runs 100% offline afterward:
 | Phone apps (APK) | github.com/kiwix/kiwix-android, f-droid.org |
 | Education (optional) | download.kiwix.org (Khan Academy ZIM), github.com/learningequality/kolibri (Kolibri app) |
 | Extra archives (optional) | download.kiwix.org (Wikivoyage, Wikibooks ZIM) |
+| Health topics (optional) | medlineplus.gov/xml.html (MedlinePlus health topic XML, US National Library of Medicine; public domain) |
 
 **Verify the installer before running it.** Each script's SHA-256 is published in
 [`SHA256SUMS.txt`](SHA256SUMS.txt) and CI checks they stay in sync.
@@ -339,7 +380,10 @@ macOS also writes small `._*` files on exFAT drives; CHECK-DRIVE ignores them.
 
 ---
 
-## Options (optional, for small drives)
+## Advanced: options and flags
+
+Add these to the commands in [E) Clone and run](#e-clone-and-run) (see the [Quick start](#quick-start-with-a-smaller-download) examples). The one-liners in C and D cannot take flags as written.
+None of them are needed for a normal install.
 
 | Flag | Effect |
 |---|---|
@@ -351,6 +395,8 @@ macOS also writes small `._*` files on exFAT drives; CHECK-DRIVE ignores them.
 | `-BrowserMaps` / `--browser-maps` | **Add street maps for any web browser** (US states, ~16.5 GB for all, on top of ~17.8 GB of OsmAnd maps, so ~34 GB of maps in total; follows `-Region`) — off by default |
 | `-Kolibri` / `--kolibri` | **Add the Kolibri learning app** (pick subjects + low-res in-app; tens of GB) — off by default |
 | `-ExtraZims` / `--extra-zims` | **Add Wikivoyage + Wikibooks** (Kiwix ZIM, ~5.8 GB; CC BY-SA) into `Extra-Archives\` — off by default. WikiHow is not on download.kiwix.org today, so it is not included |
+| `-Translate` / `--translate` | **Add an offline translator** (Qwen3 4B model, ~2.5 GB; Apache 2.0) with `TRANSLATE.bat` / `translate.sh` in `AI-Offline\` - off by default. Uses the bundled AI engine, so nothing else is installed. See [HOW-TO-TRANSLATE](docs/HOW-TO-TRANSLATE.md) for which languages work |
+| `-MedlinePlus` / `--medlineplus` | **Add MedlinePlus health topics** (~30 MB; public domain) as one offline page, `Medical\MedlinePlus\MedlinePlus-Health-Topics.html` - off by default. Summaries only: the copyrighted encyclopedia and drug pages are not included |
 | `-SkipWikipedia` / `--skip-wikipedia` | Don't download the 24 GB Wikipedia dump (~24 GB saved) |
 | `-SkipMaps` / `--skip-maps` | Don't download the maps (~17 GB saved for US) |
 | `-SkipModels` / `--skip-models` | Skip the large 8B/7B AI models, keep the small 3B (~9 GB saved) |
@@ -386,3 +432,9 @@ everyone who has tested the installers on real hardware and reported what broke.
 Code and documentation in this repo: **MIT** (see `LICENSE`). Downloaded content retains
 its original licenses (open-weight model licenses, CC licenses for Kiwix content, public
 domain for US-government works).
+
+**Do not sell a drive made with this kit; giving copies away is fine.** Some of what it
+downloads is non-commercial: the iFixit repair archive (CC BY-NC-SA 3.0), *A Practical Guide
+to Prolonged Casualty Care* (CC BY-NC-SA 4.0), the WHO childbirth references (CC BY-NC-SA 3.0
+IGO), *Where There Is No Doctor* and *Where There Is No Dentist* (Hesperian: copies must be
+free or at cost, not for profit), and the opt-in Khan Academy archive (CC BY-NC-SA).

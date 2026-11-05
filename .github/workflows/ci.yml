@@ -28,6 +28,10 @@ jobs:
             if [ "$expected" != "$actual" ]; then echo "MISMATCH: $file"; fail=1; else echo "ok: $file"; fi
           done < SHA256SUMS.txt
           [ "$fail" = 0 ] || { echo "SHA256SUMS.txt is out of date — regenerate it."; exit 1; }
+      - name: Launcher parity (bash vs PowerShell installer)
+        run: bash .github/scripts/check-launchers.sh
+      - name: MedlinePlus page CSP hash (inline script allowed by hash)
+        run: bash .github/scripts/check-csp-hash.sh
       - name: PowerShell parse + analyze
         shell: pwsh
         run: |
@@ -43,6 +47,28 @@ jobs:
             if ($issues) { $issues | Format-Table | Out-String | Write-Error; exit 1 }
             Write-Host "PSScriptAnalyzer: no errors"
           } catch { Write-Host "PSScriptAnalyzer skipped: $($_.Exception.Message)" }
+
+  smoke:
+    # Engine picking and portability on each OS (#69): the installer's own engine, launcher and
+    # CHECK-DRIVE code, with only this OS's llama.cpp engine downloaded (no models, ZIMs or maps).
+    name: Smoke test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Engine, launchers, move, run from the new path
+        if: runner.os != 'Windows'
+        run: bash .github/scripts/check-smoke.sh
+      - name: Engine, launchers, move, run from the new path
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: .\.github\scripts\check-smoke.ps1
 
   links:
     name: Upstream source health
