@@ -48,6 +48,28 @@ jobs:
             Write-Host "PSScriptAnalyzer: no errors"
           } catch { Write-Host "PSScriptAnalyzer skipped: $($_.Exception.Message)" }
 
+  smoke:
+    # Engine picking and portability on each OS (#69): the installer's own engine, launcher and
+    # CHECK-DRIVE code, with only this OS's llama.cpp engine downloaded (no models, ZIMs or maps).
+    name: Smoke test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Engine, launchers, move, run from the new path
+        if: runner.os != 'Windows'
+        run: bash .github/scripts/check-smoke.sh
+      - name: Engine, launchers, move, run from the new path
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: .\.github\scripts\check-smoke.ps1
+
   links:
     name: Upstream source health
     runs-on: ubuntu-latest

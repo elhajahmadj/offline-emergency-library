@@ -33,7 +33,10 @@ Look for issues labeled **`good first issue`** and **`help wanted`**.
 ## Before you open a PR
 - `bash -n get-offline-library.sh` passes.
 - PowerShell parses (`[System.Management.Automation.Language.Parser]::ParseFile(...)`).
-- CI (lint + upstream link check) is green.
+- CI (lint, upstream link check, and the per-OS smoke test) is green. The smoke test runs the
+  installer's engine, launcher and CHECK-DRIVE code on Windows, macOS and Linux, then moves the
+  folder and runs from the new path; it fails if a launcher picks an engine folder the installer
+  does not fill, or any generated file names the folder it was built in.
 
 ## Reviewing a PR
 
