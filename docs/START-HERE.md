@@ -73,6 +73,9 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 - **Communicate by radio:** read `Manuals\Radio-Communications\RADIO-GUIDE.html`.
 - **Learn / study (courses + video):** open `Education\` in Kiwix (if you added Khan Academy
   with `-Education` / `--education`; see `Education\READ-ME-FIRST.html`).
+- **Talk with someone who speaks another language:** run `AI-Offline\TRANSLATE.bat` (Windows)
+  or `translate.sh` (macOS/Linux), if you added it with `-Translate` / `--translate`; see
+  `AI-Offline\HOW-TO-TRANSLATE.html` first.
 - **Travel guide / textbooks:** open `Extra-Archives\` in Kiwix (if you added them with
   `-ExtraZims` / `--extra-zims`).
 - **Look something up:** Wikipedia (via Kiwix) and the maps (`OsmAnd\HOW-TO-VIEW-MAPS.html`
