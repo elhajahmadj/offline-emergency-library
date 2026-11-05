@@ -254,6 +254,7 @@ fi
 [ "$EDU" = 1 ] && est 168 "Khan Academy"
 [ "$EXTRA_ZIMS" = 1 ] && est 5.8 "Wikivoyage + Wikibooks"
 [ "$TRANSLATE" = 1 ] && est 2.3 "translator model"
+[ "$MEDLINEPLUS" = 1 ] && est 0.1 "MedlinePlus health topics"
 EST_GB="$(printf '%s' "$EST" | awk -F'|' '{s+=$1} END{printf "%.1f", s}')"
 FREE_GB="$(df -Pk "$ROOT" 2>/dev/null | awk 'NR==2{printf "%.1f", $4/1048576}')"
 HAVE_GB="$(du -sk "$ROOT" 2>/dev/null | awk '{printf "%.1f", $1/1048576}')"

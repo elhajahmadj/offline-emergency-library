@@ -193,6 +193,7 @@ if(-not $SkipMaps){
 if($Education){ $est['Khan Academy'] = 168 }
 if($ExtraZims){ $est['Wikivoyage + Wikibooks'] = 5.8 }
 if($Translate){ $est['translator model'] = 2.3 }
+if($MedlinePlus){ $est['MedlinePlus health topics'] = 0.1 }
 $estGB = [math]::Round(($est.Values | Measure-Object -Sum).Sum, 1)
 try {
   $drive = (Get-Item $Root).PSDrive
