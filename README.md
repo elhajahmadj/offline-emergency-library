@@ -429,17 +429,20 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 
 | Source | License | Commercial reuse? |
 |---|---|---|
-| Offline AI models — Llama 3.2 3B, Llama 3.1 8B | [Llama Community License](https://www.llama.com/llama3_1/license/) | Yes, under the license terms (incl. the >700M-MAU clause) |
+| Offline AI models — Llama 3.2 3B, Llama 3.1 8B | [Llama 3.2](https://www.llama.com/llama3_2/license/) / [Llama 3.1](https://www.llama.com/llama3_1/license/) Community License | Yes, under the license terms (incl. the >700M-MAU clause). Distributing a copy — not only selling — requires a "Built with Llama" notice and the Meta `Notice` text ⁂ |
 | Offline AI model — Qwen2.5 7B, and translator Qwen3 4B | Apache-2.0 | Yes |
-| AI engine (llama.cpp), GPT4All, Kolibri app, project-nomad-maps repo | MIT | Yes |
+| AI engine (llama.cpp), GPT4All, Kolibri app, project-nomad-maps repo | MIT (project-nomad-maps also ships fonts under [SIL OFL](https://openfontlicense.org/)) | Yes |
 | MapLibre GL JS, pmtiles.js | BSD-3-Clause | Yes |
 | Caddy web server | Apache-2.0 | Yes |
 | Portable Java (Eclipse Temurin / OpenJDK) | GPL-2.0 WITH Classpath-exception | Yes |
-| Kiwix reader; OsmAnd maps viewer; Kiwix / OsmAnd~ phone apps | GPL-3.0 | Yes |
+| Kiwix reader; Kiwix / OsmAnd~ phone apps | GPL-3.0 | Yes |
+| OsmAnd maps viewer (OsmAndMapCreator) + OsmAnd~ app | GPL-3.0 (code); artwork [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/), some proprietary (TTS voices) | Code yes; bundled artwork **non-commercial** |
 | Map data (OpenStreetMap; OsmAnd + Protomaps basemap) | [ODbL-1.0](https://opendatacommons.org/licenses/odbl/1-0/) | Yes (attribution + share-alike) |
 | Wikipedia, WikiMed medical; Appropedia DIY; Wikivoyage + Wikibooks (opt-in) | CC BY-SA | Yes (attribution + share-alike) |
-| US Army field/technical manuals | Public domain (US government) | Yes |
+| US Army field/technical manuals | US government works (public domain) ⸸ | Yes |
+| USDA *Complete Guide to Home Canning* (AIB 539) | US government work (public domain) | Yes |
 | MedlinePlus health topics (opt-in) | Public domain (US NLM) — **summaries only** | Yes |
+| Kiwix `zimgit` collections (post-disaster, water, food, knots, medicine) | **Mixed — the catalog states no license, and some items are all rights reserved** (e.g. SAS Survival Handbook, Foxfire). Under review in [#122](https://github.com/elhajahmadj/offline-emergency-library/issues/122) | **No** |
 | iFixit repair archive | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) | **No — non-commercial** |
 | *A Practical Guide to Prolonged Casualty Care* | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) | **No — non-commercial** |
 | WHO childbirth / maternal-health references | [CC BY-NC-SA 3.0 IGO](https://creativecommons.org/licenses/by-nc-sa/3.0/igo/) | **No — non-commercial** |
@@ -449,8 +452,25 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 > **MedlinePlus caveat:** only the **public-domain topic summaries** are bundled. The
 > A.D.A.M. medical encyclopedia and ASHP drug pages inside the full MedlinePlus data are
 > **copyrighted** and are **not** included.
+>
+> **⁂ Llama notice duty:** anyone who distributes the Llama models (giving copies away, not
+> only selling) must display "Built with Llama" and keep Meta's `Notice` text. We are adding
+> those files to the model folder; until then, honor the duty if you pass a drive on.
+>
+> **⸸ Two Army manuals are not plain public-release works:** *FM 3-05.70* (2002) is
+> distribution-restricted ("U.S. Government agencies and their contractors only"), and
+> *FM 21-11 First Aid for Soldiers* contains American Heart Association copyrighted material.
+> The rest are public-release US government works.
+>
+> **⚠️ zimgit collections:** the five `zimgit-*` ZIMs ship on every drive but are collections
+> of other people's PDFs with **no stated license**, and some items are all rights reserved
+> (SAS Survival Handbook, Foxfire). This conflicts with the kit's free/open-only rule and is
+> under review in [#122](https://github.com/elhajahmadj/offline-emergency-library/issues/122) —
+> they may be removed.
 
 **In short: do not sell a drive made with this kit; giving copies away is fine.** Several
 sources above are non-commercial (iFixit, Prolonged Casualty Care, the WHO references,
-the Hesperian books, and the opt-in Khan Academy archive), which blocks reselling a loaded
-drive even though giving copies away is allowed.
+the Hesperian books, OsmAnd's bundled artwork, and the opt-in Khan Academy archive), which
+blocks reselling a loaded drive even though giving copies away is allowed. The `zimgit`
+collections are **not openly licensed at all** (see above) and are being reviewed for
+removal — do not rely on them being redistributable.
