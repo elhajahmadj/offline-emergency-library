@@ -12,6 +12,10 @@ Contributor-driven reliability and portability work, from people running the kit
 hardware.
 
 ### Added
+- **README: resale note.** The License section now says a drive made with this kit cannot be
+  sold (giving copies away is fine) and names the non-commercial content: iFixit, the
+  *Prolonged Casualty Care* guide, the WHO childbirth references, the two Hesperian books and
+  the opt-in Khan Academy archive. Resolves #70. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #89._
 - **WHO childbirth and maternal-health references.** Both installers now download two WHO
   PDFs from `iris.who.int` into `Medical/Manuals-PDF/` (~9 MB), each checked to start with
   `%PDF`: *Managing complications in pregnancy and childbirth* (2nd ed., 2017) and *WHO
