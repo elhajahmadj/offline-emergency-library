@@ -8,11 +8,12 @@
 #   flags: --lite  --skip-wikipedia  --skip-maps  --skip-models
 #   opt-in: --browser-maps   street maps in any web browser (US states, ~16.5 GB for all of the US)
 #   opt-in: --extra-zims     Wikivoyage travel guide + Wikibooks textbooks (Kiwix ZIM, ~5.8 GB)
+#   opt-in: --translate      offline translator (Qwen3 4B model on the AI engine, ~2.5 GB)
 
 REPO_RAW="https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main"
 DEST=""; SKIP_WIKI=0; SKIP_MAPS=0; SKIP_MODELS=0; LITE=0
 REGION="US"; LISTREGIONS=0; FILTER=""
-EDU=0; EDULANG="en"; KOLIBRI=0; BROWSER_MAPS=0; EXTRA_ZIMS=0
+EDU=0; EDULANG="en"; KOLIBRI=0; BROWSER_MAPS=0; EXTRA_ZIMS=0; TRANSLATE=0
 CONTINENTS="africa asia australia-oceania centralamerica europe northamerica southamerica"
 # Map common names / ISO codes to the OsmAnd region token. Unknown input passes through.
 alias_region(){
@@ -67,6 +68,7 @@ while [ $# -gt 0 ]; do
     --edu-lang)       EDULANG="$2"; shift 2;;
     --kolibri)        KOLIBRI=1; shift;;
     --extra-zims)     EXTRA_ZIMS=1; shift;;
+    --translate)      TRANSLATE=1; shift;;
     --lite)           LITE=1; shift;;
     --browser-maps)   BROWSER_MAPS=1; shift;;
     --skip-wikipedia) SKIP_WIKI=1; shift;;
@@ -257,6 +259,13 @@ if [ "$SKIP_MODELS" = 0 ]; then
   fetch "https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q4_K_M.gguf" "$ROOT/AI-Offline/models/Qwen2.5-7B-Instruct-Q4_K_M.gguf"; log "model: Qwen2.5-7B done"
 else
   log "models: large models skipped"
+fi
+# Translator (opt-in): one small multilingual model run by the same engine, so no new runtime.
+TR_MODEL="Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
+if [ "$TRANSLATE" = 1 ]; then
+  fetch "https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TR_MODEL" "$ROOT/AI-Offline/models/$TR_MODEL"; log "model (translator): $TR_MODEL done"
+else
+  log "=== Translator not selected - add --translate to include (~2.5 GB) ==="
 fi
 
 # ================================================================ 3. GPT4All
@@ -603,6 +612,13 @@ make_bat "CHAT-GPU-Qwen7B.bat" "Offline AI - Qwen2.5 7B (GPU)"     'engine\vulka
 echo number (e.g. -ngl 20) or use a CPU launcher instead.'
 fi
 make_bat "WEB-UI.bat"          "Offline AI - Web UI"               'engine\x64\llama-server.exe' "Llama-3.2-3B-Instruct-Q4_K_M.gguf" "-c 4096 --host 127.0.0.1 --port 8080" 'echo When it says "server listening", open a browser to http://127.0.0.1:8080'
+if [ "$TRANSLATE" = 1 ]; then
+# Same text as Get-OfflineLibrary.ps1. No batch special characters, and no | & or \ (sed) in the prompt or notes.
+TR_ARGS='-c 4096 --temp 0.2 -sys "You are an interpreter between two people. Their first message names two languages: reply only with Ready. After that, for every message: if it is written in the first language, translate it into the second language; if it is written in the second language, translate it into the first language. Never repeat a message in the language it was written in. Write only the translation, with no notes. Keep names, numbers, doses and times exactly as written."'
+make_bat "TRANSLATE.bat" "Offline translator - Qwen3 4B" 'engine\x64\llama-cli.exe' "$TR_MODEL" "$TR_ARGS" 'echo Offline translator. First type the two languages, for example: English and Spanish. Then type what to translate.
+echo Check anything about medicine, doses or safety by translating it back. Use short, simple sentences.'
+make_sh "translate.sh" llama-cli "$TR_MODEL" 0 "$TR_ARGS" "Offline translator. First type the two languages, for example: English and Spanish. Check anything about medicine, doses or safety by translating it back. Ctrl+C to quit."
+fi
 
 # ================================================================ documentation
 log "=== Documentation (Markdown + HTML) ==="
@@ -623,6 +639,7 @@ place_doc "EMERGENCY-ESSENTIALS"  "$ROOT/EMERGENCY-ESSENTIALS"
 place_doc "POWER-AND-DEVICES"     "$ROOT/POWER-AND-DEVICES"
 place_doc "HOW-TO-RUN-OFFLINE-AI" "$ROOT/AI-Offline/HOW-TO-RUN-OFFLINE-AI"
 place_doc "HOW-TO-ASK-YOUR-DOCS"  "$ROOT/AI-Offline/DocReader-GPT4All/HOW-TO-ASK-YOUR-DOCS"
+place_doc "HOW-TO-TRANSLATE"      "$ROOT/AI-Offline/HOW-TO-TRANSLATE"
 place_doc "HOW-TO-USE-KIWIX"      "$ROOT/Kiwix-Reader/HOW-TO-USE-KIWIX"
 place_doc "Manuals-READ-ME-FIRST" "$ROOT/Manuals/READ-ME-FIRST"
 place_doc "Medical-READ-ME-FIRST" "$ROOT/Medical/READ-ME-FIRST"
