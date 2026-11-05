@@ -2,8 +2,9 @@
 
 The `OsmAnd\` folder contains offline maps (`.obf.zip` files) for the **region you chose at
 download time** (the default is the **United States**). You can use them **on a computer
-(no phone needed)** or **on a phone/tablet**. Both work with **no internet**. Dependencies
-for each are bundled or explained below.
+(no phone needed)** or **on a phone/tablet**. Browser maps and the phone app work with **no
+internet**; the OsmAndMapCreator viewer (Option 1) needs internet on Windows and macOS.
+Dependencies for each are bundled or explained below.
 
 ---
 
@@ -13,9 +14,9 @@ Add `-BrowserMaps` (Windows) or `--browser-maps` (macOS/Linux) when you run the 
 **street maps that open in any web browser**, on Windows, macOS or Linux. No app and no Java are needed.
 
 **This is the recommended way to view maps on a computer, especially on Windows** — it renders
-reliably in the browser, unlike the OsmAndMapCreator desktop viewer below, which shows a blank map on
-some Windows PCs ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)). Browser
-maps cover the **US** only; for other countries, use the OsmAndMapCreator viewer or a phone.
+reliably in the browser, with no internet. The OsmAndMapCreator desktop viewer below cannot draw the
+drive's maps on Windows or macOS ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)).
+Browser maps cover the **US** only; for other countries, use an Android phone (Option 2).
 
 1. Open the `Maps-Browser\` folder.
 2. **Windows:** double-click `OPEN-MAPS.bat`. **macOS / Linux:** run `bash OPEN-MAPS.sh` in a terminal.
@@ -80,10 +81,12 @@ Notes:
 
 ## Option 1 — On a computer with the OsmAndMapCreator viewer
 
-Best for **non-US regions** on a computer, or on **macOS/Linux**. On **Windows**, prefer the
-**browser maps** above — this viewer renders a blank map on some Windows PCs
-([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)). Everything you need is
-bundled — **no separate install, no Java to set up.**
+**On Windows and macOS this viewer needs internet:** it shows online map tiles from
+`tile.osmand.net`, not the maps on the drive. With no internet the map area stays **blank**
+([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)). For offline use on a
+computer, use the **browser maps** above (US) or an **Android phone** (Option 2; any region).
+On **Linux x64** the bundled build has the offline renderer, so it may work offline, but that is
+untested. Everything you need to launch it is bundled — **no separate install, no Java to set up.**
 
 1. Open `OsmAnd\MapViewer-Desktop\`.
 2. **Windows:** double-click **`VIEW-MAPS-ON-PC.bat`**.
@@ -95,16 +98,16 @@ bundled — **no separate install, no Java to set up.**
    Use the app's menus to open/browse a map, zoom, and search.
 
 **Dependencies: fully handled.** This folder includes a **portable Java runtime** (`jre\`)
-and the **OsmAndMapCreator** app (`app\`). Nothing else is required to launch it — offline,
-on a 64-bit PC.
+and the **OsmAndMapCreator** app (`app\`). Nothing else is required to launch it on a 64-bit PC.
 
-> **Known limitation on Windows ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)):**
-> on some Windows setups the OsmAndMapCreator window opens but the **map area stays blank**.
-> The bundled build ships a Linux native renderer and no Windows one, which is the likely
-> cause. **The fix for Windows is the browser maps at the top of this guide** — they render
-> reliably in any browser (US maps; re-run the installer with `-BrowserMaps` to add them).
-> For non-US regions on Windows, use the maps on an **Android phone/tablet** (Option 2 below),
-> which is fully tested.
+> **Known limitation on Windows and macOS ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)):**
+> the OsmAndMapCreator window opens, but it draws **downloaded online tiles**, not the `.obf`
+> maps on the drive. The offline renderer it needs (`osmand-win-amd64.lib` on Windows,
+> `osmand-mac-universal.lib` on macOS) is not in the bundled build, which only has the Linux one.
+> With internet the map draws; with **no internet it is blank**. This was reproduced on Windows 11
+> and macOS. **Offline on a computer, use the browser maps at the top of this guide** (US maps;
+> re-run the installer with `-BrowserMaps` to add them). For non-US regions, use the maps on an
+> **Android phone/tablet** (Option 2 below), which is fully tested.
 
 > **Space note:** the maps download as compressed `.obf.zip` (~17 GB). Desktop viewing
 > needs them **unzipped** to `.obf` (~30 GB), so the first run roughly doubles the map
@@ -149,7 +152,7 @@ This is an Apple platform limitation — there's no offline sideloading like And
 | You have… | Use | Dependency status |
 |---|---|---|
 | A Windows PC (US maps) | **Browser maps** (recommended) | ✅ renders reliably; opt-in `-BrowserMaps` (US only) |
-| A computer, non-US maps or macOS/Linux | **Option 1** (desktop viewer) | ✅ bundled (Java + app); ⚠️ blank map on some Windows setups — see note ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)) |
+| A computer, non-US maps | **Option 2** (Android phone/tablet) | ✅ bundled APK. The Option 1 desktop viewer is blank offline on Windows and macOS ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)); Linux untested |
 | An Android phone/tablet | **Option 2** (bundled APK) | ✅ bundled APK |
 | An iPhone/iPad | **Option 3** (App Store) | ⚠️ install the app while online |
 
@@ -159,8 +162,8 @@ This is an Apple platform limitation — there's no offline sideloading like And
 
 - The maps are standard **OsmAnd `.obf`** vector maps — detailed roads, towns, terrain,
   and search; routing works in the phone app.
-- The desktop viewer (OsmAndMapCreator) is utilitarian but fully functional for finding
-  places, roads, and coordinates offline.
+- The desktop viewer (OsmAndMapCreator) is utilitarian. It works for finding places, roads,
+  and coordinates with internet on Windows and macOS; offline on those, use browser maps or a phone.
 - Keep a **paper topographic map and compass** as an ultimate backup - electronics fail.
   Print [Map and compass - navigation without a device](MAP-AND-COMPASS.html)
   and practice reading terrain, following bearings and finding direction without power.

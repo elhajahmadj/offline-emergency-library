@@ -588,7 +588,11 @@ for z in "$MAPS"/*.obf.zip; do
   [ -e "$OBF/$base" ] || unzip -o -q "$z" -d "$OBF"
 done
 echo "Maps ready in: $OBF"
-sh "$DIR/app/OsmAndMapCreator.sh" 2>/dev/null || bash "$DIR/app/OsmAndMapCreator.sh"
+echo "If the map area stays BLANK: on macOS this viewer draws online map tiles, not the"
+echo "drive's maps, so it is blank with no internet (issue 15). Offline: use the browser maps"
+echo "(Maps-Browser/OPEN-MAPS.sh, if built with --browser-maps; US only) or an Android phone."
+# one launch only (bash runs both sh and bash scripts); the old "sh || bash" started a 2nd viewer when the 1st exited non-zero
+bash "$DIR/app/OsmAndMapCreator.sh"
 EOS
     chmod +x "$MVD/VIEW-MAPS-ON-PC.sh" 2>/dev/null
     find "$MVD/app" -name "*.sh" -exec chmod +x {} \; 2>/dev/null

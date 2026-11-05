@@ -166,8 +166,8 @@ client phone and local Wi-Fi too; local networking does not require internet.
 **Browser maps are proposed in PR #10, not shipped in the current main kit.**
 If using that opt-in version, prepare maps/viewer assets and test the whole
 setup offline first; do not assume it supports every region or Pi configuration.
-The current bundled desktop Java map viewer also has a known Windows rendering
-limitation (issue #15). A phone with tested offline maps is a simpler fallback.
+The current bundled desktop Java map viewer is blank with no internet on Windows
+and macOS (issue #15). A phone with tested offline maps is a simpler fallback.
 
 ## 4. Rehearse before relying on it
 

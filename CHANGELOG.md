@@ -181,6 +181,7 @@ hardware.
 - **Browser maps: total map size stated.** HOW-TO-VIEW-MAPS, the README options table and the skill now say that browser maps come on top of the OsmAnd maps, so a full US drive with `-BrowserMaps` needs about 34 GB for maps (16.5 + 17.8 GB, measured on a real install). Suggested in #15. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #58._
 
 ### Fixed
+- **Desktop viewer needs internet on Windows and macOS: the docs and launchers now say so.** The bundled OsmAndMapCreator has only the Linux offline renderer, so on Windows and macOS it draws online tiles from `tile.osmand.net` and shows a blank map with no internet (reproduced on Windows 11 and macOS). HOW-TO-VIEW-MAPS, the README, START-HERE, POWER-AND-DEVICES and both viewer launchers no longer call it an offline viewer; they point to browser maps (US) or an Android phone. `VIEW-MAPS-ON-PC.sh` also launched a second viewer when the first exited non-zero (`sh ... || bash ...`); it now launches once. Addresses #15. _Tested by [@boostedchaos](https://github.com/boostedchaos) - issue #15._
 - **A re-run no longer keeps or corrupts downloads whose name stays the same.** OsmAnd maps,
   OsmAndMapCreator (nightly), the portable Java runtime and the browser-maps style archive
   keep their file name when the source publishes a new edition, so a re-run resumed the new
@@ -237,10 +238,11 @@ hardware.
   _Reported by [@boostedchaos](https://github.com/boostedchaos) (issue #1)._
 
 ### Known issues
-- The bundled OsmAndMapCreator desktop viewer itself still renders a blank map on some Windows
-  setups (Linux-only native renderer). The **browser maps** are now the recommended Windows
-  computer viewer and render reliably (US maps); non-US Windows users use the Android path. See
-  the "Blank desktop map on Windows" entry above. Tracking in issue #15 until re-tested.
+- The bundled OsmAndMapCreator desktop viewer cannot draw the drive's maps on Windows or macOS
+  (Linux-only native renderer); it shows online tiles, so it is blank with no internet. The
+  **browser maps** are the offline computer viewer (US maps); non-US users use the Android path.
+  Linux x64 is untested. See the "Desktop viewer needs internet" entry under Fixed. Tracking in
+  issue #15.
   _Reported by [@EnragedAntelope](https://github.com/EnragedAntelope) — issue #15._
 
 ## [v1.4] — 2026-11-02 — faster downloads (aria2)

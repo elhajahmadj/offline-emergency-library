@@ -94,7 +94,7 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 | `.zim` archives | **Kiwix** (portable, no install) | ✅ `E:\Kiwix-Reader\app` |
 | Offline AI chat | Nothing extra (self-contained engine) | ✅ `E:\AI-Offline\engine` |
 | AI doc-Q&A | **GPT4All** (one-time install; self-contained, CPU) | ✅ installer in `DocReader-GPT4All` |
-| Maps on a computer | Bundled desktop viewer + portable Java (no phone needed) | ✅ `OsmAnd\MapViewer-Desktop` |
+| Maps on a computer | Bundled desktop viewer + portable Java (needs internet on Windows/macOS; offline use `Maps-Browser` or a phone, #15) | ⚠️ `OsmAnd\MapViewer-Desktop` |
 | Maps on Android | Bundled **OsmAnd~ APK** (sideload offline) | ✅ `OsmAnd\PhoneApp-Android` |
 | Maps on iPhone/iPad | OsmAnd from the App Store | app store (get while online) |
 

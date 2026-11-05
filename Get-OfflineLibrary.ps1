@@ -601,9 +601,10 @@ echo.
 echo Launching the desktop map viewer...
 echo In the app, your maps are the .obf files in the  OsmAnd\obf  folder.
 echo.
-echo If the map area stays BLANK (a known OsmAndMapCreator issue on some Windows PCs):
+echo If the map area stays BLANK: on Windows this viewer draws online map tiles, not the
+echo drive's maps, so it is blank with no internet (issue 15). Offline:
 echo   - best: use the browser maps - run  Maps-Browser\OPEN-MAPS.bat  (if you built the
-echo     drive with -BrowserMaps; US street maps, renders reliably on Windows), or
+echo     drive with -BrowserMaps; US street maps, work with no internet), or
 echo   - use the maps on an Android phone/tablet (see OsmAnd\HOW-TO-VIEW-MAPS.html).
 cd /d "%~dp0app"
 call OsmAndMapCreator.bat
@@ -695,7 +696,7 @@ if((-not $SkipMaps) -and $BrowserMaps){
   }catch{ Log "browser maps ERROR: $($_.Exception.Message)" }
 } else {
   Log "=== [8c] Browser maps not selected - add -BrowserMaps to include (~16.5 GB for the US) ==="
-  if(-not $SkipMaps){ Log "  Tip (Windows): browser maps is the reliable desktop viewer - the bundled OsmAndMapCreator can render a blank map on some Windows PCs (#15). Re-run with -BrowserMaps to add US street maps that open in any browser." }
+  if(-not $SkipMaps){ Log "  Tip (Windows): browser maps is the offline desktop viewer - the bundled OsmAndMapCreator draws online tiles on Windows, so its map is blank with no internet (#15). Re-run with -BrowserMaps to add US street maps that open in any browser." }
 }
 
 # ================================================================ phone apps
