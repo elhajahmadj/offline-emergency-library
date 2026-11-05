@@ -135,6 +135,13 @@ hardware.
   included:** download.kiwix.org no longer lists it (the newest copy is a 2023 archive build of
   ~51 GB), and wikiHow stopped licensing new user content under CC BY-NC-SA 3.0 on
   24 March 2025. The CI link check now covers the two new Kiwix folders.
+- **Offline translator (opt-in): `-Translate` / `--translate`.** Both installers can add
+  Qwen3-4B-Instruct-2507 (Q4_K_M, ~2.5 GB, Apache 2.0) and `AI-Offline/TRANSLATE.bat` /
+  `translate.sh`, a two-way text translator for talking with someone who speaks another
+  language. It runs on the bundled llama.cpp engine, so no Python or other runtime is added;
+  it needs about 6 GB RAM. Off by default. The new `HOW-TO-TRANSLATE` guide covers the checks
+  that catch mistakes and which languages worked in testing (weak for Swahili, Somali and
+  Amharic). Resolves #21. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #62._
 
 ### Changed
 - **Lite no longer leaves the AI's trust gap silent.** `--lite` / `-Lite` still omits GPT4All
