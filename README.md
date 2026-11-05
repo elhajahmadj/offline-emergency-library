@@ -15,6 +15,34 @@ One command asks you **only one thing — where to save the files — then downl
 everything** and writes all the documentation (Markdown **and** HTML). After that, it all
 works with **no internet**.
 
+## Start here
+
+You need a computer with internet and a drive with **128 GB or more free** (an external SSD
+is best). The download is about 85 GB and can take several hours.
+
+**Windows**
+1. [Download this project as a ZIP](https://github.com/elhajahmadj/offline-emergency-library/archive/refs/heads/main.zip),
+   right-click it and choose **Extract All**.
+2. In the extracted folder, double-click **`install.bat`**. If Windows says "Windows
+   protected your PC", click **More info**, then **Run anyway**.
+3. Type where to save the files, for example `E:\`, and press Enter.
+
+**Mac or Linux**
+1. Open **Terminal** (Mac: Applications > Utilities > Terminal).
+2. Paste this line and press Enter (Mac: Return):
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/get-offline-library.sh | bash
+   ```
+3. Type where to save the files, for example `/Volumes/MyDrive` (Mac) or `/media/you/MyDrive`
+   (Linux), and press Enter.
+
+That is the only question. Leave the window open until it says **Finished**, then open
+**`START-HERE.html`** in the `OfflineLibrary` folder it made there. If the download stops, run it again the same
+way: it carries on where it left off.
+
+Smaller drive, another country's maps, or extra content? See
+[Advanced: options and flags](#advanced-options-and-flags).
+
 ---
 
 ## What you get
@@ -110,12 +138,10 @@ Downloading ~85 GB can take several hours.
 
 ---
 
-## 🚀 How to download (pick one)
+## 🚀 Other ways to install
 
-### A) Easiest — double-click `install.bat`
-Download/clone the repo, then **double-click `install.bat`**. It opens a window, asks you
-where to save, and downloads everything. No commands, no PowerShell knowledge needed.
-(If Windows SmartScreen warns, click **More info → Run anyway**.)
+### A) Double-click `install.bat` (Windows)
+The steps are in [Start here](#start-here) at the top of this page.
 
 ### B) In Claude Code (one prompt)
 Install this repo's skill, then say:
@@ -343,7 +369,10 @@ macOS also writes small `._*` files on exFAT drives; CHECK-DRIVE ignores them.
 
 ---
 
-## Options (optional, for small drives)
+## Advanced: options and flags
+
+Add these to the PowerShell or Bash command in [Other ways to install](#-other-ways-to-install).
+None of them are needed for a normal install.
 
 | Flag | Effect |
 |---|---|
