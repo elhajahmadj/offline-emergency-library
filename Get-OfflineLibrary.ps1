@@ -1071,6 +1071,23 @@ elseif($gbad){ ScFail ("AI model(s) not complete or damaged - delete each one an
 elseif($gwarn){ ScWarn ("could not reach Hugging Face to check these AI models (not verified): " + ($gwarn -join ' ')) }
 else { ScPass "$gn AI models (.gguf): size and SHA-256 match Hugging Face" }
 
+# 6. Desktop map viewer (OsmAndMapCreator + portable Java runtime) (#100)
+$mvd = Join-Path $Root 'OsmAnd\MapViewer-Desktop'
+if(-not $SkipMaps){
+  $bat = Join-Path $mvd 'app\OsmAndMapCreator.bat'
+  $jre = Join-Path $mvd 'jre\bin\java.exe'
+  if((Test-Path $bat) -and (Test-Path $jre)){
+    ScPass 'desktop map viewer (OsmAndMapCreator + Java runtime) ready'
+  } else {
+    $mvMiss = @()
+    if(-not (Test-Path $bat)){ $mvMiss += 'app\OsmAndMapCreator.bat' }
+    if(-not (Test-Path $jre)){ $mvMiss += 'jre\bin\java.exe' }
+    ScFail ("desktop map viewer not complete - missing: " + ($mvMiss -join ', ') + ' (re-run the installer)')
+  }
+} elseif(Test-Path $mvd) {
+  ScWarn 'desktop map viewer skipped (-SkipMaps)'
+}
+
 if($scFail -eq 0){
   Log '=== DONE. Open README.html (full index) or START-HERE.html ==='
   Write-Host ''
