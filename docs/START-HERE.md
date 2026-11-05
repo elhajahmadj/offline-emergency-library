@@ -53,23 +53,26 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 ## Launchers on this drive (double-click to run)
 
 Every clickable launcher the installer wrote, and what it does. Which ones are present
-depends on what you installed (a **lite** drive has only the 3B chat; **browser maps** are
-opt-in).
+depends on what you installed (a **lite** drive skips the 8B and GPU chats; **browser maps**
+are opt-in).
 
 | Launcher (Windows / macOS-Linux) | What it does | On a full drive? |
 |---|---|---|
-| `CHAT-3B-light.bat` / `chat-3B-light.sh` | Offline AI chat, small **3B** model — ~4 GB RAM, CPU only; best on a weak PC | always |
-| `CHAT-8B-smart.bat` / `chat-8B-smart.sh` | Offline AI chat, larger **8B** model — ~8 GB RAM, smarter answers | full install |
-| `CHAT-GPU-Qwen7B.bat` / `chat-GPU-Qwen7B.sh` | Offline AI chat on a **GPU** (Qwen 7B, ~6 GB VRAM) for a big speed-up | full install |
-| `WEB-UI.bat` / `web-ui.sh` | Offline AI in your **browser** — starts a local server, then open `http://127.0.0.1:8080` | always |
-| `TRANSLATE.bat` / `translate.sh` | Offline **translator** (Qwen3 4B); see `AI-Offline\HOW-TO-TRANSLATE.html` | with `-Translate` / `--translate` |
-| `OsmAnd\MapViewer-Desktop\VIEW-MAPS-ON-PC.bat` / `.sh` | Open the **desktop map viewer** (OsmAndMapCreator); first run unzips the maps | with maps |
+| `AI-Offline\CHAT-3B-light.bat` / `chat-3B-light.sh` | Offline AI chat, small **3B** model — ~4 GB RAM, CPU only; best on a weak PC | always |
+| `AI-Offline\CHAT-8B-smart.bat` / `chat-8B-smart.sh` | Offline AI chat, larger **8B** model — ~8 GB RAM, smarter answers | full install |
+| `AI-Offline\CHAT-GPU-Qwen7B.bat` / `chat-GPU-Qwen7B.sh` | Offline AI chat on a **GPU** (Qwen 7B, ~6 GB VRAM) for a big speed-up | full install |
+| `AI-Offline\WEB-UI.bat` / `web-ui.sh` | Offline AI in your **browser** — starts a local server, then open `http://127.0.0.1:8080` | always |
+| `AI-Offline\TRANSLATE.bat` / `translate.sh` | Offline **translator** (Qwen3 4B); see `AI-Offline\HOW-TO-TRANSLATE.html` | with `-Translate` / `--translate` |
+| `OsmAnd\MapViewer-Desktop\VIEW-MAPS-ON-PC` | Open the **desktop map viewer** (OsmAndMapCreator); first run unzips the maps. **Needs internet on Windows and macOS** (draws online tiles); offline, use browser maps (US) or a phone | with maps |
 | `Maps-Browser\OPEN-MAPS.bat` / `.sh` | **Street maps in a web browser** (opt-in browser maps); opens `http://localhost:8097` | with `-BrowserMaps` / `--browser-maps` |
 | `CHECK-DRIVE.bat` / `.sh` | **Re-check every file** on the drive for damage and print only the problems | always |
 
-> **Windows vs macOS/Linux:** every launcher ships in both forms — `.bat` on Windows and
-> `.sh` on macOS/Linux (run them from a terminal). macOS also gets `CHECK-DRIVE.command` for
-> a double-click. The GPU chat launcher uses Metal on a Mac and Vulkan on Linux.
+> **Windows vs macOS/Linux:** the chat / Web-UI / translator launchers, `OPEN-MAPS` and
+> `CHECK-DRIVE` ship in **both** forms on every drive — `.bat` on Windows and `.sh` on
+> macOS/Linux (run them from a terminal); macOS also gets `CHECK-DRIVE.command` for a
+> double-click. **`VIEW-MAPS-ON-PC` is the exception:** it's written in just one form,
+> matching the OS that built the drive — `.bat` on a Windows-built drive, `.sh` on a
+> macOS/Linux-built one. The GPU chat launcher uses Metal on a Mac and Vulkan on Linux.
 
 ---
 
