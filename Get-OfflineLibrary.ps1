@@ -184,7 +184,8 @@ if($Only){
   # A finished drive has CHECKSUMS-SHA256.txt (the installer's last step). Never build a new one here.
   if(-not (Test-Path (Join-Path $Root 'CHECKSUMS-SHA256.txt') -PathType Leaf)){
     Write-Host "ERROR: no finished library found at $Root." -ForegroundColor Red
-    Write-Host '  -Only adds to a drive the installer has already filled. Run the installer without -Only first, or fix -Destination.'; exit 1 }
+    Write-Host '  -Only adds to a drive the installer has already filled. Run the installer without -Only first, or fix -Destination.'
+    Write-Host '  A drive made before this installer added CHECKSUMS-SHA256.txt needs one full re-run (without -Only) first.'; exit 1 }
   foreach($p in $Only){
     $need = $PieceNeeds[$p]; if(-not $need){ continue }
     if(-not (Test-Path (Join-Path $Root $need[0]) -PathType Leaf)){
@@ -233,12 +234,14 @@ function Remote-Size($url){
   foreach($l in (curl.exe -sIL -A (UA) $url 2>$null)){ if("$l" -match '^\s*content-length:\s*(\d+)'){ $n = $Matches[1] } }
   if($n -and [int64]$n -gt 0){ $n } else { '' }
 }
-# Fetch-Sized url out bytes: for a file whose name stays the same when the source
+# Fetch-Sized url out bytes [-Soft]: for a file whose name stays the same when the source
 # publishes a new edition (#57). A file of the right size is kept. Otherwise the new
 # edition goes to a part file whose name carries its size, so a re-run never resumes
 # one edition into another, and it replaces the old file only once it is complete.
-# With no size known, this is a plain Fetch.
-function Fetch-Sized($url,$out,$bytes){
+# With no size known, this is a plain Fetch. With -Soft, a size mismatch from the source
+# changing mid-download is not fatal: it throws (caught by the optional viewer's try) so
+# the run continues (#99).
+function Fetch-Sized($url,$out,$bytes,[switch]$Soft){
   if(-not $bytes){ Fetch $url $out; return }
   if((Test-Path $out -PathType Leaf) -and -not (Test-Path "$out.aria2") -and (Get-Item $out).Length -eq [int64]$bytes){ return }
   $part = "$out.$bytes.part"
@@ -250,6 +253,7 @@ function Fetch-Sized($url,$out,$bytes){
   $got = (Get-Item $part).Length
   if($got -ne [int64]$bytes){
     Remove-Item -LiteralPath $part -Force -ErrorAction SilentlyContinue; Remove-Item -LiteralPath "$part.aria2" -Force -ErrorAction SilentlyContinue
+    if($Soft){ throw "$(Split-Path $out -Leaf) changed on the server mid-download ($got bytes, not $bytes); the latest build was replaced. Re-run to try again; any existing copy is kept." }
     Log "ERROR: $(Split-Path $out -Leaf): got $got bytes, expected $bytes. Re-run the installer."
     exit 1
   }
@@ -690,7 +694,7 @@ if(-not $SkipMaps){
     Log 'mapviewer: OsmAndMapCreator'
     # "latest" URLs keep their file name across new editions: fetch by remote size (#57)
     $mcu = 'https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip'
-    Fetch-Sized $mcu $mc (Remote-Size $mcu)
+    Fetch-Sized $mcu $mc (Remote-Size $mcu) -Soft
     # unpack to a new folder; replace the working viewer only if the unpack worked.
     # (PowerShell 5.1 Expand-Archive can "succeed" on a damaged zip with 0 files, so check the file.)
     $appNew = Join-Path $mvd 'app.new'
@@ -713,7 +717,7 @@ if(-not $SkipMaps){
     $jz = Join-Path $mvd 'jre.zip'
     Log 'mapviewer: portable Java runtime'
     $jru = 'https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jre/hotspot/normal/eclipse'
-    Fetch-Sized $jru $jz (Remote-Size $jru)
+    Fetch-Sized $jru $jz (Remote-Size $jru) -Soft
     $tmp = Join-Path $mvd '_jre_tmp'
     if(Test-Path $tmp){ Remove-Item $tmp -Recurse -Force }
     try{ Expand-Archive $jz -DestinationPath $tmp -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }

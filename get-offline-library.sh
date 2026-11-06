@@ -242,7 +242,7 @@ fi
 ROOT="$DEST/OfflineLibrary"
 if [ "$ONLY_SET" = 1 ]; then
   # A finished drive has CHECKSUMS-SHA256.txt (the installer's last step). Never build a new one here.
-  [ -f "$ROOT/CHECKSUMS-SHA256.txt" ] || { echo "ERROR: no finished library found at $ROOT."; echo "  --only adds to a drive the installer has already filled. Run the installer without --only first, or fix -d."; exit 1; }
+  [ -f "$ROOT/CHECKSUMS-SHA256.txt" ] || { echo "ERROR: no finished library found at $ROOT."; echo "  --only adds to a drive the installer has already filled. Run the installer without --only first, or fix -d."; echo "  A drive made before this installer added CHECKSUMS-SHA256.txt needs one full re-run (without --only) first."; exit 1; }
   for p in $ONLY; do
     need="$(piece_needs "$p")"; [ -n "$need" ] || continue
     [ -f "$ROOT/${need%%|*}" ] || { echo "ERROR: '$p' needs ${need#*|}, which is not on this drive (missing: ${need%%|*})."; echo "  Nothing was downloaded. Run the installer without --only to add it first."; exit 1; }
@@ -286,12 +286,14 @@ fetch(){ # url out
 }
 # Size of a remote file in bytes after redirects (empty if the server does not say).
 remote_size(){ curl -sIL -A "${UA:-Mozilla/5.0}" "$1" 2>/dev/null | tr -d '\r' | awk 'tolower($1)=="content-length:"{n=$2} END{if(n>0)print n}'; }
-# fetch_sized url out bytes: for a file whose name stays the same when the source
+# fetch_sized url out bytes [soft]: for a file whose name stays the same when the source
 # publishes a new edition (#57). A file of the right size is kept. Otherwise the new
 # edition goes to a part file whose name carries its size, so a re-run never resumes
 # one edition into another, and it replaces the old file only once it is complete.
-# With no size known, this is a plain fetch.
-fetch_sized(){ # url out bytes
+# With no size known, this is a plain fetch. With a 4th arg (soft), a size mismatch from
+# the source changing mid-download is not fatal: it returns 1 so an optional download (the
+# desktop viewer) can be skipped and the run continues (#99).
+fetch_sized(){ # url out bytes [soft]
   [ -n "$3" ] || { fetch "$1" "$2"; return; }
   if [ -f "$2" ] && [ ! -e "$2.aria2" ] && [ "$(wc -c < "$2" | tr -d ' ')" = "$3" ]; then return 0; fi
   part="$2.$3.part"
@@ -299,7 +301,11 @@ fetch_sized(){ # url out bytes
   [ -f "$2" ] && log "  re-download: $(basename "$2") (size on disk is not the source's $3 bytes)"
   fetch "$1" "$part"
   got="$(wc -c < "$part" | tr -d ' ')"
-  [ "$got" = "$3" ] || { rm -f "$part" "$part.aria2"; log "ERROR: $(basename "$2"): got $got bytes, expected $3. Re-run the installer."; exit 1; }
+  if [ "$got" != "$3" ]; then
+    rm -f "$part" "$part.aria2"
+    if [ -n "${4:-}" ]; then log "  note: $(basename "$2") changed on the server mid-download ($got bytes, not $3 — the latest build was replaced). Keeping any existing copy; re-run to try again."; return 1; fi
+    log "ERROR: $(basename "$2"): got $got bytes, expected $3. Re-run the installer."; exit 1
+  fi
   rm -f "$2.aria2"; mv -f "$part" "$2"
 }
 if [ "$USE_ARIA" = 1 ]; then log "Downloader: aria2 (fast, multi-connection)"; else log "Downloader: curl (tip: install 'aria2' for much faster downloads)"; fi
@@ -738,22 +744,24 @@ if [ "$SKIP_MAPS" = 0 ]; then
   if [ "$HAVE_UNZIP" = 1 ]; then
     # "latest" URLs keep their file name across new editions: fetch by remote size (#57)
     mcu="https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip"
-    fetch_sized "$mcu" "$MVD/OsmAndMapCreator.zip" "$(remote_size "$mcu")"
-    # unpack to a new folder; replace the working viewer only if the unpack worked
-    rm -rf "$MVD/app.new"
-    if unzip -o -q "$MVD/OsmAndMapCreator.zip" -d "$MVD/app.new" && [ -f "$MVD/app.new/OsmAndMapCreator.sh" ]; then
-      rm -rf "$MVD/app"; mv "$MVD/app.new" "$MVD/app"
-    else
-      rm -rf "$MVD/app.new"; log "  mapviewer ERROR: could not unpack OsmAndMapCreator.zip (old viewer kept). Delete it and re-run."
+    if fetch_sized "$mcu" "$MVD/OsmAndMapCreator.zip" "$(remote_size "$mcu")" soft; then
+      # unpack to a new folder; replace the working viewer only if the unpack worked
+      rm -rf "$MVD/app.new"
+      if unzip -o -q "$MVD/OsmAndMapCreator.zip" -d "$MVD/app.new" && [ -f "$MVD/app.new/OsmAndMapCreator.sh" ]; then
+        rm -rf "$MVD/app"; mv "$MVD/app.new" "$MVD/app"
+      else
+        rm -rf "$MVD/app.new"; log "  mapviewer ERROR: could not unpack OsmAndMapCreator.zip (old viewer kept). Delete it and re-run."
+      fi
     fi
     jreurl="https://api.adoptium.net/v3/binary/latest/21/ga/${PLAT}/${JARCH}/jre/hotspot/normal/eclipse"
     [ "$PLAT" = mac ] && jreurl="https://api.adoptium.net/v3/binary/latest/21/ga/mac/${JARCH}/jre/hotspot/normal/eclipse"
-    fetch_sized "$jreurl" "$MVD/jre.tar.gz" "$(remote_size "$jreurl")"
-    rm -rf "$MVD/_jre"; mkdir -p "$MVD/_jre"; tar -xf "$MVD/jre.tar.gz" -C "$MVD/_jre" 2>/dev/null
-    if [ -n "$(find "$MVD/_jre" -name java -type f 2>/dev/null | head -n1)" ]; then
-      rm -rf "$MVD/jre"; mv "$MVD/_jre"/*/ "$MVD/jre" 2>/dev/null
-    else log "  mapviewer ERROR: could not unpack jre.tar.gz (old Java kept). Delete it and re-run."; fi
-    rm -rf "$MVD/_jre"
+    if fetch_sized "$jreurl" "$MVD/jre.tar.gz" "$(remote_size "$jreurl")" soft; then
+      rm -rf "$MVD/_jre"; mkdir -p "$MVD/_jre"; tar -xf "$MVD/jre.tar.gz" -C "$MVD/_jre" 2>/dev/null
+      if [ -n "$(find "$MVD/_jre" -name java -type f 2>/dev/null | head -n1)" ]; then
+        rm -rf "$MVD/jre"; mv "$MVD/_jre"/*/ "$MVD/jre" 2>/dev/null
+      else log "  mapviewer ERROR: could not unpack jre.tar.gz (old Java kept). Delete it and re-run."; fi
+      rm -rf "$MVD/_jre"
+    fi
     cat > "$MVD/VIEW-MAPS-ON-PC.sh" <<'EOS'
 #!/usr/bin/env bash
 DIR="$(cd "$(dirname "$0")" && pwd)"

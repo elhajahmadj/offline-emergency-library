@@ -163,7 +163,7 @@ exit $LASTEXITCODE
   }
   Chk 'unknown piece' @('-Only','bogus','-Destination',$od)
   Chk 'cannot be combined' @('-Only','translate','-Lite','-Destination',$od)
-  Chk 'no finished library' @('-Only','translate','-Destination',$od)
+  Chk 'needs one full re-run' @('-Only','translate','-Destination',$od)
   if(Test-Path $od){ Fail "-Only created $od although there was no finished library there" }
   New-Item -ItemType Directory -Force (Join-Path $od 'OfflineLibrary') | Out-Null
   Set-Content -Path (Join-Path $od 'OfflineLibrary\CHECKSUMS-SHA256.txt') -Value 'x  ./a' -Encoding ascii
