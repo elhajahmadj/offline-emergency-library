@@ -113,6 +113,9 @@ for platform in Darwin-arm64 Darwin-x86_64 Linux-aarch64 Linux-arm64 Linux-x86_6
         echo "FAIL: $platform browser startup/shutdown (exit $rc)"; cat "$run/output"; fail=1
       fi
       grep -qF "$F/engine/$p" "$run/libdir" || { echo "FAIL: $platform selected the wrong engine"; fail=1; }
+      # The library var was unset for this run, so the path must be just LIBDIR with no empty
+      # (current-directory) entry: no leading, trailing or doubled colon (#161).
+      grep -qE '(^|:):|:$' "$run/libdir" && { echo "FAIL: $platform library path has an empty entry: $(cat "$run/libdir")"; fail=1; }
       grep -qxF 'http://127.0.0.1:8087' "$run/opened" || { echo "FAIL: browser URL"; fail=1; }
       for arg in --offline --webui-config-file "$F/translate-webui.json" "$F/models/$TR_MODEL"; do
         grep -qxF -- "$arg" "$run/args" || { echo "FAIL: missing generated server argument $arg"; fail=1; }

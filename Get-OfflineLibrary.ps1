@@ -953,7 +953,7 @@ BIN="$(find "$DIR/engine/$P" -name __TOOL__ -type f 2>/dev/null | head -n1)"
 [ -z "$BIN" ] && { echo "AI engine for this computer not found: $DIR/engine/$P"; exit 1; }
 chmod +x "$BIN" 2>/dev/null
 LIBDIR="$(dirname "$BIN")"
-export LD_LIBRARY_PATH="$LIBDIR:${LD_LIBRARY_PATH:-}" DYLD_LIBRARY_PATH="$LIBDIR:${DYLD_LIBRARY_PATH:-}"
+export LD_LIBRARY_PATH="$LIBDIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" DYLD_LIBRARY_PATH="$LIBDIR${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
 echo "__NOTE__"
 echo "The AI is a helper for finding and summarizing info - for anything safety-critical, follow the bundled manuals."
 exec "$BIN" -m "$DIR/models/__MODEL__" __ARGS__
@@ -1009,7 +1009,7 @@ case "$P" in macos-*) OPENER=open ;; *) OPENER=xdg-open ;; esac
 command -v "$OPENER" >/dev/null || { echo "The browser translator needs $OPENER and a desktop browser. Use translate.sh instead."; exit 1; }
 chmod +x "$BIN" 2>/dev/null
 LIBDIR="$(dirname "$BIN")"
-export LD_LIBRARY_PATH="$LIBDIR:${LD_LIBRARY_PATH:-}" DYLD_LIBRARY_PATH="$LIBDIR:${DYLD_LIBRARY_PATH:-}"
+export LD_LIBRARY_PATH="$LIBDIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" DYLD_LIBRARY_PATH="$LIBDIR${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
 LOG="$(mktemp "${TMPDIR:-/tmp}/oel-translator.XXXXXX")" || exit 1
 PID=
 cleanup(){

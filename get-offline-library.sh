@@ -912,7 +912,7 @@ BIN="$(find "$DIR/engine/$P" -name __TOOL__ -type f 2>/dev/null | head -n1)"
 [ -z "$BIN" ] && { echo "AI engine for this computer not found: $DIR/engine/$P"; exit 1; }
 chmod +x "$BIN" 2>/dev/null
 LIBDIR="$(dirname "$BIN")"
-export LD_LIBRARY_PATH="$LIBDIR:${LD_LIBRARY_PATH:-}" DYLD_LIBRARY_PATH="$LIBDIR:${DYLD_LIBRARY_PATH:-}"
+export LD_LIBRARY_PATH="$LIBDIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" DYLD_LIBRARY_PATH="$LIBDIR${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
 echo "__NOTE__"
 echo "The AI is a helper for finding and summarizing info - for anything safety-critical, follow the bundled manuals."
 exec "$BIN" -m "$DIR/models/__MODEL__" __ARGS__
@@ -973,7 +973,7 @@ case "$P" in macos-*) OPENER=open ;; *) OPENER=xdg-open ;; esac
 command -v "$OPENER" >/dev/null || { echo "The browser translator needs $OPENER and a desktop browser. Use translate.sh instead."; exit 1; }
 chmod +x "$BIN" 2>/dev/null
 LIBDIR="$(dirname "$BIN")"
-export LD_LIBRARY_PATH="$LIBDIR:${LD_LIBRARY_PATH:-}" DYLD_LIBRARY_PATH="$LIBDIR:${DYLD_LIBRARY_PATH:-}"
+export LD_LIBRARY_PATH="$LIBDIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" DYLD_LIBRARY_PATH="$LIBDIR${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
 LOG="$(mktemp "${TMPDIR:-/tmp}/oel-translator.XXXXXX")" || exit 1
 PID=
 cleanup(){
@@ -1253,7 +1253,7 @@ BIN="$(find "$E/$P" -name llama-cli -type f 2>/dev/null | head -n1)"
 if [ -n "$BIN" ]; then
   chmod +x "$BIN" 2>/dev/null
   LIBDIR="$(dirname "$BIN")"
-  out="$(LD_LIBRARY_PATH="$LIBDIR:${LD_LIBRARY_PATH:-}" DYLD_LIBRARY_PATH="$LIBDIR:${DYLD_LIBRARY_PATH:-}" "$BIN" --version 2>&1)"; rc=$?
+  out="$(LD_LIBRARY_PATH="$LIBDIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" DYLD_LIBRARY_PATH="$LIBDIR${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}" "$BIN" --version 2>&1)"; rc=$?
   if [ "$rc" = 0 ]; then
     sc_pass "AI engine starts on this computer ($P): $(printf '%s\n' "$out" | grep -m1 '^version' | cut -c1-80)"
   else
