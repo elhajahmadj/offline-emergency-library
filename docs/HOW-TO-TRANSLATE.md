@@ -33,7 +33,10 @@ No graphics card is needed. Close other programs, especially web browsers, if it
    the same message in the other language. Turn the screen so the other person can read it.
 3. To switch to other languages, type `/clear` and press Enter, then type the two new
    languages. To quit, type `/exit` or press Ctrl+C.
-4. If it stops answering after a long talk, type `/clear` and name the two languages again.
+4. A long talk can fill the launcher's 4096-token conversation limit. In llama.cpp
+   b12110, `--context-shift` does not remove this chat-mode limit. If it reports
+   `exceeds the available context size`, type `/clear` and name the two languages
+   again. This discards the old conversation; repeat any details still needed.
 
 ```text
 > English and Spanish

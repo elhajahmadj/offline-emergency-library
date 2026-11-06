@@ -6,9 +6,9 @@ Portable installers assemble an offline reference library. Read
 ## Current state
 _Last verified: 2026-11-06_
 
-- Status: issue 132 rejects stale success when a Windows downloader cannot start.
+- Status: issue 72 documents the tested chat context limit; no launcher change.
 - Works: aria2 fallback, cancellation and partial-file protection have offline regression checks.
-- In progress: maintainer review of the downloader launch fix.
+- In progress: maintainer review of the context-limit documentation.
 - Known gaps: independent Swahili and Somali language review is still required.
 - Deep docs: `evaluations/issue-73/README.md` describes the interpreter protocol;
   `evaluations/issue-76/README.md` describes the CPU model comparison.

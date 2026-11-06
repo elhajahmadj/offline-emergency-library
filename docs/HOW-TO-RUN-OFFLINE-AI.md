@@ -158,6 +158,25 @@ engine and add `-ngl 99` to push the model onto the GPU:
 
 Current llama-cli builds enter chat mode automatically for these instruction-tuned models.
 
+### Long chats and the context limit
+
+The chat and translation launchers use `-c 4096`. This is a limit on the
+conversation history in tokens (pieces of words), including your messages and
+the model's replies, not a limit of 4096 messages or words.
+
+In llama.cpp **b12110**, a long chat does **not** automatically drop old messages
+to keep going. Once the history fills the context, it stops answering and reports
+`exceeds the available context size (4096 tokens)`. Adding `--context-shift` does
+not fix this chat-mode limit: a Windows CPU test with Llama 3.2 3B still rejected
+a 4535-token request with that flag enabled.
+
+Type `/clear` and press Enter to start a new conversation. This discards the
+previous conversation history, so repeat any details the model still needs.
+For translation, name the two languages again after clearing. Alternatively,
+quit and edit the launcher's `-c 4096` to a larger context before restarting,
+if the model supports it and you have enough RAM. A larger context uses more
+memory and only postpones the limit.
+
 ### What the options mean
 - `-m "...gguf"`  = which model (brain) file to load.
 - `-c 4096`       = how much conversation it can remember at once (context size).
