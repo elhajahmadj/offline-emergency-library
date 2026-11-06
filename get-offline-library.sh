@@ -240,7 +240,7 @@ log "Platform: $PLAT/$CPU   Destination: $ROOT"
 [ -n "$ONLY" ] && log "Adding to the finished library: $ONLY (nothing else is downloaded)"
 for d in AI-Offline AI-Offline/engine AI-Offline/models AI-Offline/DocReader-GPT4All \
          Manuals Manuals/ArmyFieldManuals Manuals/Repair-iFixit Manuals/DIY-Appropedia \
-         Manuals/Radio-Communications Manuals/Food-Preservation/USDA-Complete-Guide-to-Home-Canning-2015 \
+         Manuals/Survival-Preparedness Manuals/Radio-Communications Manuals/Food-Preservation/USDA-Complete-Guide-to-Home-Canning-2015 \
          Medical Medical/WikiMed Medical/Manuals-PDF \
          Wikipedia OsmAnd Kiwix-Reader Phone-Apps Education; do
   [ -z "$ONLY" ] && mkdir -p "$ROOT/$d"
@@ -573,6 +573,16 @@ get_pdf_url "https://nchfp.uga.edu/papers/guide/GUIDE04_HomeCan_rev0715.pdf" "4 
 get_pdf_url "https://nchfp.uga.edu/papers/guide/GUIDE05_HomeCan_rev0715.pdf" "5 Poultry, Red Meats, and Seafoods.pdf" "$CAN"
 get_pdf_url "https://nchfp.uga.edu/papers/guide/GUIDE06_HomeCan_rev0715.pdf" "6 Fermented Foods and Pickled Vegetables.pdf" "$CAN"
 get_pdf_url "https://nchfp.uga.edu/papers/guide/GUIDE07_HomeCan_rev0715.pdf" "7 Jams and Jellies.pdf" "$CAN"
+# Canning, Freezing, Storing Garden Produce (USDA Agriculture Information Bulletin 410; US-government work, public domain).
+get_pdf "canningfreezings00unit" "USDA Canning, Freezing, Storing Garden Produce (AIB 410).pdf" "$ROOT/Manuals/Food-Preservation"
+# Survival & preparedness (public domain):
+SP="$ROOT/Manuals/Survival-Preparedness"
+# FEMA Are You Ready? An In-Depth Guide to Citizen Preparedness (IS-22; US-government work, public domain).
+get_pdf "FemaEmergencyHandbook-areYouReady" "FEMA Are You Ready - Citizen Preparedness.pdf" "$SP"
+# Knots, Splices and Rope Work, A. Hyatt Verrill (1912; public domain, 150+ illustrations).
+get_pdf "knotssplicesrope00verr" "Knots, Splices and Rope Work (Verrill).pdf" "$SP"
+# EPA Emergency Disinfection of Drinking Water (US-government work, public domain): making water safe when the tap is unsafe.
+get_pdf_url "https://19january2021snapshot.epa.gov/sites/static/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf" "EPA Emergency Disinfection of Drinking Water.pdf" "$SP"
 fi
 
 # ================================================================ 7. Wikipedia + Maps
