@@ -14,7 +14,6 @@ try {
   $payload = Join-Path $tmp 'payload.txt'
   [IO.File]::WriteAllText($payload, 'offline library download fixture')
   $url = ([uri]$payload).AbsoluteUri
-  $realCurl = (Get-Command curl.exe -CommandType Application).Source
   # The executable fixture implements only aria's output placement and exit outcomes.
   $stub = Join-Path $tmp 'stub.exe'
   Add-Type -OutputAssembly $stub -OutputType ConsoleApplication -TypeDefinition @'
@@ -62,7 +61,9 @@ public class AriaFixture {
     if($case.Mode -eq 'curl'){
       [IO.File]::WriteAllText((Join-Path $dir 'curl.exe'), 'MZ invalid executable')
       [IO.File]::WriteAllText($out, 'old file must not imply success')
-    } else { Copy-Item $realCurl (Join-Path $dir 'curl.exe') }
+    }
+    # Use curl from its installed PATH location; copying only the exe can separate
+    # a runner's curl from the DLLs it needs. Only the blocked-curl case shadows it.
     $runner = Join-Path $dir 'run.ps1'
     $body = @"
 `$ErrorActionPreference = 'Continue'
