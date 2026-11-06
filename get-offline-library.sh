@@ -427,7 +427,7 @@ else
     "GPT4All (offline document Q&A) is NOT included in a --lite install." \
     "" \
     "This lite drive includes the source-citing manual reader:" \
-    "  AI-Offline/Manual-QA/start-docs.sh" \
+    "  AI-Offline/Manual-QA/start-docs.command (macOS) or start-docs.sh (Linux)" \
     "It uses the 3B model and downloaded source text. Check the original PDF before acting." \
     "" \
     "To add GPT4All and its source-citing LocalDocs workflow:" \

@@ -17,7 +17,7 @@ Every install, including `--lite` / `-Lite`, now has a reader that is ready on t
 drive. It needs no collection setup and no internet:
 
 1. **Windows:** open `AI-Offline\Manual-QA\START-DOCS.bat`.
-   **macOS / Linux:** run `AI-Offline/Manual-QA/start-docs.sh` in a terminal.
+   **macOS:** double-click `AI-Offline/Manual-QA/start-docs.command`. **Linux:** run `AI-Offline/Manual-QA/start-docs.sh` in a terminal.
 2. When it says it is ready, open
    **http://127.0.0.1:8081/AI-Offline/Manual-QA/** in a browser on the same computer.
 3. Ask a question, for example *"How do I control bleeding?"*. The page shows the

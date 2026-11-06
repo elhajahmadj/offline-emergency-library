@@ -38,7 +38,8 @@ try {
     }
     const text = await localText(file);
     if (!text.trim()) throw new Error(`Empty source text: ${pdf}`);
-    for (const [pageIndex, pageText] of text.split("\f").entries()) {
+    // A leading "#SOURCE" line carries the license; it is not manual text and must not shift pages.
+    for (const [pageIndex, pageText] of text.replace(/^(#SOURCE [^\n]*\n)+/, "").split("\f").entries()) {
       // Overlap keeps sentences on a chunk boundary available to retrieval.
       for (let start = 0; start < pageText.length; start += 900) {
         // OCR text carries hard line breaks; collapse whitespace so passages read as prose.

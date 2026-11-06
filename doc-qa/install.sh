@@ -13,7 +13,7 @@ install_manual_qa(){
   out="$root/AI-Offline/Manual-QA"
   base="https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/doc-qa"
   mkdir -p "$out/text"
-  for name in index.html reader.mjs START-DOCS.bat start-docs.sh sources.tsv; do
+  for name in index.html reader.css reader.mjs START-DOCS.bat start-docs.sh sources.tsv; do
     target="$out/$name"
     if [ -f "$src/doc-qa/$name" ]; then cp "$src/doc-qa/$name" "$target"
     else
@@ -56,7 +56,8 @@ install_manual_qa(){
     if [ "$actual" != "$texthash" ]; then printf '%s\n' "$pdf - source text download failed or changed" >> "$out/missing.txt"; continue; fi
     printf '%s\ttext/%s.txt\t%s\n' "$pdf" "$texthash" "$mode" >> "$out/ready.tsv"
   done < <(tr -d '\r' < "$out/sources.tsv")
-  chmod +x "$out/start-docs.sh"
+  cp "$out/start-docs.sh" "$out/start-docs.command"   # macOS double-click
+  chmod +x "$out/start-docs.sh" "$out/start-docs.command"
   if [ -s "$out/missing.txt" ]; then
     while IFS= read -r line; do log "doc-QA WARN: $line"; done < "$out/missing.txt"
     return 1

@@ -14,7 +14,7 @@ function Install-ManualQA($Root, $SourceDir) {
   $out = Join-Path $Root 'AI-Offline\Manual-QA'
   New-Item -ItemType Directory -Force (Join-Path $out 'text') | Out-Null
   $base = 'https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/doc-qa'
-  foreach($name in 'index.html','reader.mjs','START-DOCS.bat','start-docs.sh','sources.tsv'){
+  foreach($name in 'index.html','reader.css','reader.mjs','START-DOCS.bat','start-docs.sh','sources.tsv'){
     $local = Join-Path $SourceDir "doc-qa\$name"
     $target = Join-Path $out $name
     if(Test-Path -LiteralPath $local){ Copy-Item -LiteralPath $local -Destination $target -Force }
@@ -22,6 +22,7 @@ function Install-ManualQA($Root, $SourceDir) {
       if(-not (DocQa-Download "$base/$name" $target)){ throw "Document reader asset unavailable: $name" }
     }
   }
+  Copy-Item -LiteralPath (Join-Path $out 'start-docs.sh') -Destination (Join-Path $out 'start-docs.command') -Force   # macOS double-click
   $bat = Join-Path $out 'START-DOCS.bat'
   [IO.File]::WriteAllText($bat, ([IO.File]::ReadAllText($bat) -replace "`r", '' -replace "`n", "`r`n"), [Text.Encoding]::ASCII)
   $ready = @(); $missing = @()

@@ -47,7 +47,9 @@ selects the largest PDF, while Bash selects the first matching PDF. If those
 choices differ, fix that selection before registering the source.
 
 Direct medical sidecars are extracted from exact official PDFs, with form-feed
-separators preserving PDF page numbers. To regenerate, place the reviewed PDFs
+separators preserving PDF page numbers. Each starts with one `#SOURCE` line giving
+the title and license, so the terms travel with the file; the reader strips that
+line before splitting pages. To regenerate, place the reviewed PDFs
 in a temporary folder as `usuhs.pdf`, `who-complications.pdf`, and
 `who-maternal.pdf`, then run:
 

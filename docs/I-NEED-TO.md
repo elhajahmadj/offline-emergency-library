@@ -84,7 +84,7 @@ explains health problems and tests in plain language (English and Spanish), in a
 
 **Want to search across everything at once?** **Ask the manuals** searches the downloaded
 manual text, shows the passages behind an answer, and links each one to the PDF. It is
-already set up: run `AI-Offline\Manual-QA\START-DOCS.bat` (`start-docs.sh` on macOS/Linux),
+already set up: run `AI-Offline\Manual-QA\START-DOCS.bat` (`start-docs.command` on macOS, `start-docs.sh` on Linux),
 then open `http://127.0.0.1:8081/AI-Offline/Manual-QA/`. GPT4All LocalDocs can also index
 folders of your own documents. It is a helper, not an authority: for anything safety-critical,
 open the manual it points to and follow that. See
