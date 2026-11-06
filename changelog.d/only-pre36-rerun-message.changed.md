@@ -3,4 +3,4 @@
   `CHECKSUMS-SHA256.txt`, but now also says that a drive made before the installer started
   writing that file needs one full re-run (without `--only`) first — the real reason an older,
   otherwise-complete drive is rejected. Both installers. Resolves #126.
-  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #PENDING._
+  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #172._

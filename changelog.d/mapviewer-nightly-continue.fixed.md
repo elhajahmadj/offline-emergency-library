@@ -4,4 +4,4 @@
   "Re-run the installer". These two downloads are optional (maps-on-PC), so they are now soft:
   the mismatch is logged and the run continues with any existing viewer kept, the same way an
   unpack failure already does. Required downloads still stop hard. Both installers. Resolves #99.
-  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #PENDING._
+  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #172._
