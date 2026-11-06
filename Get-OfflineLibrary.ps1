@@ -143,8 +143,10 @@ $DlTty = -not [Console]::IsOutputRedirected
 function Fetch($url,$out){
   if($UseAria){
     $ariaProg = if($DlTty){ '--summary-interval=1' } else { '--summary-interval=0' }
+    # A native program that cannot start leaves LASTEXITCODE unchanged (#132).
+    $global:LASTEXITCODE = $null
     aria2c -c -x16 -s16 -k1M --max-tries=10 --retry-wait=5 --console-log-level=warn $ariaProg --follow-metalink=mem --allow-overwrite=false --auto-file-renaming=false -d (Split-Path $out -Parent) -o (Split-Path $out -Leaf) $url
-    if($LASTEXITCODE -eq 0){ return }
+    if($LASTEXITCODE -eq 0 -and (Test-Path $out -PathType Leaf)){ return }
     # Stop, do not fall back to curl, on Ctrl+C (aria2 exit 7) or when aria2 left a
     # part-done file: it is preallocated with gaps, so 'curl -C -' would keep a corrupt
     # copy. aria2 resumes it from its .aria2 control file on the next run.
@@ -155,6 +157,7 @@ function Fetch($url,$out){
     Log '  (aria2 failed, falling back to curl)'
   }
   $curlProg = if($DlTty){ '-#' } else { '-sS' }
+  $global:LASTEXITCODE = $null
   curl.exe -fL -C - --retry 10 --retry-delay 5 --retry-all-errors $curlProg -o $out $url
   if($LASTEXITCODE -ne 0 -or -not (Test-Path $out -PathType Leaf) -or (Get-Item $out).Length -eq 0){
     Log "ERROR: download failed: $url -> $out. Re-run the installer to resume."
@@ -227,8 +230,8 @@ if((-not $SkipMaps) -or $BmOnly){
   if(-not $SkipMaps){ $est["maps for '$Region' + desktop viewer"] = [math]::Round($mapGB + 0.5, 1) }
   if($BrowserMaps){
     $rt = @(($Region -split '[,; ]') | Where-Object { $_ } | ForEach-Object { (Resolve-RegionToken $_.Trim()).ToLower() })
-    # all of the US ~15.4 GB; single states roughly match their OsmAnd size; always + the world map
-    $bm = if(@($rt | Where-Object { $_ -in 'us','world','northamerica' }).Count){ 15.4 } elseif(@($rt | Where-Object { $_.StartsWith('us_') }).Count){ $mapGB } else { 0 }
+    # all of the US ~15.4 GB; states ~0.4 of their OsmAnd size (#102); always + the world map
+    $bm = if(@($rt | Where-Object { $_ -in 'us','world','northamerica' }).Count){ 15.4 } elseif(@($rt | Where-Object { $_.StartsWith('us_') }).Count){ 0.4 * $mapGB } else { 0 }
     $est['browser maps'] = [math]::Round($bm + 0.2, 1)
   }
 }
@@ -240,17 +243,18 @@ $estGB = [math]::Round(($est.Values | Measure-Object -Sum).Sum, 1)
 try {
   $drive = (Get-Item $Root).PSDrive
   $freeGB = [math]::Round((Get-PSDrive $drive.Name).Free/1GB,1)
-  $haveGB = [math]::Round(((Get-ChildItem -LiteralPath $Root -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum)/1GB,1)
-  if($Only){ $haveGB = 0 }   # the rest of the drive is not part of this estimate
-  $needGB = [math]::Round([math]::Max(0.0, $estGB - $haveGB), 1)
+  # Folder bytes do not prove this selection's downloads are complete: they can be
+  # unrelated files, old editions, unpacked maps or preallocated partial files (#102).
+  $needGB = $estGB
   function Gb($x){ ([double]$x).ToString('0.0', [cultureinfo]::InvariantCulture) }   # same text on every locale
   Log "Destination: $Root   (free space: $(Gb $freeGB) GB)"
   Log "Space estimate for this selection: about $(Gb $estGB) GB"
   foreach($k in $est.Keys){ Log ("  {0,6} GB  {1}" -f (Gb $est[$k]), $k) }
   if($Kolibri){ Log '     (Kolibri content is not counted: you pick it in the app)' }
-  Log "Already in the folder: $(Gb $haveGB) GB. Still to download: about $(Gb $needGB) GB. Free: $(Gb $freeGB) GB."
+  Log "Conservative space budget: $(Gb $needGB) GB. Free: $(Gb $freeGB) GB."
+  Log "Existing files are not subtracted; a re-run may need less space."
   if($needGB -gt $freeGB){
-    Log "WARNING: NOT ENOUGH SPACE. This needs about $(Gb $needGB) GB more, but only $(Gb $freeGB) GB is free."
+    Log "WARNING: NOT ENOUGH SPACE for the full selection. Budget about $(Gb $needGB) GB, but only $(Gb $freeGB) GB is free."
     Log '  Use a bigger drive, free up space, or choose less: -Lite, -SkipWikipedia (49 GB), -SkipModels (9 GB),'
     Log '  a smaller -Region, -SkipMaps, or leave off an opt-in. Press Ctrl+C now to stop and re-run.'
   }
@@ -481,7 +485,8 @@ if($MedlinePlus){
     $sd = if($PSScriptRoot){$PSScriptRoot}else{(Get-Location).Path}
     $lp = Join-Path $sd 'medlineplus\MedlinePlus.html'; $tpl = Join-Path $md '_MedlinePlus.html'
     if(Test-Path $lp){ Copy-Item $lp $tpl -Force }
-    else { curl.exe -fLsS "$RepoRaw/medlineplus/MedlinePlus.html" -A (UA) -o $tpl
+    else { $global:LASTEXITCODE = $null
+      curl.exe -fLsS "$RepoRaw/medlineplus/MedlinePlus.html" -A (UA) -o $tpl
       if($LASTEXITCODE -ne 0){ Log 'ERROR: download failed: medlineplus/MedlinePlus.html'; exit 1 } }
     $page = [System.IO.File]::ReadAllText($tpl, [System.Text.Encoding]::UTF8)
     $mark = '<script type="text/xml" id="data"></script>'
@@ -530,7 +535,7 @@ $pdfs = @(
  # Survival & preparedness (public domain)
  @{id='FemaEmergencyHandbook-areYouReady';                   n='FEMA Are You Ready - Citizen Preparedness.pdf';    d='Manuals\Survival-Preparedness'}
  @{id='knotssplicesrope00verr';                              n='Knots, Splices and Rope Work (Verrill).pdf';       d='Manuals\Survival-Preparedness'}
- @{u='https://19january2021snapshot.epa.gov/sites/static/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf'; n='EPA Emergency Disinfection of Drinking Water.pdf'; d='Manuals\Survival-Preparedness'}
+ @{u='https://www.epa.gov/sites/default/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf'; n='EPA Emergency Disinfection of Drinking Water.pdf'; d='Manuals\Survival-Preparedness'}
 )
 foreach($p in $pdfs){
   if($Only){ Log 'pdf: manuals not touched (-Only)'; break }
@@ -630,7 +635,7 @@ if(-not $SkipMaps){
 
   # helper: unzip the downloaded .obf.zip map files into an \obf folder the viewer can read
   $prep = @'
-$ErrorActionPreference='Continue'
+$ErrorActionPreference='Stop'
 $maps = Split-Path -Parent $PSScriptRoot      # ...\OsmAnd
 $obf  = Join-Path $maps 'obf'
 New-Item -ItemType Directory -Force $obf | Out-Null
@@ -639,9 +644,21 @@ $i=0
 foreach($z in $zips){
   $i++
   $target = Join-Path $obf ($z.Name -replace '\.zip$','')
-  if(-not (Test-Path $target)){
+  $stamp = "$target.sha256"
+  $fingerprint = (Get-FileHash -LiteralPath $z.FullName -Algorithm SHA256).Hash
+  if(-not (Test-Path -LiteralPath $target -PathType Leaf) -or
+     -not (Test-Path -LiteralPath $stamp -PathType Leaf) -or
+     (Get-Content -LiteralPath $stamp -TotalCount 1) -ne $fingerprint){
     Write-Host ("[{0}/{1}] unzipping {2}" -f $i,$zips.Count,$z.Name)
-    try{ Expand-Archive $z.FullName -DestinationPath $obf -Force }catch{ Write-Host "  failed: $($_.Exception.Message)" }
+    $stage = Join-Path $obf ('.prepare-' + [guid]::NewGuid().ToString('N'))
+    try{
+      New-Item -ItemType Directory $stage | Out-Null
+      Expand-Archive -LiteralPath $z.FullName -DestinationPath $stage -Force
+      $unpacked = Join-Path $stage (Split-Path -Leaf $target)
+      if(-not (Test-Path -LiteralPath $unpacked -PathType Leaf)){ throw 'Archive does not contain the expected map.' }
+      Move-Item -LiteralPath $unpacked -Destination $target -Force
+      Set-Content -LiteralPath $stamp -Value $fingerprint -Encoding ascii
+    }finally{ Remove-Item -LiteralPath $stage -Recurse -Force -ErrorAction SilentlyContinue }
   }
 }
 Write-Host "Maps ready in: $obf"
@@ -656,6 +673,7 @@ set "JAVA_HOME=%~dp0jre"
 set "PATH=%~dp0jre\bin;%PATH%"
 echo Preparing map files for desktop viewing (first run can take several minutes)...
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0prepare-maps.ps1"
+if errorlevel 1 exit /b 1
 echo.
 echo Launching the desktop map viewer...
 echo In the app, your maps are the .obf files in the  OsmAnd\obf  folder.
@@ -889,6 +907,7 @@ function PlaceDoc($srcName,$destPath,$title){
     $lp = Join-Path $localDocs ($base + $ext)
     if(Test-Path $lp){ Copy-Item $lp $dest -Force }
     else {
+      $global:LASTEXITCODE = $null
       curl.exe -fLsS "$RepoRaw/docs/$base$ext" -A (UA) -o $dest
       if($LASTEXITCODE -ne 0){ Log "ERROR: documentation download failed: $base$ext"; exit 1 }
     }
@@ -922,6 +941,7 @@ foreach($f in 'CHECK-DRIVE.sh','check-drive.ps1','CHECK-DRIVE.bat'){
   $lp = Join-Path (Join-Path $scriptDir 'drive') $f
   if(Test-Path $lp){ Copy-Item $lp $dest -Force }
   else {
+    $global:LASTEXITCODE = $null
     curl.exe -fLsS "$RepoRaw/drive/$f" -A (UA) -o $dest
     if($LASTEXITCODE -ne 0){ Log "ERROR: download failed: drive/$f"; exit 1 }
   }
@@ -1084,6 +1104,27 @@ if(-not $gn){ ScWarn 'no AI models (.gguf) found' }
 elseif($gbad){ ScFail ("AI model(s) not complete or damaged - delete each one and re-run the installer:`n        " + ($gbad -join "`n        ")) }
 elseif($gwarn){ ScWarn ("could not reach Hugging Face to check these AI models (not verified): " + ($gwarn -join ' ')) }
 else { ScPass "$gn AI models (.gguf): size and SHA-256 match Hugging Face" }
+
+# 6. Desktop map viewer (OsmAndMapCreator + portable Java runtime) (#100)
+$mvd = Join-Path $Root 'OsmAnd\MapViewer-Desktop'
+if(-not $SkipMaps){
+  $bat = Join-Path $mvd 'app\OsmAndMapCreator.bat'
+  $jre = Join-Path $mvd 'jre\bin\java.exe'
+  if((Test-Path $bat) -and (Test-Path $jre)){
+    ScPass 'desktop map viewer (OsmAndMapCreator + Java runtime) ready'
+  } else {
+    $mvMiss = @()
+    if(-not (Test-Path $bat)){ $mvMiss += 'app\OsmAndMapCreator.bat' }
+    if(-not (Test-Path $jre)){ $mvMiss += 'jre\bin\java.exe' }
+    ScFail ("desktop map viewer not complete - missing: " + ($mvMiss -join ', ') + ' - delete OsmAnd\MapViewer-Desktop\OsmAndMapCreator.zip (or the Java archive) and re-run the installer')
+  }
+} elseif(Test-Path $mvd) {
+  if($Only){
+    ScWarn 'desktop map viewer not part of this run'
+  } else {
+    ScWarn 'desktop map viewer skipped (-SkipMaps)'
+  }
+}
 
 if($scFail -eq 0){
   Log '=== DONE. Open README.html (full index) or START-HERE.html ==='

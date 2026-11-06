@@ -28,7 +28,7 @@ urls=(
   "https://archive.org/metadata/FemaEmergencyHandbook-areYouReady"
   "https://archive.org/metadata/knotssplicesrope00verr"
   "https://archive.org/metadata/canningfreezings00unit"
-  "https://19january2021snapshot.epa.gov/sites/static/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf"
+  "https://www.epa.gov/sites/default/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf"
   "https://iris.who.int/server/api/core/bitstreams/3bda1306-da5d-487d-b2ad-aff995112a7a/content"
   "https://iris.who.int/server/api/core/bitstreams/12fdb499-733d-4614-aafc-88dcbbb3c829/content"
   "https://api.github.com/repos/Crosstalk-Solutions/project-nomad-maps/contents/pmtiles"

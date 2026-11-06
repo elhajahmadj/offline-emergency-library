@@ -17,10 +17,14 @@ hardware.
   `Manuals/Survival-Preparedness/` and `Manuals/Food-Preservation/`: **FEMA *Are You Ready? —
   An In-Depth Guide to Citizen Preparedness*** (IS-22, US-government work), **EPA *Emergency
   Disinfection of Drinking Water*** (US-government work), USDA ***Canning, Freezing, Storing
-  Garden Produce*** (Agriculture Information Bulletin 410, US-government work), and ***Knots,
+  Garden Produce*** (Agriculture Information Bulletin 410, 1977, US-government work), and ***Knots,
   Splices and Rope Work*** (A. Hyatt Verrill, 1912, public domain, 150+ illustrations). All are
   public domain, so they restore the survival/water/food/knots coverage dropped with the zimgit
   ZIMs (#122) without the licensing problem. Follow-up sources are tracked in #78/#130.
+- **Interpreter temperature comparison.** `evaluations/issue-73/` records paired
+  interpreter replies and chrF++ scores at 0 and 0.2, including repetition and
+  mistranslation failures. The existing 0.2 default is retained in both installers.
+  Resolves #73. _[@EnragedAntelope](https://github.com/EnragedAntelope)._
 - **macOS double-click starter: `install.command`.** The Mac twin of `install.bat`: double-click
   it in Finder and it runs `get-offline-library.sh` from the same folder, or downloads it from
   GitHub first when the file is on its own. It waits for Return before it exits. README
@@ -231,6 +235,12 @@ hardware.
   page is not updated. Resolves #91. _[@boostedchaos](https://github.com/boostedchaos) - PR #97._
 
 ### Fixed
+- **Browser-only additions preserve OsmAnd region metadata.** Bash now uses temporary
+  files for the region size lookup when adding `--only browser-maps`, keeping an
+  existing drive's OsmAnd index and file list unchanged. Normal map installs still
+  retain those files. Resolves #125.
+  _[@EnragedAntelope](https://github.com/EnragedAntelope)._
+- Self-check: verify the desktop map viewer program and Java runtime are present (#100) (@imsurya26)
 - **Windows self-check no longer passes the AI engine when Windows blocks it.** When Smart App
   Control (or another app-control policy) blocks `llama-cli.exe`, PowerShell throws and keeps the
   old exit code, so the check read 0 and printed "PASS AI engine starts" with no version. It now
@@ -241,6 +251,27 @@ hardware.
   as broken ZIMs and PDFs ("FINISHED WITH PROBLEMS: 2 self-check(s) failed"), and the README
   index listed them. Both now leave out `._*`, as `CHECKSUMS-SHA256.txt` already did. Resolves
   #123. _[@boostedchaos](https://github.com/boostedchaos)._
+- **Windows downloader launch failures.** A blocked or broken aria2 now falls back
+  to curl instead of treating an earlier program's exit code as download success.
+  Checked curl downloads also reject a failure to start, including when an old
+  destination file exists. Cancellation and aria2 partial-file protection remain
+  intact. Resolves #132. _[@EnragedAntelope](https://github.com/EnragedAntelope)._
+- **Desktop maps refresh after a map ZIP changes.** Both installers' generated map
+  helpers remember the archive fingerprint after successful extraction. Existing
+  maps without a fingerprint are refreshed once; unchanged maps are left alone.
+  Extraction is staged so a damaged replacement keeps the previous map.
+  Resolves #98. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #133._
+- **Explain the long-chat limit.** The AI and translation guides now describe
+  the 4096-token context limit, the loss of history when clearing, and how to
+  resume. A Windows CPU test of llama.cpp b12110 still rejected an oversized
+  chat with `--context-shift`, so launcher flags stay unchanged. Resolves #72.
+  _[@EnragedAntelope](https://github.com/EnragedAntelope)._
+- **Safer space estimates.** State browser maps use roughly 0.4 of the OsmAnd
+  download size, plus the world map. Space warnings now use a conservative budget
+  for the full selection instead of subtracting every byte in the destination:
+  unrelated files, unpacked maps and partial downloads cannot hide a warning.
+  Re-runs may need less space, as the installer now explains. Resolves #102.
+  _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #135._
 - **Desktop viewer needs internet on Windows and macOS: the docs and launchers now say so.** The bundled OsmAndMapCreator has only the Linux offline renderer, so on Windows and macOS it draws online tiles from `tile.osmand.net` and shows a blank map with no internet (reproduced on Windows 11 and macOS). HOW-TO-VIEW-MAPS, the README, START-HERE, POWER-AND-DEVICES and both viewer launchers no longer call it an offline viewer; they point to browser maps (US) or an Android phone. `VIEW-MAPS-ON-PC.sh` also launched a second viewer when the first exited non-zero (`sh ... || bash ...`); it now launches once. Addresses #15. _Tested by [@boostedchaos](https://github.com/boostedchaos) - issue #15._
 - **The upstream link check no longer fails on one-off errors.** `check-links.sh` retries a
   failed URL up to 3 times (5xx, timeouts, resets) before counting it as dead, and sends the

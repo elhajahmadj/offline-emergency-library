@@ -15,7 +15,7 @@
 <li><strong>Type the two languages first</strong>, for example <code>English and Spanish</code>, and press Enter. It answers <code>Ready</code>.</li>
 <li><strong>Take turns.</strong> Each person types in their own language and presses Enter. The answer is the same message in the other language. Turn the screen so the other person can read it.</li>
 <li>To switch to other languages, type <code>/clear</code> and press Enter, then type the two new languages. To quit, type <code>/exit</code> or press Ctrl+C.</li>
-<li>If it stops answering after a long talk, type <code>/clear</code> and name the two languages again.</li>
+<li>A long talk can fill the launcher's 4096-token conversation limit. In llama.cpp b12110, <code>--context-shift</code> does not remove this chat-mode limit. If it reports <code>exceeds the available context size</code>, type <code>/clear</code> and name the two languages again. This discards the old conversation; repeat any details still needed.</li>
 </ol>
 <pre><code>&gt; English and Spanish
 Ready

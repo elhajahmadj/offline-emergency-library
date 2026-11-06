@@ -249,24 +249,35 @@ done
 # ---- OsmAnd map files for --region, picked now so the space estimate below knows their size ----
 MAP_MB=0
 if [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; then   # --only browser-maps needs the sizes for its estimate, not the maps
-  mkdir -p "$ROOT/OsmAnd"
-  curl -sL "https://download.osmand.net/get_indexes" -o "$ROOT/OsmAnd/_index.xml"
-  allnames="$(grep -oE 'name="[^"]+\.obf\.zip"' "$ROOT/OsmAnd/_index.xml" | sed -E 's/name="([^"]+)"/\1/' | grep -viE 'wiki|srtm|depth|road|hillshade|heightmap')"
-  : > "$ROOT/OsmAnd/_filelist.txt"
+  MAP_LOOKUP="$ROOT/OsmAnd"
+  if [ "$BM_ONLY" = 1 ]; then
+    # The estimate must not replace another region's OsmAnd metadata (#125).
+    MAP_LOOKUP="$(mktemp -d)" || exit 1
+    trap 'rm -rf "$MAP_LOOKUP"' EXIT
+  else
+    mkdir -p "$MAP_LOOKUP"
+  fi
+  curl -sL "https://download.osmand.net/get_indexes" -o "$MAP_LOOKUP/_index.xml"
+  allnames="$(grep -oE 'name="[^"]+\.obf\.zip"' "$MAP_LOOKUP/_index.xml" | sed -E 's/name="([^"]+)"/\1/' | grep -viE 'wiki|srtm|depth|road|hillshade|heightmap')"
+  : > "$MAP_LOOKUP/_filelist.txt"
   # '%s\n': without a final newline, read skips the last name (default "US" got 0 maps)
   printf '%s\n' "$REGION" | tr ',;' '  ' | tr ' ' '\n' | while IFS= read -r tok; do
     [ -z "$tok" ] && continue
     tok="$(alias_region "$tok")"
     tl="$(printf '%s' "$tok" | tr 'A-Z' 'a-z')"
-    if [ "$tl" = world ]; then printf '%s\n' "$allnames" >> "$ROOT/OsmAnd/_filelist.txt"
-    elif echo "$CONTINENTS" | grep -qw "$tl"; then printf '%s\n' "$allnames" | grep -iE "_${tl}_" >> "$ROOT/OsmAnd/_filelist.txt"
-    else printf '%s\n' "$allnames" | grep -iE "^${tok}_" >> "$ROOT/OsmAnd/_filelist.txt"
+    if [ "$tl" = world ]; then printf '%s\n' "$allnames" >> "$MAP_LOOKUP/_filelist.txt"
+    elif echo "$CONTINENTS" | grep -qw "$tl"; then printf '%s\n' "$allnames" | grep -iE "_${tl}_" >> "$MAP_LOOKUP/_filelist.txt"
+    else printf '%s\n' "$allnames" | grep -iE "^${tok}_" >> "$MAP_LOOKUP/_filelist.txt"
     fi
   done
-  sort -u "$ROOT/OsmAnd/_filelist.txt" -o "$ROOT/OsmAnd/_filelist.txt"
+  sort -u "$MAP_LOOKUP/_filelist.txt" -o "$MAP_LOOKUP/_filelist.txt"
   # sum containerSize (bytes) of the picked files; one <region .../> per line in the index
-  MAP_MB="$(sed -nE 's/.*containerSize="([0-9]+)".* name="([^"]+\.obf\.zip)".*/\2 \1/p' "$ROOT/OsmAnd/_index.xml" |
-    awk 'NR==FNR{w[$1]=1; next} ($1 in w){s+=$2} END{printf "%d", s/1048576}' "$ROOT/OsmAnd/_filelist.txt" -)"
+  MAP_MB="$(sed -nE 's/.*containerSize="([0-9]+)".* name="([^"]+\.obf\.zip)".*/\2 \1/p' "$MAP_LOOKUP/_index.xml" |
+    awk 'NR==FNR{w[$1]=1; next} ($1 in w){s+=$2} END{printf "%d", s/1048576}' "$MAP_LOOKUP/_filelist.txt" -)"
+  if [ "$BM_ONLY" = 1 ]; then
+    rm -rf "$MAP_LOOKUP"
+    trap - EXIT
+  fi
 fi
 
 # ---- space estimate for the chosen flags (#68) ----
@@ -280,13 +291,13 @@ EST=""; est(){ EST="$EST$1|$2
 [ "$SKIP_WIKI" = 0 ] && est 49.1 "Wikipedia"
 [ "$SKIP_MAPS" = 0 ] && est "$(awk -v m="$MAP_MB" 'BEGIN{printf "%.1f", m/1024 + 0.5}')" "maps for '$REGION' + desktop viewer"
 if [ "$BROWSER_MAPS" = 1 ] && { [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; }; then
-  # all of the US ~15.4 GB; single states roughly match their OsmAnd size; always + the world map
+  # all of the US ~15.4 GB; states ~0.4 of their OsmAnd size (#102); always + the world map
   bm=0
   for tok in $(printf '%s' "$REGION" | tr ',;' '  '); do
     tl="$(alias_region "$tok" | tr 'A-Z' 'a-z')"
     case "$tl" in us|world|northamerica) bm=all ;; us_*) [ "$bm" = all ] || bm=state ;; esac
   done
-  case "$bm" in all) bmgb=15.4 ;; state) bmgb="$(awk -v m="$MAP_MB" 'BEGIN{print m/1024}')" ;; *) bmgb=0 ;; esac
+  case "$bm" in all) bmgb=15.4 ;; state) bmgb="$(awk -v m="$MAP_MB" 'BEGIN{print 0.4*m/1024}')" ;; *) bmgb=0 ;; esac
   est "$(awk -v b="$bmgb" 'BEGIN{printf "%.1f", b + 0.2}')" "browser maps"
 fi
 [ "$EDU" = 1 ] && est 168 "Khan Academy"
@@ -295,16 +306,17 @@ fi
 [ "$MEDLINEPLUS" = 1 ] && est 0.1 "MedlinePlus health topics"
 EST_GB="$(printf '%s' "$EST" | awk -F'|' '{s+=$1} END{printf "%.1f", s}')"
 FREE_GB="$(df -Pk "$ROOT" 2>/dev/null | awk 'NR==2{printf "%.1f", $4/1048576}')"
-HAVE_GB="$(du -sk "$ROOT" 2>/dev/null | awk '{printf "%.1f", $1/1048576}')"
-[ -n "$ONLY" ] && HAVE_GB=0   # the rest of the drive is not part of this estimate
-NEED_GB="$(awk -v e="$EST_GB" -v h="${HAVE_GB:-0}" 'BEGIN{n=e-h; if(n<0)n=0; printf "%.1f", n}')"
+# Folder bytes do not prove this selection's downloads are complete: they can be
+# unrelated files, old editions, unpacked maps or preallocated partial files (#102).
+NEED_GB="$EST_GB"
 log "Space estimate for this selection: about $EST_GB GB"
 printf '%s' "$EST" | while IFS='|' read -r g n; do log "$(awk -v g="$g" -v n="$n" 'BEGIN{printf "  %6.1f GB  %s", g, n}')"; done
 [ "$KOLIBRI" = 1 ] && log "     (Kolibri content is not counted: you pick it in the app)"
 if [ -n "$FREE_GB" ]; then
-  log "Already in the folder: ${HAVE_GB:-0} GB. Still to download: about $NEED_GB GB. Free: $FREE_GB GB."
+  log "Conservative space budget: $NEED_GB GB. Free: $FREE_GB GB."
+  log "Existing files are not subtracted; a re-run may need less space."
   if awk -v n="$NEED_GB" -v f="$FREE_GB" 'BEGIN{exit !(n>f)}'; then
-    log "WARNING: NOT ENOUGH SPACE. This needs about $NEED_GB GB more, but only $FREE_GB GB is free."
+    log "WARNING: NOT ENOUGH SPACE for the full selection. Budget about $NEED_GB GB, but only $FREE_GB GB is free."
     log "  Use a bigger drive, free up space, or choose less: --lite, --skip-wikipedia (49 GB), --skip-models (9 GB),"
     log "  a smaller --region, --skip-maps, or leave off an opt-in. Press Ctrl+C now to stop and re-run."
   fi
@@ -582,7 +594,7 @@ get_pdf "FemaEmergencyHandbook-areYouReady" "FEMA Are You Ready - Citizen Prepar
 # Knots, Splices and Rope Work, A. Hyatt Verrill (1912; public domain, 150+ illustrations).
 get_pdf "knotssplicesrope00verr" "Knots, Splices and Rope Work (Verrill).pdf" "$SP"
 # EPA Emergency Disinfection of Drinking Water (US-government work, public domain): making water safe when the tap is unsafe.
-get_pdf_url "https://19january2021snapshot.epa.gov/sites/static/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf" "EPA Emergency Disinfection of Drinking Water.pdf" "$SP"
+get_pdf_url "https://www.epa.gov/sites/default/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf" "EPA Emergency Disinfection of Drinking Water.pdf" "$SP"
 fi
 
 # ================================================================ 7. Wikipedia + Maps
@@ -643,7 +655,20 @@ echo "Preparing maps for desktop viewing (first run can take several minutes)...
 for z in "$MAPS"/*.obf.zip; do
   [ -e "$z" ] || continue
   base="$(basename "$z" .zip)"
-  [ -e "$OBF/$base" ] || unzip -o -q "$z" -d "$OBF"
+  stamp="$OBF/$base.cksum"
+  fingerprint="$(cksum < "$z")" || exit 1
+  if [ -f "$OBF/$base" ] && [ -f "$stamp" ] && [ "$(cat "$stamp")" = "$fingerprint" ]; then continue; fi
+  # Stage first: a damaged replacement must not destroy the previous map.
+  stage="$(mktemp -d "$OBF/.prepare-XXXXXX")" || exit 1
+  trap 'rm -rf "$stage"' EXIT
+  if ! unzip -o -q "$z" -d "$stage" || [ ! -f "$stage/$base" ]; then
+    echo "ERROR: could not unpack $z (previous map kept)." >&2
+    exit 1
+  fi
+  mv -f "$stage/$base" "$OBF/$base" || exit 1
+  printf '%s\n' "$fingerprint" > "$stamp" || exit 1
+  rm -rf "$stage"
+  trap - EXIT
 done
 echo "Maps ready in: $OBF"
 echo "If the map area stays BLANK: on macOS this viewer draws online map tiles, not the"
@@ -1037,6 +1062,27 @@ if [ "$gt" = 0 ]; then sc_warn "no AI models (.gguf) found"
 elif [ -n "$gbad" ]; then sc_fail "AI model(s) not complete or damaged - delete each one and re-run the installer:$gbad"
 elif [ -n "$gwarn" ]; then sc_warn "could not reach Hugging Face to check these AI models (not verified):$gwarn"
 else sc_pass "$gt AI models (.gguf): size and SHA-256 match Hugging Face"; fi
+
+# 6. Desktop map viewer (OsmAndMapCreator + portable Java runtime) (#100)
+MVD="$ROOT/OsmAnd/MapViewer-Desktop"
+if [ "$SKIP_MAPS" = 0 ]; then
+  BAT="$MVD/app/OsmAndMapCreator.sh"
+  JRE="$(find "$MVD/jre" -name java -type f 2>/dev/null | head -n1)"
+  if [ -f "$BAT" ] && [ -n "$JRE" ]; then
+    sc_pass "desktop map viewer (OsmAndMapCreator + Java runtime) ready"
+  else
+    mv_miss=""
+    [ -f "$BAT" ] || mv_miss="$mv_miss app/OsmAndMapCreator.sh"
+    [ -n "$JRE" ] || mv_miss="$mv_miss jre/bin/java"
+    sc_fail "desktop map viewer not complete - missing:$mv_miss - delete OsmAnd/MapViewer-Desktop/OsmAndMapCreator.zip (or the Java archive) and re-run the installer"
+  fi
+elif [ -d "$MVD" ]; then
+  if [ -n "$ONLY" ]; then
+    sc_warn "desktop map viewer not part of this run"
+  else
+    sc_warn "desktop map viewer skipped (--skip-maps)"
+  fi
+fi
 
 if [ "$SC_FAIL" = 0 ]; then
   log "=== DONE. Open README.html (full index) or START-HERE.html ==="
