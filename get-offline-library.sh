@@ -1038,10 +1038,14 @@ if [ "$SKIP_MAPS" = 0 ]; then
     mv_miss=""
     [ -f "$BAT" ] || mv_miss="$mv_miss app/OsmAndMapCreator.sh"
     [ -n "$JRE" ] || mv_miss="$mv_miss jre/bin/java"
-    sc_fail "desktop map viewer not complete - missing:$mv_miss (re-run the installer)"
+    sc_fail "desktop map viewer not complete - missing:$mv_miss - delete OsmAnd/MapViewer-Desktop/OsmAndMapCreator.zip (or the Java archive) and re-run the installer"
   fi
 elif [ -d "$MVD" ]; then
-  sc_warn "desktop map viewer skipped (--skip-maps)"
+  if [ -n "$ONLY" ]; then
+    sc_warn "desktop map viewer not part of this run"
+  else
+    sc_warn "desktop map viewer skipped (--skip-maps)"
+  fi
 fi
 
 if [ "$SC_FAIL" = 0 ]; then

@@ -1082,10 +1082,14 @@ if(-not $SkipMaps){
     $mvMiss = @()
     if(-not (Test-Path $bat)){ $mvMiss += 'app\OsmAndMapCreator.bat' }
     if(-not (Test-Path $jre)){ $mvMiss += 'jre\bin\java.exe' }
-    ScFail ("desktop map viewer not complete - missing: " + ($mvMiss -join ', ') + ' (re-run the installer)')
+    ScFail ("desktop map viewer not complete - missing: " + ($mvMiss -join ', ') + ' - delete OsmAnd\MapViewer-Desktop\OsmAndMapCreator.zip (or the Java archive) and re-run the installer')
   }
 } elseif(Test-Path $mvd) {
-  ScWarn 'desktop map viewer skipped (-SkipMaps)'
+  if($Only){
+    ScWarn 'desktop map viewer not part of this run'
+  } else {
+    ScWarn 'desktop map viewer skipped (-SkipMaps)'
+  }
 }
 
 if($scFail -eq 0){
