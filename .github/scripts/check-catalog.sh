@@ -143,7 +143,7 @@ echo "== results and file shapes"
 ok all "{\"pieces\":[$(q $ids)],\"regions\":[\"US_delaware\",\"Gb\"]}" \
   "lite=0 skip-models=0 skip-wikipedia=0 skip-maps=0 region=US_delaware,Gb browser-maps=1 education=1 kolibri=1 extra-zims=1 translate=1 medlineplus=1"
 ok core-only '{"pieces":["core"]}' \
-  "lite=1 skip-models=1 skip-wikipedia=1 skip-maps=1 region=US browser-maps=0 education=0 kolibri=0 extra-zims=0 translate=0 medlineplus=0"
+  "lite=1 skip-models=1 skip-wikipedia=1 skip-maps=1 region=- browser-maps=0 education=0 kolibri=0 extra-zims=0 translate=0 medlineplus=0"
 ok maps-default-us '{"pieces":["core","gpt4all-repair","maps"]}' \
   "lite=0 skip-models=1 skip-wikipedia=1 skip-maps=0 region=US browser-maps=0 education=0 kolibri=0 extra-zims=0 translate=0 medlineplus=0"
 ok pretty-bom "$(printf '\357\273\277{\r\n  "regions": [ "US_delaware" ],\r\n\t"pieces": [\r\n    "core",\r\n    "maps"\r\n  ]\r\n}\r\n')"
@@ -165,6 +165,21 @@ rm -f "$T/missing.json"
 sh_rc=0; out="$(bash get-offline-library.sh --select "$T/missing.json" --check-selection </dev/null 2>&1)" || sh_rc=$?
 ps_out="$("$PS" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File Get-OfflineLibrary.ps1 -Selection "$T/missing.json" -CheckSelection </dev/null 2>&1)"; ps_rc=$?
 case "$sh_rc $ps_rc $out $ps_out" in "1 1 "*"selection file not found"*"selection file not found"*) echo "  ok: missing file refused";; *) bad "missing file: bash $sh_rc '$out' / PowerShell $ps_rc '$ps_out'";; esac
+# --select followed by another flag must not swallow the flag as the file name (#167)
+sh_rc=0; out="$(bash get-offline-library.sh --select --check-selection </dev/null 2>&1)" || sh_rc=$?
+ps_out="$("$PS" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File Get-OfflineLibrary.ps1 -Selection -CheckSelection </dev/null 2>&1)"; ps_rc=$?
+if [ "$sh_rc" = 1 ] && printf '%s' "$out" | grep -qF -- "--select needs a selection file" && [ "$ps_rc" != 0 ]; then
+  echo "  ok: --select with no file refused (bash) / rejected at binding (PowerShell)"
+else bad "--select no file: bash $sh_rc '$out' / PowerShell $ps_rc '$ps_out'"; fi
+# A UTF-16 selection file must be refused by both, not silently accepted by one (#167)
+if command -v iconv >/dev/null 2>&1; then
+  printf '{"pieces":["core"]}' | iconv -f UTF-8 -t UTF-16 > "$T/utf16.json"
+  sh_rc=0; out="$(bash get-offline-library.sh --select "$T/utf16.json" --check-selection </dev/null 2>&1)" || sh_rc=$?
+  ps_out="$("$PS" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File Get-OfflineLibrary.ps1 -Selection "$T/utf16.json" -CheckSelection </dev/null 2>&1)"; ps_rc=$?
+  if [ "$sh_rc" = 1 ] && [ "$ps_rc" = 1 ] && printf '%s' "$out" | grep -qF "not a selection file" && printf '%s' "$ps_out" | grep -qiF "UTF-16"; then
+    echo "  ok: UTF-16 selection refused by both"
+  else bad "UTF-16: bash $sh_rc '$out' / PowerShell $ps_rc '$ps_out'"; fi
+else echo "  (skip UTF-16 case: iconv not available)"; fi
 sh_rc=0; out="$(bash get-offline-library.sh --check-selection </dev/null 2>&1)" || sh_rc=$?
 ps_out="$("$PS" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File Get-OfflineLibrary.ps1 -CheckSelection </dev/null 2>&1)"; ps_rc=$?
 case "$sh_rc $ps_rc $out $ps_out" in "1 1 "*"needs"*"needs"*) echo "  ok: --check-selection alone refused";; *) bad "--check-selection alone: bash $sh_rc '$out' / PowerShell $ps_rc '$ps_out'";; esac

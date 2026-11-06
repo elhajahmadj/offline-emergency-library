@@ -84,7 +84,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     -d|--destination) DEST="$2"; shift 2;;
     --region)         REGION="$2"; REGION_SET=1; shift 2;;
-    --select)         SELECT_SET=1; SELECT="${2:-}"; if [ $# -ge 2 ]; then shift 2; else shift; fi;;
+    --select)         SELECT_SET=1; if [ $# -ge 2 ] && [ "${2#-}" = "$2" ]; then SELECT="$2"; shift 2; else SELECT=""; shift; fi;;
     --check-selection) CHECK_SEL=1; shift;;
     --list-regions)   LISTREGIONS=1; if [ -n "$2" ] && [ "${2#-}" = "$2" ]; then FILTER="$2"; shift 2; else shift; fi;;
     --education)      EDU=1; shift;;
@@ -164,7 +164,8 @@ if [ "$SELECT_SET" = 1 ]; then
   echo "Selection file: $SELECT"
   echo "Pieces:$SEL_LIST"
   if [ "$SKIP_MAPS" = 1 ]; then echo "Regions: (no maps)"; else echo "Regions: $REGION"; fi
-  echo "Resolved: lite=$LITE skip-models=$SKIP_MODELS skip-wikipedia=$SKIP_WIKI skip-maps=$SKIP_MAPS region=$REGION browser-maps=$BROWSER_MAPS education=$EDU kolibri=$KOLIBRI extra-zims=$EXTRA_ZIMS translate=$TRANSLATE medlineplus=$MEDLINEPLUS"
+  RREGION="$REGION"; [ "$SKIP_MAPS" = 1 ] && RREGION="-"   # no region is resolved when maps are skipped (#167)
+  echo "Resolved: lite=$LITE skip-models=$SKIP_MODELS skip-wikipedia=$SKIP_WIKI skip-maps=$SKIP_MAPS region=$RREGION browser-maps=$BROWSER_MAPS education=$EDU kolibri=$KOLIBRI extra-zims=$EXTRA_ZIMS translate=$TRANSLATE medlineplus=$MEDLINEPLUS"
   echo "Same as:$SAME"
   [ "$CHECK_SEL" = 1 ] && { echo "Selection OK (--check-selection: nothing was created or downloaded)."; exit 0; }
 fi
@@ -210,7 +211,7 @@ if [ "$LISTREGIONS" = 1 ]; then
   rm -f "$idx" 2>/dev/null; exit 0
 fi
 
-if [ "$LITE" = 1 ] && [ "$SKIP_MAPS" = 0 ]; then
+if [ "$LITE" = 1 ] && [ "$SKIP_MAPS" = 0 ] && [ "$SELECT_SET" = 0 ]; then
   echo "LITE MAP SIZE: maps for '$REGION' are still included. The default US maps alone are about 17 GB."
   echo "  Keep all US maps: use --lite with no --region (the default)."
   echo "  Smaller area: use --lite --region US_delaware (example); sizes vary by region."
@@ -304,7 +305,7 @@ fetch_sized(){ # url out bytes
 }
 if [ "$USE_ARIA" = 1 ]; then log "Downloader: aria2 (fast, multi-connection)"; else log "Downloader: curl (tip: install 'aria2' for much faster downloads)"; fi
 [ "$SELECT_SET" = 1 ] && log "Selection from $SELECT:$SEL_LIST (same as:$SAME)"
-if [ "$LITE" = 1 ]; then log "Lite preset: 3B AI, medical/survival references and maps for '$REGION' (unless skipped). Size depends on region; use --region for a small area or --skip-maps. Re-run without --lite to add the full library."; fi
+if [ "$LITE" = 1 ] && [ "$SELECT_SET" = 0 ]; then log "Lite preset: 3B AI, medical/survival references and maps for '$REGION' (unless skipped). Size depends on region; use --region for a small area or --skip-maps. Re-run without --lite to add the full library."; fi
 UA="Mozilla/5.0"
 
 # ---- platform detection ----

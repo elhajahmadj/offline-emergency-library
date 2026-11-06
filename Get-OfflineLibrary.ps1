@@ -59,7 +59,12 @@ if($PSBoundParameters.ContainsKey('Selection')){
   if(-not (Test-Path -LiteralPath $Selection -PathType Leaf)){ SelFail "selection file not found: $Selection" }
   # The whole file must be exactly this shape (spaces and line breaks are ignored), so
   # nothing in it is skipped unread: {"pieces":["id",...],"regions":["name",...]}
-  $sel = [IO.File]::ReadAllText((Resolve-Path -LiteralPath $Selection).ProviderPath) -replace '[\t\r\n]', ' '
+  $selBytes = [IO.File]::ReadAllBytes((Resolve-Path -LiteralPath $Selection).ProviderPath)
+  # Read as UTF-8 like bash does. Refuse UTF-16 (what Windows PowerShell 5.1 '>' / Out-File write)
+  # so the same file is not accepted here but refused there (#167).
+  if($selBytes.Length -ge 2 -and (($selBytes[0] -eq 0xFF -and $selBytes[1] -eq 0xFE) -or ($selBytes[0] -eq 0xFE -and $selBytes[1] -eq 0xFF))){
+    SelFail "$Selection looks like UTF-16; save it as UTF-8 (both installers read the selection file as UTF-8)." }
+  $sel = ([Text.Encoding]::UTF8.GetString($selBytes) -replace '^\uFEFF', '') -replace '[\t\r\n]', ' '
   # A space between two name characters is inside a name ("co re"): not a selection file.
   if($sel -match '[A-Za-z0-9_.-] +[A-Za-z0-9_.-]'){ $sel = 'bad' }
   $sel = $sel -replace ' ', ''
@@ -95,7 +100,8 @@ if($PSBoundParameters.ContainsKey('Selection')){
   Write-Host "Selection file: $Selection"
   Write-Host "Pieces: $SelList"
   Write-Host $(if($SkipMaps){ 'Regions: (no maps)' } else { "Regions: $Region" })
-  Write-Host "Resolved: lite=$(B $Lite) skip-models=$(B $SkipModels) skip-wikipedia=$(B $SkipWikipedia) skip-maps=$(B $SkipMaps) region=$Region browser-maps=$(B $BrowserMaps) education=$(B $Education) kolibri=$(B $Kolibri) extra-zims=$(B $ExtraZims) translate=$(B $Translate) medlineplus=$(B $MedlinePlus)"
+  $rRegion = if($SkipMaps){ '-' } else { $Region }   # no region is resolved when maps are skipped (#167)
+  Write-Host "Resolved: lite=$(B $Lite) skip-models=$(B $SkipModels) skip-wikipedia=$(B $SkipWikipedia) skip-maps=$(B $SkipMaps) region=$rRegion browser-maps=$(B $BrowserMaps) education=$(B $Education) kolibri=$(B $Kolibri) extra-zims=$(B $ExtraZims) translate=$(B $Translate) medlineplus=$(B $MedlinePlus)"
   Write-Host "Same as: $SelSame"
   if($CheckSelection){ Write-Host 'Selection OK (-CheckSelection: nothing was created or downloaded).'; exit 0 }
 }
@@ -164,7 +170,7 @@ if($ListRegions){
 }
 
 # ---------------------------------------------------------------- destination
-if($Lite -and -not $SkipMaps){
+if($Lite -and -not $SkipMaps -and -not $PSBoundParameters.ContainsKey('Selection')){
   Write-Host "LITE MAP SIZE: maps for '$Region' are still included. The default US maps alone are about 17 GB." -ForegroundColor Yellow
   Write-Host '  Keep all US maps: use -Lite with no -Region (the default).'
   Write-Host '  Smaller area: use -Lite -Region US_delaware (example); sizes vary by region.'
@@ -257,7 +263,7 @@ function Fetch-Sized($url,$out,$bytes){
   Move-Item -LiteralPath $part -Destination $out -Force
 }
 if($UseAria){ Log 'Downloader: aria2 (fast, multi-connection)' } else { Log "Downloader: curl (tip: install 'aria2' for much faster downloads)" }
-if($Lite){ Log "Lite preset: 3B AI, medical/survival references and maps for '$Region' (unless skipped). Size depends on region; use -Region for a small area or -SkipMaps. Re-run without -Lite to add the full library." }
+if($Lite -and -not $PSBoundParameters.ContainsKey('Selection')){ Log "Lite preset: 3B AI, medical/survival references and maps for '$Region' (unless skipped). Size depends on region; use -Region for a small area or -SkipMaps. Re-run without -Lite to add the full library." }
 if($SelList){ Log "Selection from ${Selection}: $SelList (same as: $SelSame)" }
 if($Only){ Log "Adding to the finished library: $($Only -join ', ') (nothing else is downloaded)" }
 
