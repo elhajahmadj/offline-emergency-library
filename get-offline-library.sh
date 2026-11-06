@@ -579,6 +579,10 @@ get_pdf "tm-9-8000-principles-of-automotive-vehicles-1985"   "TM 9-8000 Principl
 get_pdf "u-s-army-guide-to-rigging"                          "FM 5-125 Army Guide to Rigging.pdf" "$AFM"
 get_pdf "fm-90-3-desert-operations-1993"                     "FM 90-3 Desert Operations.pdf" "$AFM"
 get_pdf "tm-10-412-armed-forces-recipe-service-2003"         "TM 10-412 Armed Forces Recipe Service.pdf" "$AFM"
+get_pdf "FM2110MCRP411.1DFieldHygieneAndSanitation"          "FM 21-10 Field Hygiene and Sanitation.pdf" "$AFM"
+get_pdf "fm-5-34-engineer-field-data-w-change-3-1999"        "FM 5-34 Engineer Field Data.pdf" "$AFM"
+get_pdf "armyfm5428concreteandmasonry"                       "FM 5-428 Concrete and Masonry.pdf" "$AFM"
+get_pdf "TM5-295"                                            "TM 5-295 Water Supply and Water Purification.pdf" "$AFM"
 get_pdf "where-there-is-no-doctor"                           "Where There Is No Doctor.pdf" "$MPDF"
 get_pdf "where-there-is-no-dentist-web-full-book"            "Where There Is No Dentist.pdf" "$MPDF"
 # Advanced care when help is delayed: USUHS + Henry M. Jackson Foundation, 2025, CC BY-NC-SA 4.0 (not public domain).
