@@ -30,12 +30,40 @@ param(
   [switch]$ExtraZims,        # OPT-IN: add Wikivoyage travel guide + Wikibooks textbooks (Kiwix ZIM, ~5.8 GB)
   [switch]$Translate,        # OPT-IN: offline translator (Qwen3 4B model on the AI engine, ~2.5 GB)
   [switch]$MedlinePlus,      # OPT-IN: MedlinePlus plain-language health topics (public domain, ~30 MB)
-  [switch]$NoAria            # force curl even if aria2c is installed
+  [switch]$NoAria,           # force curl even if aria2c is installed
+  [string[]]$Only            # add just these pieces to a finished drive (#74): translate, medlineplus, extra-zims,
+                             #   browser-maps, education, kolibri, wikipedia. Example: -Only translate,medlineplus
 )
 
 $ErrorActionPreference = 'Continue'
 $ProgressPreference    = 'SilentlyContinue'
 if($Lite){ $SkipWikipedia = $true; $SkipModels = $true }
+# ---- -Only: add pieces to a finished drive (#74) ----
+# Everything else the installer does (engine, models, manuals, maps, docs) is off; only the
+# named pieces run. Checked here, before anything is created or downloaded. A piece that needs
+# something on the drive lists it in $PieceNeeds as @(file under OfflineLibrary, what it is
+# called). When the component table (#67) lands, read both from it.
+$OnlyPieces = 'translate','medlineplus','extra-zims','browser-maps','education','kolibri','wikipedia'
+$PieceNeeds = @{ 'translate' = @('AI-Offline\engine\BUILD.txt','the AI engine (the translator runs on it)') }
+$BmOnly = $false
+if($PSBoundParameters.ContainsKey('Only')){
+  $Only = @($Only | ForEach-Object { "$_" -split '[,; ]' } | Where-Object { $_ } | ForEach-Object { $_.ToLower() })
+  if(-not $Only.Count){ Write-Host "ERROR: -Only needs at least one piece. Pieces: $($OnlyPieces -join ' ')" -ForegroundColor Red; exit 1 }
+  if($Lite -or $SkipWikipedia -or $SkipMaps -or $SkipModels -or $Education -or $Kolibri -or $ExtraZims -or $Translate -or $MedlinePlus -or $BrowserMaps){
+    Write-Host "ERROR: -Only cannot be combined with -Lite, -Skip* or a piece switch. Name the pieces after -Only instead. Pieces: $($OnlyPieces -join ' ')" -ForegroundColor Red; exit 1 }
+  foreach($p in $Only){
+    if($OnlyPieces -notcontains $p){ Write-Host "ERROR: unknown piece '$p'. Pieces: $($OnlyPieces -join ' ')" -ForegroundColor Red; exit 1 }
+    switch($p){
+      'translate'    { $Translate = $true }
+      'medlineplus'  { $MedlinePlus = $true }
+      'extra-zims'   { $ExtraZims = $true }
+      'browser-maps' { $BrowserMaps = $true; $BmOnly = $true }
+      'education'    { $Education = $true }
+      'kolibri'      { $Kolibri = $true }
+    }
+  }
+  $SkipModels = $true; $SkipMaps = $true; $SkipWikipedia = ($Only -notcontains 'wikipedia')
+} else { $Only = $null }
 $RepoRaw = 'https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main'
 $Continents = @('africa','asia','australia-oceania','centralamerica','europe','northamerica','southamerica')
 # Common names / ISO codes -> OsmAnd region token (unknown input passes through unchanged)
@@ -86,10 +114,22 @@ if (-not $Destination) {
   Write-Host ''
   Write-Host '  Offline Emergency Library installer' -ForegroundColor Cyan
   Write-Host '  -----------------------------------'
-  $Destination = Read-Host 'Where would you like to save these files?'
+  $Destination = Read-Host $(if($Only){ 'Where is the drive you want to add to (the folder that holds OfflineLibrary)?' } else { 'Where would you like to save these files?' })
 }
 if (-not $Destination) { Write-Host 'No destination given. Exiting.' -ForegroundColor Red; return }
 $Root = Join-Path $Destination 'OfflineLibrary'
+if($Only){
+  # A finished drive has CHECKSUMS-SHA256.txt (the installer's last step). Never build a new one here.
+  if(-not (Test-Path (Join-Path $Root 'CHECKSUMS-SHA256.txt') -PathType Leaf)){
+    Write-Host "ERROR: no finished library found at $Root." -ForegroundColor Red
+    Write-Host '  -Only adds to a drive the installer has already filled. Run the installer without -Only first, or fix -Destination.'; exit 1 }
+  foreach($p in $Only){
+    $need = $PieceNeeds[$p]; if(-not $need){ continue }
+    if(-not (Test-Path (Join-Path $Root $need[0]) -PathType Leaf)){
+      Write-Host "ERROR: '$p' needs $($need[1]), which is not on this drive (missing: $($need[0]))." -ForegroundColor Red
+      Write-Host '  Nothing was downloaded. Run the installer without -Only to add it first.'; exit 1 }
+  }
+}
 try { New-Item -ItemType Directory -Force $Root | Out-Null }
 catch { Write-Host "Cannot create $Root : $($_.Exception.Message)" -ForegroundColor Red; return }
 
@@ -153,10 +193,11 @@ function Fetch-Sized($url,$out,$bytes){
 }
 if($UseAria){ Log 'Downloader: aria2 (fast, multi-connection)' } else { Log "Downloader: curl (tip: install 'aria2' for much faster downloads)" }
 if($Lite){ Log "Lite preset: 3B AI, medical/survival references and maps for '$Region' (unless skipped). Size depends on region; use -Region for a small area or -SkipMaps. Re-run without -Lite to add the full library." }
+if($Only){ Log "Adding to the finished library: $($Only -join ', ') (nothing else is downloaded)" }
 
 # OsmAnd map files for -Region, picked now so the space estimate below knows their size.
 $sel = @(); $osmErr = $null
-if(-not $SkipMaps){
+if((-not $SkipMaps) -or $BmOnly){   # -Only browser-maps needs the sizes for its estimate, not the maps
   try{
     $idxFile = Join-Path $env:TEMP 'osmand_idx.xml'
     curl.exe -sL 'https://download.osmand.net/get_indexes' -o $idxFile
@@ -175,14 +216,15 @@ if(-not $SkipMaps){
 
 # Space estimate for the chosen flags (#68). Sizes in GB (1024^3 bytes), measured on a full
 # drive; keep them the same as in get-offline-library.sh so both installers agree.
-$est = [ordered]@{ 'core (AI engine, 3B model, medical, survival, manuals, Kiwix, phone apps)' = 6.3 }
+$est = [ordered]@{}
+if(-not $Only){ $est['core (AI engine, 3B model, medical, survival, manuals, Kiwix, phone apps)'] = 6.3 }
 if(-not $SkipModels){ $est['8B + 7B AI models'] = 8.9 }
-if(-not $Lite){ $est['GPT4All, iFixit, Appropedia'] = 4.5 }
+if((-not $Lite) -and (-not $Only)){ $est['GPT4All, iFixit, Appropedia'] = 4.5 }
 if(-not $SkipWikipedia){ $est['Wikipedia'] = 49.1 }
 $mapGB = 0
-if(-not $SkipMaps){
+if((-not $SkipMaps) -or $BmOnly){
   $mapGB = [double](($sel | ForEach-Object { [double]$_.containerSize } | Measure-Object -Sum).Sum) / 1GB
-  $est["maps for '$Region' + desktop viewer"] = [math]::Round($mapGB + 0.5, 1)
+  if(-not $SkipMaps){ $est["maps for '$Region' + desktop viewer"] = [math]::Round($mapGB + 0.5, 1) }
   if($BrowserMaps){
     $rt = @(($Region -split '[,; ]') | Where-Object { $_ } | ForEach-Object { (Resolve-RegionToken $_.Trim()).ToLower() })
     # all of the US ~15.4 GB; single states roughly match their OsmAnd size; always + the world map
@@ -199,6 +241,7 @@ try {
   $drive = (Get-Item $Root).PSDrive
   $freeGB = [math]::Round((Get-PSDrive $drive.Name).Free/1GB,1)
   $haveGB = [math]::Round(((Get-ChildItem -LiteralPath $Root -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum)/1GB,1)
+  if($Only){ $haveGB = 0 }   # the rest of the drive is not part of this estimate
   $needGB = [math]::Round([math]::Max(0.0, $estGB - $haveGB), 1)
   function Gb($x){ ([double]$x).ToString('0.0', [cultureinfo]::InvariantCulture) }   # same text on every locale
   Log "Destination: $Root   (free space: $(Gb $freeGB) GB)"
@@ -217,11 +260,11 @@ try {
 $dirs = @(
  'AI-Offline','AI-Offline\engine','AI-Offline\models','AI-Offline\DocReader-GPT4All',
  'Manuals','Manuals\ArmyFieldManuals','Manuals\Repair-iFixit','Manuals\DIY-Appropedia',
- 'Manuals\Survival-Water-Food','Manuals\Radio-Communications','Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015',
- 'Medical','Medical\WikiMed','Medical\zimgit-medicine','Medical\Manuals-PDF',
+ 'Manuals\Radio-Communications','Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015',
+ 'Medical','Medical\WikiMed','Medical\Manuals-PDF',
  'Wikipedia','OsmAnd','Kiwix-Reader','Kiwix-Reader\app','Phone-Apps','Education'
 )
-foreach($d in $dirs){ New-Item -ItemType Directory -Force (Join-Path $Root $d) | Out-Null }
+if(-not $Only){ foreach($d in $dirs){ New-Item -ItemType Directory -Force (Join-Path $Root $d) | Out-Null } }
 
 # ---------------------------------------------------------------- helpers
 function Latest-Zim($dirUrl,$prefix){
@@ -265,6 +308,7 @@ function Expand-Tgz($file,$dest){
     Copy-Item (Join-Path $t '*') $dest -Recurse -Force
   } finally { Remove-Item $t -Recurse -Force -ErrorAction SilentlyContinue }
 }
+if($Only){ Log 'engine: not touched (-Only)' } else {   # -Only adds pieces to a finished drive: no engine download (#74)
 try{
   $rels = Invoke-RestMethod 'https://api.github.com/repos/ggml-org/llama.cpp/releases?per_page=20' -Headers @{'User-Agent'='ps'}
   $lt = $null
@@ -293,6 +337,7 @@ try{
     Set-Content -Path (Join-Path $e 'BUILD.txt') -Value $lt -Encoding ascii
   }
 }catch{ Log "engine ERROR: $($_.Exception.Message)" }
+}
 
 # ================================================================ 2. AI models
 Log '=== [2/8] AI chat models (GGUF, Q4_K_M) ==='
@@ -302,6 +347,7 @@ $models = @(
  @{n='Qwen2.5-7B-Instruct-Q4_K_M.gguf';        u='https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q4_K_M.gguf'; big=$true}
 )
 foreach($m in $models){
+  if($Only){ continue }   # -Only adds pieces: the core models are not touched (#74)
   if($SkipModels -and $m.big){ Log "model (skipped): $($m.n)"; continue }
   Log "model: $($m.n)"; Fetch $m.u (Join-Path $Root "AI-Offline\models\$($m.n)")
 }
@@ -316,7 +362,8 @@ $GgufUrls = @($models | ForEach-Object { $_.u }) + "https://huggingface.co/barto
 
 # ================================================================ 3. GPT4All
 Log '=== [3/8] GPT4All (offline document Q&A) ==='
-if(-not $Lite){
+if($Only){ Log 'gpt4all: not touched (-Only)' }
+elseif(-not $Lite){
 try{
   $rel = Gh-ReleaseWith 'nomic-ai/gpt4all' 'installer-win64-v'
   $a = $rel.assets | Where-Object { $_.name -match 'installer-win64-v.*\.exe$' -and $_.name -notmatch 'arm' } | Select-Object -First 1
@@ -340,6 +387,7 @@ try{
 
 # ================================================================ 4. Kiwix reader
 Log '=== [4/8] Kiwix reader (portable) ==='
+if($Only){ Log 'kiwix: not touched (-Only)' } else {
 try{
   $kdir = 'https://download.kiwix.org/release/kiwix-desktop/'
   $html = curl.exe -sL -A (UA) $kdir
@@ -350,20 +398,23 @@ try{
     try{ Expand-Archive $out -DestinationPath (Join-Path $Root 'Kiwix-Reader\app') -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
   }
 }catch{ Log "kiwix ERROR: $($_.Exception.Message)" }
+}
 
 # ================================================================ 5. ZIM archives
-Log '=== [5/8] Offline archives (Kiwix ZIM: repair, DIY, medical, survival) ==='
+Log '=== [5/8] Offline archives (Kiwix ZIM: repair, DIY, medical) ==='
+# NOTE: the zimgit-* collections (post-disaster, water, food-preparation, knots, medicine)
+# were removed in #122: they are collections of third-party PDFs with no stated license, and
+# some items are all rights reserved (e.g. the SAS Survival Handbook, Foxfire). This kit only
+# ships content that is free, openly licensed, or public domain. Survival/water/food/first-aid
+# are covered by the Army field manuals, USDA canning guide, Appropedia, WikiMed and the
+# Hesperian/WHO PDFs. A license-cleared replacement for knots is tracked in #78.
 $zims = @(
  @{dir='https://download.kiwix.org/zim/ifixit/'; pre='ifixit_en_all_';            d='Manuals\Repair-iFixit'}
  @{dir='https://download.kiwix.org/zim/other/';  pre='appropedia_en_all_maxi_';   d='Manuals\DIY-Appropedia'}
- @{dir='https://download.kiwix.org/zim/other/';  pre='zimgit-post-disaster_en_';  d='Manuals\Survival-Water-Food'}
- @{dir='https://download.kiwix.org/zim/other/';  pre='zimgit-water_en_';          d='Manuals\Survival-Water-Food'}
- @{dir='https://download.kiwix.org/zim/other/';  pre='zimgit-food-preparation_en_'; d='Manuals\Survival-Water-Food'}
- @{dir='https://download.kiwix.org/zim/other/';  pre='zimgit-knots_en_';          d='Manuals\Survival-Water-Food'}
  @{dir='https://download.kiwix.org/zim/wikipedia/'; pre='wikipedia_en_medicine_maxi_'; d='Medical\WikiMed'}
- @{dir='https://download.kiwix.org/zim/other/';  pre='zimgit-medicine_en_';       d='Medical\zimgit-medicine'}
 )
 foreach($z in $zims){
+  if($Only){ Log 'zim: core archives not touched (-Only)'; break }
   if($Lite -and $z.d -in @('Manuals\Repair-iFixit','Manuals\DIY-Appropedia')){ continue }
   $name = Latest-Zim $z.dir $z.pre
   if($name){ Log "zim: $name"; Fetch ($z.dir+$name) (Join-Path $Root "$($z.d)\$name") }
@@ -476,6 +527,7 @@ $pdfs = @(
  @{u='https://nchfp.uga.edu/papers/guide/GUIDE07_HomeCan_rev0715.pdf'; n='7 Jams and Jellies.pdf'; d='Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015'}
 )
 foreach($p in $pdfs){
+  if($Only){ Log 'pdf: manuals not touched (-Only)'; break }
   try{
     if($p.u){ $url = $p.u } else {   # direct link, or an archive.org item
       $meta = curl.exe -sL "https://archive.org/metadata/$($p.id)" -A (UA) | ConvertFrom-Json
@@ -497,6 +549,7 @@ foreach($p in $pdfs){
 # ================================================================ 7. Wikipedia + Maps
 if(-not $SkipWikipedia){
   Log '=== [7/8] Wikipedia (full, no images - Kiwix ZIM, ~49 GB) ==='
+  New-Item -ItemType Directory -Force (Join-Path $Root 'Wikipedia') | Out-Null
   $wk = Latest-Zim 'https://download.kiwix.org/zim/wikipedia/' 'wikipedia_en_all_nopic_'
   if($wk){ Log "zim: $wk"; Fetch ("https://download.kiwix.org/zim/wikipedia/$wk") (Join-Path $Root "Wikipedia\$wk") }
   else { Log 'Wikipedia: ZIM not found' }
@@ -601,9 +654,10 @@ echo.
 echo Launching the desktop map viewer...
 echo In the app, your maps are the .obf files in the  OsmAnd\obf  folder.
 echo.
-echo If the map area stays BLANK (a known OsmAndMapCreator issue on some Windows PCs):
+echo If the map area stays BLANK: on Windows this viewer draws online map tiles, not the
+echo drive's maps, so it is blank with no internet (issue 15). Offline:
 echo   - best: use the browser maps - run  Maps-Browser\OPEN-MAPS.bat  (if you built the
-echo     drive with -BrowserMaps; US street maps, renders reliably on Windows), or
+echo     drive with -BrowserMaps; US street maps, work with no internet), or
 echo   - use the maps on an Android phone/tablet (see OsmAnd\HOW-TO-VIEW-MAPS.html).
 cd /d "%~dp0app"
 call OsmAndMapCreator.bat
@@ -617,7 +671,7 @@ pause
 # state maps made by Project NOMAD (MIT; map data (c) OpenStreetMap contributors, ODbL),
 # NOMAD's style/fonts/symbols, the MapLibre GL JS viewer (BSD-3) and Caddy (Apache-2.0) as a
 # local web server. NOMAD has US states only; any region also gets a low-detail world map.
-if((-not $SkipMaps) -and $BrowserMaps){
+if(((-not $SkipMaps) -or $BmOnly) -and $BrowserMaps){
   Log '=== [8c] Browser maps (Project NOMAD / Protomaps + MapLibre + Caddy) ==='
   $mb = Join-Path $Root 'Maps-Browser'
   foreach($d in 'pmtiles','viewer\lib','server'){ New-Item -ItemType Directory -Force (Join-Path $mb $d) | Out-Null }
@@ -695,12 +749,13 @@ if((-not $SkipMaps) -and $BrowserMaps){
   }catch{ Log "browser maps ERROR: $($_.Exception.Message)" }
 } else {
   Log "=== [8c] Browser maps not selected - add -BrowserMaps to include (~16.5 GB for the US) ==="
-  if(-not $SkipMaps){ Log "  Tip (Windows): browser maps is the reliable desktop viewer - the bundled OsmAndMapCreator can render a blank map on some Windows PCs (#15). Re-run with -BrowserMaps to add US street maps that open in any browser." }
+  if(-not $SkipMaps){ Log "  Tip (Windows): browser maps is the offline desktop viewer - the bundled OsmAndMapCreator draws online tiles on Windows, so its map is blank with no internet (#15). Re-run with -BrowserMaps to add US street maps that open in any browser." }
 }
 
 # ================================================================ phone apps
 Log '=== Phone apps (port the library to a phone) ==='
 $pa = Join-Path $Root 'Phone-Apps'
+if($Only){ Log 'phone apps: not touched (-Only)' } else {
 New-Item -ItemType Directory -Force $pa | Out-Null
 # Kiwix for Android — reads ALL the .zim archives (Wikipedia, medical, repair, survival)
 try{
@@ -709,6 +764,7 @@ try{
   if(-not $ka){ $ka = $kr.assets | Where-Object { $_.name -match '\.apk$' } | Select-Object -First 1 }
   if($ka){ Log "phone app: Kiwix ($($ka.name))"; Fetch $ka.browser_download_url (Join-Path $pa $ka.name) }
 }catch{ Log "kiwix apk ERROR: $($_.Exception.Message)" }
+}
 # OsmAnd for Android — offline maps (only if maps were downloaded)
 if(-not $SkipMaps){
   try{
@@ -723,6 +779,7 @@ if(-not $SkipMaps){
 Log '=== Writing launchers (.bat + .sh) ==='
 function WriteBat($path,$text){ Set-Content -Path $path -Value $text -Encoding ascii }
 $ao = Join-Path $Root 'AI-Offline'
+if(-not $Only){   # -Only writes just the launchers of the piece it adds (#74)
 WriteBat (Join-Path $ao 'CHAT-3B-light.bat') @"
 @echo off
 title Offline AI - Llama 3.2 3B (light)
@@ -760,6 +817,7 @@ echo The AI is a helper for finding and summarizing info - for anything safety-c
 "%~dp0engine\x64\llama-server.exe" -m "%~dp0models\Llama-3.2-3B-Instruct-Q4_K_M.gguf" -c 4096 --host 127.0.0.1 --port 8080
 pause
 "@
+}
 
 # .sh launchers for macOS / Linux: same text as get-offline-library.sh writes (LF line ends,
 # UTF-8 without BOM). Each one picks the engine folder for the computer it runs on.
@@ -788,12 +846,14 @@ function WriteSh($name,$tool,$model,$gpu,$argv,$note){
   if(-not $t.EndsWith("`n")){ $t += "`n" }
   [System.IO.File]::WriteAllText((Join-Path $ao $name), $t, [System.Text.UTF8Encoding]::new($false))
 }
+if(-not $Only){
 WriteSh 'chat-3B-light.sh'   'llama-cli'    'Llama-3.2-3B-Instruct-Q4_K_M.gguf'      '0' '-c 4096' 'Offline AI - Llama 3.2 3B (light). Ctrl+C to quit.'
 if(-not $Lite){
 WriteSh 'chat-8B-smart.sh'   'llama-cli'    'Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf' '0' '-c 4096' 'Offline AI - Llama 3.1 8B (smart). Ctrl+C to quit.'
 WriteSh 'chat-GPU-Qwen7B.sh' 'llama-cli'    'Qwen2.5-7B-Instruct-Q4_K_M.gguf'        '1' '-c 4096 -ngl 99' 'Offline AI - Qwen2.5 7B on the GPU (Metal on a Mac, Vulkan on Linux).'
 }
 WriteSh 'web-ui.sh'          'llama-server' 'Llama-3.2-3B-Instruct-Q4_K_M.gguf'      '0' '-c 4096 --host 127.0.0.1 --port 8080' "Open http://127.0.0.1:8080 when it says 'server is listening'."
+}
 if($Translate){
 # Same text as get-offline-library.sh. No batch special characters in the prompt or notes.
 $TrArgs = '-c 4096 --temp 0.2 -sys "You are an interpreter between two people. Their first message names two languages: reply only with Ready. After that, for every message: if it is written in the first language, translate it into the second language; if it is written in the second language, translate it into the first language. Never repeat a message in the language it was written in. Write only the translation, with no notes. Keep names, numbers, doses and times exactly as written."'
@@ -828,6 +888,7 @@ function PlaceDoc($srcName,$destPath,$title){
     }
   }
 }
+if($Only){ Log 'docs: already on the drive (not placed again by -Only)' } else {
 PlaceDoc 'START-HERE.md'            (Join-Path $Root 'START-HERE')                                  'Offline Emergency Kit - Start Here'
 PlaceDoc 'I-NEED-TO.md'             (Join-Path $Root 'I-NEED-TO')                                   'I need to - Emergency Quick Index'
 PlaceDoc 'EMERGENCY-ESSENTIALS.md'  (Join-Path $Root 'EMERGENCY-ESSENTIALS')                        'Emergency essentials - print this one page'
@@ -846,6 +907,7 @@ PlaceDoc 'MAP-AND-COMPASS.md'       (Join-Path $Root 'OsmAnd\MAP-AND-COMPASS')  
 PlaceDoc 'USE-ON-PHONE.md'          (Join-Path $Root 'Phone-Apps\USE-ON-PHONE')                      'Use the Library on a Phone'
 PlaceDoc 'Education-READ-ME-FIRST.md' (Join-Path $Root 'Education\READ-ME-FIRST')                     'Education - Khan Academy Offline'
 PlaceDoc 'HOW-TO-KOLIBRI.md'          (Join-Path $Root 'Education\HOW-TO-KOLIBRI')                     'Kolibri - Offline Learning App'
+}
 
 # ================================================================ README index
 # CHECK-DRIVE scripts (#28), placed before the index so README.html lists them.

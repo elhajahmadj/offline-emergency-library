@@ -27,14 +27,21 @@ is best). The download is about 85 GB and can take several hours.
    protected your PC", click **More info**, then **Run anyway**.
 3. Type where to save the files, for example `E:\`, and press Enter.
 
-**Mac or Linux**
-1. Open **Terminal** (Mac: Applications > Utilities > Terminal).
-2. Paste this line and press Enter (Mac: Return):
+**Mac**
+1. [Download this project as a ZIP](https://github.com/elhajahmadj/offline-emergency-library/archive/refs/heads/main.zip).
+   If the Mac does not open it for you, double-click it in Downloads.
+2. In the folder, double-click **`install.command`**. The first time, the Mac says
+   *"install.command" Not Opened*: click **Done**, open **System Settings > Privacy & Security**,
+   click **Open Anyway** (twice), and type your password.
+3. Type where to save the files, for example `/Volumes/MyDrive`, and press Return.
+
+**Linux**
+1. Open a terminal.
+2. Paste this line and press Enter:
    ```bash
    curl -fsSL https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/get-offline-library.sh | bash
    ```
-3. Type where to save the files, for example `/Volumes/MyDrive` (Mac) or `/media/you/MyDrive`
-   (Linux), and press Enter.
+3. Type where to save the files, for example `/media/you/MyDrive`, and press Enter.
 
 That is the only question. Leave the window open until it says **Finished**, then open
 **`START-HERE.html`** in the `OfflineLibrary` folder it made there. If the download stops, run it again the same
@@ -53,11 +60,10 @@ Smaller drive, another country's maps, or extra content? See
 | **Offline doc-Q&A** | GPT4All — ask an AI questions about your PDFs, with citations | ~0.7 GB | CPU, one-time install |
 | **Wikipedia** | Full English Wikipedia (all articles, no images) — Kiwix-readable | ~49 GB | Kiwix |
 | **Browser maps** *(opt-in)* | US street maps that open in **any web browser** (Project NOMAD / Protomaps + MapLibre viewer + Caddy), `-BrowserMaps` / `--browser-maps` | US ≈16.5 GB (one state: less) | **Any computer** with a browser |
-| **Offline maps** | Maps for the region you pick (**default US**; any country/region/continent — see below) + **bundled desktop viewer** (OsmAndMapCreator + portable Java) + **bundled Android app (APK)** | US ≈17 GB; varies by region (+~0.4 GB tools) | **PC (no phone) or phone** |
+| **Offline maps** | Maps for the region you pick (**default US**; any country/region/continent — see below) + **bundled desktop viewer** (OsmAndMapCreator + portable Java; needs internet on Windows/macOS, see below) + **bundled Android app (APK)** | US ≈17 GB; varies by region (+~0.4 GB tools) | **PC (no phone) or phone** |
 | **Repair archive** | iFixit — cars, appliances, electronics, phones | ~3.4 GB | Kiwix |
 | **DIY archive** | Appropedia — plumbing, electrical, construction, energy, water, food | ~0.6 GB | Kiwix |
-| **Medical** | Offline medical Wikipedia (WikiMed) + curated medical guide | ~1.8 GB | Kiwix |
-| **Survival** | Post-disaster, water, food prep, knots (zimgit) | ~0.8 GB | Kiwix |
+| **Medical** | Offline medical Wikipedia (WikiMed) | ~1.8 GB | Kiwix |
 | **Education** *(opt-in)* | Khan Academy archive (one file, all videos) **or** Kolibri app (pick subjects/low-res) | KA ZIM ~168 GB; Kolibri = your choice | Kiwix / Kolibri app |
 | **Offline translator** *(opt-in)* | Two-way text translator for talking with someone who speaks another language; a small multilingual AI model (Qwen3 4B, Apache 2.0) on the bundled llama.cpp engine, `-Translate` / `--translate`. Good for widely spoken languages, weak or unusable for some others ([guide](docs/HOW-TO-TRANSLATE.md)) | ~2.5 GB | CPU, ~6 GB RAM |
 | **Extra archives** *(opt-in)* | Wikivoyage travel guide + Wikibooks open textbooks (English, with images), `-ExtraZims` / `--extra-zims` | ~5.8 GB | Kiwix |
@@ -130,7 +136,7 @@ Downloading ~85 GB can take several hours.
 | **Offline AI — GPU model (Qwen 7B)** | A graphics card with **~6 GB VRAM** (NVIDIA/AMD/Intel) for a big speed boost. Optional. |
 | **Offline translator** *(opt-in)* | 64-bit PC, **~6 GB RAM** (about 4.8 GB in use while it runs). CPU only. |
 | **GPT4All doc-Q&A** | 64-bit PC, ~8 GB RAM recommended. CPU only. Self-contained (no Python/CUDA). |
-| **Maps on a computer** | **No phone needed** — bundled desktop viewer (OsmAndMapCreator) + bundled portable Java. First use unzips maps (~30 GB). |
+| **Maps on a computer** | **No phone needed.** Offline: browser maps (US, `-BrowserMaps`). The bundled desktop viewer (OsmAndMapCreator + portable Java) draws online tiles on Windows and macOS, so it is blank with no internet ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)); use an Android phone for non-US offline maps. First use of the desktop viewer unzips maps (~30 GB). |
 | **Maps on a phone** | Android: bundled **OsmAnd~ APK** (sideload offline). iPhone/iPad: install **OsmAnd** from the App Store while online. |
 
 **Key points:**
@@ -144,7 +150,7 @@ Downloading ~85 GB can take several hours.
 
 ## 🚀 Other ways to install
 
-### A) Double-click `install.bat` (Windows)
+### A) Double-click `install.bat` (Windows) or `install.command` (Mac)
 The steps are in [Start here](#start-here) at the top of this page.
 
 ### B) In Claude Code (one prompt)
@@ -184,11 +190,11 @@ and it continues where it left off.
 ### Platform support
 | | Windows | macOS | Linux |
 |---|---|---|---|
-| Installer | `Get-OfflineLibrary.ps1` / `install.bat` | `get-offline-library.sh` | `get-offline-library.sh` |
+| Installer | `Get-OfflineLibrary.ps1` / `install.bat` | `get-offline-library.sh` / `install.command` | `get-offline-library.sh` |
 | Offline AI chat | ✅ (x64/ARM + Vulkan GPU) | ✅ (Metal GPU) | ✅ (x64/ARM + Vulkan GPU) |
 | GPT4All doc-Q&A | ✅ `.exe` | ✅ `.dmg` | ✅ `.run` |
 | Kiwix desktop | ✅ bundled portable | App Store / kiwix.org | ✅ bundled AppImage (x64) |
-| Maps on PC | ✅ bundled viewer+Java | ✅ bundled viewer+Java | ✅ bundled viewer+Java |
+| Maps on PC | ⚠️ viewer needs internet; offline: browser maps (US) | ⚠️ viewer needs internet; offline: browser maps (US) | viewer bundled (offline untested); browser maps (US) |
 | All content (Wikipedia, ZIM, PDF, maps, APKs) | ✅ | ✅ | ✅ |
 
 ### Quick start with a smaller download
@@ -393,9 +399,27 @@ None of them are needed for a normal install.
 | `-SkipWikipedia` / `--skip-wikipedia` | Don't download the 24 GB Wikipedia dump (~24 GB saved) |
 | `-SkipMaps` / `--skip-maps` | Don't download the maps (~17 GB saved for US) |
 | `-SkipModels` / `--skip-models` | Skip the large 8B/7B AI models, keep the small 3B (~9 GB saved) |
+| `-Only <piece>[,<piece>]` / `--only <piece>[,<piece>]` | **Add just these pieces to a drive you already made** (see below). Pieces: `translate`, `medlineplus`, `extra-zims`, `browser-maps`, `education`, `kolibri`, `wikipedia`. Cannot be combined with `-Lite`, the `-Skip` options or the piece switches above |
 | `-NoAria` / `--no-aria` | Force `curl` even if `aria2c` is installed |
 
 Example: `./Get-OfflineLibrary.ps1 -Destination "F:\" -SkipWikipedia -SkipMaps`
+
+### Add one piece to a finished drive
+
+To add something later without re-running the whole install, point the installer at the same
+destination with `-Only` (Windows) or `--only` (macOS/Linux):
+
+```
+.\Get-OfflineLibrary.ps1 -Destination "F:\" -Only translate
+./get-offline-library.sh -d /mnt/usb --only translate,medlineplus
+```
+
+It downloads only those pieces, then rebuilds `README.html`, `CHECKSUMS-SHA256.txt` (a full
+read of the drive, so it takes a while on a big drive) and runs the self-check. It stops with a
+plain message, before downloading anything, if the folder is not a finished library or a piece
+needs something the drive lacks: `translate` needs the AI engine. Nothing is installed for you
+in that case. `browser-maps` follows `-Region` / `--region` and `education` follows
+`-EduLang` / `--edu-lang`, as in a full install.
 
 ---
 

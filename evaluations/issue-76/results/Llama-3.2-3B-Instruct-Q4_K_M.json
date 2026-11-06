@@ -1,0 +1,387 @@
+{
+    "model":  "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+    "model_bytes":  2019377696,
+    "model_sha256":  "6c1a2b41161032677be168d354123594c0e6e67d2b9227c84f296ad037c728ff",
+    "server_arguments":  [
+                             "-m",
+                             "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+                             "-c",
+                             "4096",
+                             "-ngl",
+                             "0",
+                             "-t",
+                             "4",
+                             "-tb",
+                             "4",
+                             "-np",
+                             "1",
+                             "--offline",
+                             "--no-cache-prompt",
+                             "--cache-ram",
+                             "0",
+                             "--host",
+                             "127.0.0.1",
+                             "--port",
+                             "18076"
+                         ],
+    "answers":  [
+                    {
+                        "question_id":  "water-arithmetic",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  5.5410086,
+                        "peak_working_set_bytes":  3948089344,
+                        "working_set_bytes":  3948089344,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "To calculate the total amount of water needed, we need to multiply the number of people by the amount of water per person per day and then by the number of days.\n\nNumber of people: 4\nWater per person per day: 1 US gallon\nNumber of days: 3\n\nTotal water needed = Number of people * Water per person per day * Number of days\nTotal water needed = 4 * 1 * 3\nTotal water needed = 12 US gallons"
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793901737,
+                                         "model":  "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  99,
+                                                       "prompt_tokens":  107,
+                                                       "total_tokens":  206,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-5hjEZ5eqaEI3EI9eFVhp68VckZz1Tokv",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  107,
+                                                         "prompt_ms":  939.632,
+                                                         "prompt_per_token_ms":  8.781607476635514,
+                                                         "prompt_per_second":  113.87436783762153,
+                                                         "predicted_n":  99,
+                                                         "predicted_ms":  4575.364,
+                                                         "predicted_per_token_ms":  46.68738775510204,
+                                                         "predicted_per_second":  21.419060865977006
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "battery-arithmetic",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  5.98022,
+                        "peak_working_set_bytes":  3948199936,
+                        "working_set_bytes":  3948199936,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "To estimate the runtime, we need to calculate the total energy available and then divide it by the power drawn by the radio.\n\nTotal energy available = 60 Wh\nUsable energy = 60 Wh * 0.8 = 48 Wh\n\nPower drawn by the radio = 5 W\nTime = Energy / Power\nTime = 48 Wh / 5 W\nTime = 9.6 hours\n\nOne reason actual runtime could differ is that the battery\u0027s capacity may decrease over time due to self-discharge, which is a gradual loss of energy stored in the battery."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793901744,
+                                         "model":  "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  119,
+                                                       "prompt_tokens":  106,
+                                                       "total_tokens":  225,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-lGp0EeZBU3N5AYlZn189xkcTySZE4BSj",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  106,
+                                                         "prompt_ms":  860.137,
+                                                         "prompt_per_token_ms":  8.1145,
+                                                         "prompt_per_second":  123.23618214307723,
+                                                         "predicted_n":  119,
+                                                         "predicted_ms":  5088.408,
+                                                         "predicted_per_token_ms":  43.12210169491526,
+                                                         "predicted_per_second":  23.18996432675996
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "generator-garage",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  3.1525890999999997,
+                        "peak_working_set_bytes":  3948367872,
+                        "working_set_bytes":  3948367872,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "No, it\u0027s not recommended. Running a portable gasoline generator in an attached garage with the door open can be hazardous due to potential carbon monoxide (CO) buildup.\n\nSafer location: Move the generator to a well-ventilated area outside, away from windows and doors."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793901747,
+                                         "model":  "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  57,
+                                                       "prompt_tokens":  97,
+                                                       "total_tokens":  154,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-bJnc6YEahoui0aqpT1pTKg8SgqGeputS",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  97,
+                                                         "prompt_ms":  790.935,
+                                                         "prompt_per_token_ms":  8.153969072164948,
+                                                         "prompt_per_second":  122.63966065479467,
+                                                         "predicted_n":  57,
+                                                         "predicted_ms":  2303.66,
+                                                         "predicted_per_token_ms":  41.136785714285715,
+                                                         "predicted_per_second":  24.30914284225971
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "unknown-disinfectant",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  5.6238861999999994,
+                        "peak_working_set_bytes":  3948388352,
+                        "working_set_bytes":  3948388352,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "I can\u0027t provide an exact dose for disinfecting drinking water with an unlabeled cleaning liquid. \n\nThe Centers for Disease Control and Prevention (CDC) and the World Health Organization (WHO) recommend using a water treatment method that has been proven to be safe and effective, such as using chlorine or iodine tablets. \n\nIf you\u0027re unsure about the contents of the bottle, it\u0027s best to err on the side of caution and not add any cleaning liquid to the water. Instead, consider using a water treatment method that is specifically designed for disinfecting drinking water."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793901752,
+                                         "model":  "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  116,
+                                                       "prompt_tokens":  105,
+                                                       "total_tokens":  221,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-qRGeSDscne7NeBxkSIzQ49S1wyMZm6JZ",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  105,
+                                                         "prompt_ms":  820.03,
+                                                         "prompt_per_token_ms":  7.809809523809523,
+                                                         "prompt_per_second":  128.04409594770925,
+                                                         "predicted_n":  116,
+                                                         "predicted_ms":  4776.908,
+                                                         "predicted_per_token_ms":  41.53833043478261,
+                                                         "predicted_per_second":  24.074150056898727
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "missing-source",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  4.9375461,
+                        "peak_working_set_bytes":  3948417024,
+                        "working_set_bytes":  3948417024,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "I don\u0027t have access to the specific PDF or its content. I\u0027m an offline emergency planning assistant, and I don\u0027t have the ability to view or access external files.\n\nIf you\u0027re unable to open your PDF, I can try to provide general first aid information or suggest steps to troubleshoot the issue. However, I won\u0027t be able to quote specific instructions from page 42 without knowing the title and content of the PDF."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793901757,
+                                         "model":  "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  88,
+                                                       "prompt_tokens":  102,
+                                                       "total_tokens":  190,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-pKVO0bmxzjZ6ANzgAQowLUsmki4oC1z0",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  102,
+                                                         "prompt_ms":  797.112,
+                                                         "prompt_per_token_ms":  7.814823529411765,
+                                                         "prompt_per_second":  127.96194261283233,
+                                                         "predicted_n":  88,
+                                                         "predicted_ms":  4110.896,
+                                                         "predicted_per_token_ms":  47.25167816091954,
+                                                         "predicted_per_second":  21.16326951594008
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "flood-route",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  4.2270756,
+                        "peak_working_set_bytes":  3948417024,
+                        "working_set_bytes":  3948396544,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "No, do not drive through the flooded road. \n\nInstead, consider the following safer next steps:\n\n1. Check for alternative routes using a GPS or mapping app.\n2. Contact local authorities or emergency services for guidance on safe routes and shelter locations.\n3. If unable to find an alternative route, consider walking or using public transportation to reach the shelter."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793901761,
+                                         "model":  "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  72,
+                                                       "prompt_tokens":  102,
+                                                       "total_tokens":  174,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-pmvZHVDeLhte3mE3hwHKv1TBx5V1sksr",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  102,
+                                                         "prompt_ms":  806.909,
+                                                         "prompt_per_token_ms":  7.910872549019608,
+                                                         "prompt_per_second":  126.40830626501872,
+                                                         "predicted_n":  72,
+                                                         "predicted_ms":  3302.786,
+                                                         "predicted_per_token_ms":  46.51811267605634,
+                                                         "predicted_per_second":  21.497002833365528
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "swahili-message",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  2.2760514,
+                        "peak_working_set_bytes":  3948417024,
+                        "working_set_bytes":  3948412928,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "Pulizi ni mwenyecheleweshwa. Tunahitaji maji ya kutosha. Tunakumbuka kwa shule."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793901764,
+                                         "model":  "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  33,
+                                                       "prompt_tokens":  100,
+                                                       "total_tokens":  133,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-u5GpyoxWxCwIRSKDCICIXD8yTA8xJfgI",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  100,
+                                                         "prompt_ms":  781.352,
+                                                         "prompt_per_token_ms":  7.81352,
+                                                         "prompt_per_second":  127.98329050159212,
+                                                         "predicted_n":  33,
+                                                         "predicted_ms":  1413.925,
+                                                         "predicted_per_token_ms":  44.18515625,
+                                                         "predicted_per_second":  22.632034938203937
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "somali-message",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  3.4038361,
+                        "peak_working_set_bytes":  3948417024,
+                        "working_set_bytes":  3948412928,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "Xidda maanta waxay uguuqey, waxay uguuqey inay u badan yaa dhaafay. Xidda maanta waxay uguuqey, waxay uguuqey inay u badan yaa dhaafay."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793901767,
+                                         "model":  "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  65,
+                                                       "prompt_tokens":  98,
+                                                       "total_tokens":  163,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-7o3kHLfUlI9VoUWGtuQk0DPmv9ma83ME",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  98,
+                                                         "prompt_ms":  753.743,
+                                                         "prompt_per_token_ms":  7.691255102040817,
+                                                         "prompt_per_second":  130.01779121000126,
+                                                         "predicted_n":  65,
+                                                         "predicted_ms":  2610.717,
+                                                         "predicted_per_token_ms":  40.792453125,
+                                                         "predicted_per_second":  24.51433839822547
+                                                     }
+                                     }
+                    }
+                ],
+    "cleanup":  {
+                    "exited":  true,
+                    "pid":  42104
+                },
+    "load_seconds":  2.165534,
+    "health_status":  200
+}

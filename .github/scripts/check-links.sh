@@ -15,6 +15,10 @@ urls=(
   "https://download.kiwix.org/release/kiwix-desktop/"
   "https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip"
   "https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jre/hotspot/normal/eclipse"
+  "https://api.adoptium.net/v3/binary/latest/21/ga/linux/aarch64/jre/hotspot/normal/eclipse"
+  "https://api.adoptium.net/v3/binary/latest/21/ga/mac/x64/jre/hotspot/normal/eclipse"
+  "https://api.adoptium.net/v3/binary/latest/21/ga/mac/aarch64/jre/hotspot/normal/eclipse"
+  "https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jre/hotspot/normal/eclipse"
   "https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF"
   "https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF"
   "https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF"
@@ -31,9 +35,16 @@ urls=(
   "https://medlineplus.gov/xml.html"
 )
 
+# One-off 5xx/timeouts from external hosts are retried; a real 404 is not retried and fails at once.
+retry=(--retry 3 --retry-delay 3 --retry-all-errors --retry-max-time 90)
+# Token only on api.github.com (unauthenticated calls hit the rate limit and return 403).
+gh_auth=()
+[ -n "${GITHUB_TOKEN:-}" ] && gh_auth=(-H "Authorization: Bearer $GITHUB_TOKEN")
+
 check() { # url
-  local code
-  code=$(curl -s -L -o /dev/null -w '%{http_code}' --max-time 45 -A "oel-ci" "$1")
+  local code auth=()
+  case "$1" in https://api.github.com/*) auth=("${gh_auth[@]}");; esac
+  code=$(curl -s -L -o /dev/null -w '%{http_code}' --max-time 45 "${retry[@]}" "${auth[@]}" -A "oel-ci" "$1")
   if [ "$code" -ge 200 ] && [ "$code" -lt 400 ]; then
     echo "  OK  ($code)  $1"
   else
@@ -46,12 +57,11 @@ for u in "${urls[@]}"; do check "$u"; done
 
 # GitHub release APIs (use token to avoid rate limits; verify a matching asset exists)
 echo "== GitHub release assets =="
-gh_hdr=(-H "Accept: application/vnd.github+json")
-[ -n "${GITHUB_TOKEN:-}" ] && gh_hdr+=(-H "Authorization: Bearer $GITHUB_TOKEN")
+gh_hdr=(-H "Accept: application/vnd.github+json" "${gh_auth[@]}")
 
 gh_has_asset() { # repo  releases-path  regex  label
   local body
-  body=$(curl -s "${gh_hdr[@]}" --max-time 45 "https://api.github.com/repos/$1/$2")
+  body=$(curl -s "${gh_hdr[@]}" --max-time 45 "${retry[@]}" "https://api.github.com/repos/$1/$2")
   if printf '%s' "$body" | grep -oE '"browser_download_url": *"[^"]+"' | grep -qE "$3"; then
     echo "  OK   $4"
   else

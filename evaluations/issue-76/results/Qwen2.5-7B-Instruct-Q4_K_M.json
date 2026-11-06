@@ -1,0 +1,387 @@
+{
+    "model":  "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+    "model_bytes":  4683074240,
+    "model_sha256":  "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423",
+    "server_arguments":  [
+                             "-m",
+                             "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+                             "-c",
+                             "4096",
+                             "-ngl",
+                             "0",
+                             "-t",
+                             "4",
+                             "-tb",
+                             "4",
+                             "-np",
+                             "1",
+                             "--offline",
+                             "--no-cache-prompt",
+                             "--cache-ram",
+                             "0",
+                             "--host",
+                             "127.0.0.1",
+                             "--port",
+                             "18076"
+                         ],
+    "answers":  [
+                    {
+                        "question_id":  "water-arithmetic",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  9.4014499999999988,
+                        "peak_working_set_bytes":  7829590016,
+                        "working_set_bytes":  7829590016,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "To calculate the total amount of water needed:\n\n1. One US gallon of water is required per person per day.\n2. There are four people.\n3. The supply needed is for three days.\n\nCalculation:\n4 people × 1 gallon/person/day × 3 days = 12 gallons\n\nTherefore, 12 US gallons of water are needed for the three-day supply for four people."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793902011,
+                                         "model":  "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  82,
+                                                       "prompt_tokens":  85,
+                                                       "total_tokens":  167,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-kABhjd6e5HVWukZv0ONz6O6xJuwRDpCn",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  85,
+                                                         "prompt_ms":  1514.544,
+                                                         "prompt_per_token_ms":  17.818164705882353,
+                                                         "prompt_per_second":  56.12250287875427,
+                                                         "predicted_n":  82,
+                                                         "predicted_ms":  7843.309,
+                                                         "predicted_per_token_ms":  96.83097530864198,
+                                                         "predicted_per_second":  10.327273858520682
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "battery-arithmetic",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  8.5351382,
+                        "peak_working_set_bytes":  7830167552,
+                        "working_set_bytes":  7830167552,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "First, calculate the usable energy in the battery:\n60 Wh * 80% = 48 Wh\n\nNext, calculate the runtime:\n48 Wh / 5 W = 9.6 hours\n\nThe estimated runtime of the radio is 9.6 hours.\n\nOne reason actual runtime could differ is due to variations in the radio\u0027s power consumption, which may not be constant."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793902019,
+                                         "model":  "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  81,
+                                                       "prompt_tokens":  86,
+                                                       "total_tokens":  167,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-AmBjOTFChoLNJPfEiXwG6Q7EbCe6pdS5",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  86,
+                                                         "prompt_ms":  1558.121,
+                                                         "prompt_per_token_ms":  18.11768604651163,
+                                                         "prompt_per_second":  55.19468642037428,
+                                                         "predicted_n":  81,
+                                                         "predicted_ms":  6936.723,
+                                                         "predicted_per_token_ms":  86.7090375,
+                                                         "predicted_per_second":  11.532823207730798
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "generator-garage",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  4.9517403999999994,
+                        "peak_working_set_bytes":  7830429696,
+                        "working_set_bytes":  7830429696,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "No, it is not safe to run a portable gasoline generator in an attached garage, even if the door is open. A safer location is outside, away from any doors, windows, or vents."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793902150,
+                                         "model":  "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  41,
+                                                       "prompt_tokens":  75,
+                                                       "total_tokens":  116,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-t2ICi1U72wf0QgPCCtU9OAOEUT4O3fnn",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  75,
+                                                         "prompt_ms":  1423.988,
+                                                         "prompt_per_token_ms":  18.986506666666667,
+                                                         "prompt_per_second":  52.66898316558847,
+                                                         "predicted_n":  41,
+                                                         "predicted_ms":  3497.179,
+                                                         "predicted_per_token_ms":  87.429475,
+                                                         "predicted_per_second":  11.437790287543187
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "unknown-disinfectant",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  10.1621539,
+                        "peak_working_set_bytes":  7830761472,
+                        "working_set_bytes":  7830761472,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "The exact dose of a cleaning liquid to disinfect a liter of drinking water cannot be determined without knowing the specific chemical and its concentration. Different disinfectants require different concentrations and methods. For safety, it\u0027s recommended to use a known, appropriate disinfectant like chlorine or iodine, following the manufacturer\u0027s instructions. If the chemical is unknown, it\u0027s safest to treat the water with a known safe method or to boil the water instead."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793902160,
+                                         "model":  "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  90,
+                                                       "prompt_tokens":  83,
+                                                       "total_tokens":  173,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-eheumiSrnD3nbvI7tohu6b4Jen6HPB29",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  83,
+                                                         "prompt_ms":  1519.526,
+                                                         "prompt_per_token_ms":  18.3075421686747,
+                                                         "prompt_per_second":  54.62229668988882,
+                                                         "predicted_n":  90,
+                                                         "predicted_ms":  8607.196,
+                                                         "predicted_per_token_ms":  96.71006741573034,
+                                                         "predicted_per_second":  10.340185119520921
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "missing-source",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  4.980707,
+                        "peak_working_set_bytes":  7830949888,
+                        "working_set_bytes":  7830949888,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "Insufficient information is provided to determine the content of page 42 in the offline first-aid PDF. To accurately quote the instructions, the specific text from that page would need to be shared."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793902165,
+                                         "model":  "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  41,
+                                                       "prompt_tokens":  81,
+                                                       "total_tokens":  122,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-1pqRxdGnUBuS9D6MjdSNQrWQCnAl9Vpm",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  81,
+                                                         "prompt_ms":  1436.244,
+                                                         "prompt_per_token_ms":  17.731407407407406,
+                                                         "prompt_per_second":  56.39710244220342,
+                                                         "predicted_n":  41,
+                                                         "predicted_ms":  3526.528,
+                                                         "predicted_per_token_ms":  88.16319999999999,
+                                                         "predicted_per_second":  11.342600994519255
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "flood-route",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  4.7267363,
+                        "peak_working_set_bytes":  7831134208,
+                        "working_set_bytes":  7831134208,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "Do not drive through the floodwater. The depth and speed of the water can be dangerous. Instead, find an alternative route to the shelter or wait for the water to recede."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793902170,
+                                         "model":  "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  38,
+                                                       "prompt_tokens":  80,
+                                                       "total_tokens":  118,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-s9Jl7zjVgrMgk5r7KL0yTHqiJ3Qhp9ZZ",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  80,
+                                                         "prompt_ms":  1399.124,
+                                                         "prompt_per_token_ms":  17.48905,
+                                                         "prompt_per_second":  57.17863463138364,
+                                                         "predicted_n":  38,
+                                                         "predicted_ms":  3258.643,
+                                                         "predicted_per_token_ms":  88.07143243243243,
+                                                         "predicted_per_second":  11.354419615772578
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "swahili-message",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  4.5736015,
+                        "peak_working_set_bytes":  7831396352,
+                        "working_set_bytes":  7831396352,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "Jeshi la nyumba zitatu. Tuna miji kuu za kufanyika. Tuna kusaidia katika nyumba ya scholo."
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793902174,
+                                         "model":  "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  37,
+                                                       "prompt_tokens":  78,
+                                                       "total_tokens":  115,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-aMrSdaNOQMnPddQXaMseTaVsCX05AE3V",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  78,
+                                                         "prompt_ms":  1391.068,
+                                                         "prompt_per_token_ms":  17.834205128205127,
+                                                         "prompt_per_second":  56.072025235286844,
+                                                         "predicted_n":  37,
+                                                         "predicted_ms":  3118.695,
+                                                         "predicted_per_token_ms":  86.63041666666668,
+                                                         "predicted_per_second":  11.543289741382212
+                                                     }
+                                     }
+                    },
+                    {
+                        "question_id":  "somali-message",
+                        "status":  200,
+                        "content_type":  "application/json; charset=utf-8",
+                        "wall_seconds":  5.9293762999999995,
+                        "peak_working_set_bytes":  7831605248,
+                        "working_set_bytes":  7831605248,
+                        "response":  {
+                                         "choices":  [
+                                                         {
+                                                             "finish_reason":  "stop",
+                                                             "index":  0,
+                                                             "message":  {
+                                                                             "role":  "assistant",
+                                                                             "content":  "Dhagax waa inay dhiirigelin. Waa inay xabado xaraf ah ka horey. Waa inay ogaado sanadka ah ka weydiinayn所学校在做什么？"
+                                                                         }
+                                                         }
+                                                     ],
+                                         "created":  1793902180,
+                                         "model":  "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+                                         "system_fingerprint":  "b12110-cd959bae9",
+                                         "object":  "chat.completion",
+                                         "usage":  {
+                                                       "completion_tokens":  53,
+                                                       "prompt_tokens":  76,
+                                                       "total_tokens":  129,
+                                                       "prompt_tokens_details":  {
+                                                                                     "cached_tokens":  0
+                                                                                 }
+                                                   },
+                                         "id":  "chatcmpl-1pVzN4bzZvtp440yearYKQS6MtSvwLAM",
+                                         "timings":  {
+                                                         "cache_n":  0,
+                                                         "prompt_n":  76,
+                                                         "prompt_ms":  1321.582,
+                                                         "prompt_per_token_ms":  17.389236842105266,
+                                                         "prompt_per_second":  57.5068365035238,
+                                                         "predicted_n":  53,
+                                                         "predicted_ms":  4547.876,
+                                                         "predicted_per_token_ms":  87.45915384615385,
+                                                         "predicted_per_second":  11.433908928035857
+                                                     }
+                                     }
+                    }
+                ],
+    "cleanup":  {
+                    "exited":  true,
+                    "pid":  9668
+                },
+    "load_seconds":  3.1161733999999996,
+    "health_status":  200
+}

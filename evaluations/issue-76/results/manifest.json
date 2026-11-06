@@ -1,0 +1,25 @@
+﻿{
+    "date_utc":  "2026-11-05T18:02:05.6989788Z",
+    "os":  "Microsoft Windows NT 10.0.26300.0",
+    "powershell":  "5.1.26100.9818",
+    "cpu":  [
+                "13th Gen Intel(R) Core(TM) i7-13700KF"
+            ],
+    "logical_processors":  24,
+    "physical_ram_bytes":  102856974336,
+    "free_ram_before_bytes":  51298840576,
+    "engine_sha256":  "00d50686815af38249d0218c91558fbd0e9093ac8c074bac86196907f4305e31",
+    "engine_version":  "version: 0.9.0-dev (build 12110, commit cd959bae9)\r\nbuilt with Clang 20.1.8 for Windows x86_64",
+    "questions_sha256":  "1564d24ab536f96fc104ff0802c5ac3937f54fc9e2ca7a3defa8820ba101bb69",
+    "settings":  {
+                     "seed":  76,
+                     "gpu_layers":  0,
+                     "max_tokens":  384,
+                     "threads":  4,
+                     "system":  "You are an offline emergency planning assistant. Answer concisely. Do not invent facts or source quotations. State when necessary information is missing.",
+                     "cache_prompt":  false,
+                     "parallel":  1,
+                     "context":  4096,
+                     "temperature":  0
+                 }
+}

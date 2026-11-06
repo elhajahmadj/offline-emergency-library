@@ -12,6 +12,24 @@ Contributor-driven reliability and portability work, from people running the kit
 hardware.
 
 ### Added
+- **macOS double-click starter: `install.command`.** The Mac twin of `install.bat`: double-click
+  it in Finder and it runs `get-offline-library.sh` from the same folder, or downloads it from
+  GitHub first when the file is on its own. It waits for Return before it exits. README
+  "Start here" now gives the Mac steps as a double-click, with the one-time Gatekeeper step for
+  a downloaded zip. Resolves #81. _[@boostedchaos](https://github.com/boostedchaos) - PR #96._
+- **CPU model comparison.** `evaluations/issue-76/` records a fixed emergency
+  question set, a replayable Windows CPU runner, raw answers, and RAM/timing
+  results. It preserves the model lineup and states the limits of the quality
+  assessment, including the need for independent language review. Resolves #76.
+  _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #121._
+- **Add one piece to a finished drive: `-Only` / `--only`.** `-Only translate,medlineplus` (or
+  `--only ...`) downloads just those pieces into an existing library instead of re-running the
+  whole install: `translate`, `medlineplus`, `extra-zims`, `browser-maps`, `education`,
+  `kolibri`, `wikipedia`. It stops with a plain message, before downloading anything, when the
+  folder is not a finished library or a piece needs something missing (the translator needs the
+  AI engine), then rebuilds `README.html` and `CHECKSUMS-SHA256.txt` and runs the self-check.
+  The CI smoke test covers the stop messages on every OS. Resolves #74.
+  _[@EnragedAntelope](https://github.com/EnragedAntelope)._
 - **README: "Start here" install steps first.** The README now opens with the steps for each
   OS (Windows: download the ZIP, double-click `install.bat`; Mac/Linux: paste one line in
   Terminal) and the one question the installer asks. The flags table moves under "Advanced:
@@ -171,6 +189,19 @@ hardware.
   makes no network requests. Off by default. Resolves #64.
   _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #87._
 
+### Removed
+- **Dropped the five `zimgit-*` Kiwix collections (post-disaster, water, food preparation,
+  knots, medicine).** They are collections of third-party PDFs with no stated license, and
+  some items are all rights reserved (for example the SAS Survival Handbook and Foxfire), so
+  they do not meet this project's rule that everything bundled is free, openly licensed, or
+  public domain (#59). The goal of this kit is to help people, and to be a clean library
+  anyone can use however they like without taking something that is not ours to give — so we
+  removed them rather than risk the project being taken down over a licensing complaint.
+  Survival, water, food and first-aid are still covered by the public-domain US Army field
+  manuals (FM 21-76 covers water, food, knots and shelter), the USDA home-canning guide,
+  Appropedia, WikiMed and the Hesperian/WHO PDFs. A license-cleared replacement for the knots
+  guide is tracked in #78. Resolves #122.
+
 ### Changed
 - **Lite no longer leaves the AI's trust gap silent.** `--lite` / `-Lite` still omits GPT4All
   (keeping the preset lean — forcing it back in would undo the #32/#39 sizing work), but a lite
@@ -191,6 +222,18 @@ hardware.
   page is not updated. Resolves #91. _[@boostedchaos](https://github.com/boostedchaos) - PR #97._
 
 ### Fixed
+- **macOS + exFAT: the self-check and README index skip macOS's hidden `._` files.** On an exFAT
+  or FAT32 drive, macOS writes a `._<name>` file beside every file. The bash self-check read them
+  as broken ZIMs and PDFs ("FINISHED WITH PROBLEMS: 2 self-check(s) failed"), and the README
+  index listed them. Both now leave out `._*`, as `CHECKSUMS-SHA256.txt` already did. Resolves
+  #123. _[@boostedchaos](https://github.com/boostedchaos)._
+- **Desktop viewer needs internet on Windows and macOS: the docs and launchers now say so.** The bundled OsmAndMapCreator has only the Linux offline renderer, so on Windows and macOS it draws online tiles from `tile.osmand.net` and shows a blank map with no internet (reproduced on Windows 11 and macOS). HOW-TO-VIEW-MAPS, the README, START-HERE, POWER-AND-DEVICES and both viewer launchers no longer call it an offline viewer; they point to browser maps (US) or an Android phone. `VIEW-MAPS-ON-PC.sh` also launched a second viewer when the first exited non-zero (`sh ... || bash ...`); it now launches once. Addresses #15. _Tested by [@boostedchaos](https://github.com/boostedchaos) - issue #15._
+- **The upstream link check no longer fails on one-off errors.** `check-links.sh` retries a
+  failed URL up to 3 times (5xx, timeouts, resets) before counting it as dead, and sends the
+  `GITHUB_TOKEN` on every `api.github.com` URL, not only the release-asset checks, so the
+  pmtiles `contents` URL no longer hits the unauthenticated rate limit (403). A real dead link
+  (for example a 404) still fails the job at once. Resolves #103. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #105._
+- Fix outdated browser-maps note in POWER-AND-DEVICES guide (PR #109) (@imsurya26)
 - **A re-run no longer keeps or corrupts downloads whose name stays the same.** OsmAnd maps,
   OsmAndMapCreator (nightly), the portable Java runtime and the browser-maps style archive
   keep their file name when the source publishes a new edition, so a re-run resumed the new
@@ -247,10 +290,11 @@ hardware.
   _Reported by [@boostedchaos](https://github.com/boostedchaos) (issue #1)._
 
 ### Known issues
-- The bundled OsmAndMapCreator desktop viewer itself still renders a blank map on some Windows
-  setups (Linux-only native renderer). The **browser maps** are now the recommended Windows
-  computer viewer and render reliably (US maps); non-US Windows users use the Android path. See
-  the "Blank desktop map on Windows" entry above. Tracking in issue #15 until re-tested.
+- The bundled OsmAndMapCreator desktop viewer cannot draw the drive's maps on Windows or macOS
+  (Linux-only native renderer); it shows online tiles, so it is blank with no internet. The
+  **browser maps** are the offline computer viewer (US maps); non-US users use the Android path.
+  Linux x64 is untested. See the "Desktop viewer needs internet" entry under Fixed. Tracking in
+  issue #15.
   _Reported by [@EnragedAntelope](https://github.com/EnragedAntelope) — issue #15._
 
 ## [v1.4] — 2026-11-02 — faster downloads (aria2)
