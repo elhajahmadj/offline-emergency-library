@@ -1051,7 +1051,7 @@ if [ "$READY" != 1 ]; then
     echo "Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible)."
   else
     wait "$PID" 2>/dev/null; SRC=$?; PID=
-    echo "The translator server stopped right after it started (exit code $SRC). The log is above."
+    echo "The translator server stopped right after it started (exit code $SRC). The log is above. If it says it could not bind, another program is using port 8087."
   fi
   exit 1
 fi
@@ -1123,7 +1123,7 @@ try {
     Start-Sleep -Milliseconds 1000
   }
   if(-not $ready){
-    if($server.HasExited){ throw "The translator server stopped right after it started (exit code $($server.ExitCode)). The log is below. On Windows, security software or Smart App Control can block llama-server.exe or its DLLs." }
+    if($server.HasExited){ throw "The translator server stopped right after it started (exit code $($server.ExitCode)). The log is below. If it says it could not bind, another program is using port 8087. On Windows, security software or Smart App Control can block llama-server.exe or its DLLs." }
     throw 'Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible).'
   }
   Write-Host "Opening $url. First send the two languages, for example: English and Spanish."

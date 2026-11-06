@@ -176,8 +176,8 @@ if command -v iconv >/dev/null 2>&1; then
   printf '{"pieces":["core"]}' | iconv -f UTF-8 -t UTF-16 > "$T/utf16.json"
   sh_rc=0; out="$(bash get-offline-library.sh --select "$T/utf16.json" --check-selection </dev/null 2>&1)" || sh_rc=$?
   ps_out="$("$PS" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File Get-OfflineLibrary.ps1 -Selection "$T/utf16.json" -CheckSelection </dev/null 2>&1)"; ps_rc=$?
-  if [ "$sh_rc" = 1 ] && [ "$ps_rc" = 1 ] && printf '%s' "$out" | grep -qF "not a selection file" && printf '%s' "$ps_out" | grep -qiF "UTF-16"; then
-    echo "  ok: UTF-16 selection refused by both"
+  if [ "$sh_rc" = 1 ] && [ "$ps_rc" = 1 ] && printf '%s' "$out" | grep -qiF "UTF-16" && printf '%s' "$ps_out" | grep -qiF "UTF-16"; then
+    echo "  ok: UTF-16 selection refused by both (with the save-as-UTF-8 hint)"
   else bad "UTF-16: bash $sh_rc '$out' / PowerShell $ps_rc '$ps_out'"; fi
 else echo "  (skip UTF-16 case: iconv not available)"; fi
 sh_rc=0; out="$(bash get-offline-library.sh --check-selection </dev/null 2>&1)" || sh_rc=$?
