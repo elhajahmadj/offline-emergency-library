@@ -62,5 +62,9 @@ install_manual_qa(){
     while IFS= read -r line; do log "doc-QA WARN: $line"; done < "$out/missing.txt"
     return 1
   fi
-  log "doc-QA: manuals ready. Run AI-Offline/Manual-QA/start-docs.sh."
+  if [ "$(uname -s 2>/dev/null)" = "Darwin" ]; then
+    log "doc-QA: manuals ready. Run AI-Offline/Manual-QA/start-docs.command."
+  else
+    log "doc-QA: manuals ready. Run AI-Offline/Manual-QA/start-docs.sh."
+  fi
 }

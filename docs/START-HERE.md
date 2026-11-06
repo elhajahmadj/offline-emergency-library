@@ -68,7 +68,7 @@ are opt-in).
 | `AI-Offline\TRANSLATE.bat` / `translate.sh` | Offline **translator** (Qwen3 4B); see `AI-Offline\HOW-TO-TRANSLATE.html` | with `-Translate` / `--translate` |
 | `OsmAnd\MapViewer-Desktop\VIEW-MAPS-ON-PC` | Open the **desktop map viewer** (OsmAndMapCreator); first run unzips the maps. **Needs internet on Windows and macOS** (draws online tiles); offline, use browser maps (US) or a phone | with maps |
 | `Maps-Browser\OPEN-MAPS.bat` / `.sh` | **Street maps in a web browser** (opt-in browser maps); opens `http://localhost:8097` | with `-BrowserMaps` / `--browser-maps` |
-| `AI-Offline\Manual-QA\START-DOCS.bat` / `start-docs.sh` | **Ask the manuals** with source passages and PDF links - starts a local server, then open `http://127.0.0.1:8081/AI-Offline/Manual-QA/` | always |
+| `AI-Offline\Manual-QA\START-DOCS.bat` / `start-docs.command` / `start-docs.sh` | **Ask the manuals** with source passages and PDF links - starts a local server, then open `http://127.0.0.1:8081/AI-Offline/Manual-QA/` | always |
 | `CHECK-DRIVE.bat` / `.sh` | **Re-check every file** on the drive for damage and print only the problems | always |
 
 > **Windows vs macOS/Linux:** the chat / Web-UI / translator launchers, `OPEN-MAPS` and
