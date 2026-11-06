@@ -923,7 +923,12 @@ for ((attempt=0; attempt<120 && SECONDS<120; attempt++)); do
 done
 if [ "$READY" != 1 ]; then
   cat "$LOG"
-  echo "Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible)."
+  if kill -0 "$PID" 2>/dev/null; then
+    echo "Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible)."
+  else
+    wait "$PID" 2>/dev/null; SRC=$?; PID=
+    echo "The translator server stopped right after it started (exit code $SRC). The log is above."
+  fi
   exit 1
 fi
 echo "Opening $URL. First send the two languages, for example: English and Spanish."
@@ -993,7 +998,10 @@ try {
     }
     Start-Sleep -Milliseconds 1000
   }
-  if(-not $ready){ throw 'Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible).' }
+  if(-not $ready){
+    if($server.HasExited){ throw "The translator server stopped right after it started (exit code $($server.ExitCode)). The log is below. On Windows, security software or Smart App Control can block llama-server.exe or its DLLs." }
+    throw 'Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible).'
+  }
   Write-Host "Opening $url. First send the two languages, for example: English and Spanish."
   Write-Host 'Use a private browser window for sensitive conversations. Closing the tab does not stop the server.'
   try { Start-Process $url } catch { Write-Host "Could not open the browser. Open $url manually." }
@@ -1022,7 +1030,11 @@ place_doc(){ # base  destpath
     fi
   done
 }
-if [ -n "$ONLY" ]; then log "docs: already on the drive (not placed again by --only)"; else
+if [ -n "$ONLY" ]; then
+  log "docs: already on the drive (not placed again by --only)"
+  # --only writes just the piece it adds, including that piece's own guide (#152).
+  case " $ONLY " in *" translate "*) place_doc "HOW-TO-TRANSLATE" "$ROOT/AI-Offline/HOW-TO-TRANSLATE"; log "docs: refreshed HOW-TO-TRANSLATE for --only translate" ;; esac
+else
 place_doc "START-HERE"            "$ROOT/START-HERE"
 place_doc "I-NEED-TO"             "$ROOT/I-NEED-TO"
 place_doc "EMERGENCY-ESSENTIALS"  "$ROOT/EMERGENCY-ESSENTIALS"

@@ -141,7 +141,8 @@ exit $LASTEXITCODE
   Set-Content -Path $model -Value 'not a GGUF model' -Encoding ascii
   try {
     $out = (& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $wrapper $browser 2>&1 | Out-String); $rc = $LASTEXITCODE
-    if($rc -ne 1 -or $out -notmatch 'Translator did not start' -or $out -match 'UNEXPECTED_BROWSER_OPEN'){ Fail "invalid translator model (exit ${rc}):`n$out" }
+    # An unreadable model makes the server exit at once, so it reports an early exit, not a timeout (#153).
+    if($rc -ne 1 -or $out -notmatch 'stopped right after it started' -or $out -match 'UNEXPECTED_BROWSER_OPEN'){ Fail "invalid translator model (exit ${rc}):`n$out" }
   } finally { Remove-Item -LiteralPath $model -Force }
   $global:LASTEXITCODE = 0
 

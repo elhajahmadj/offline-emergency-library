@@ -105,7 +105,8 @@ out="$(PATH="$T/browser-bin:$PATH" bash "$NEW/AI-Offline/translate-browser.sh" <
 printf 'not a GGUF model\n' > "$NEW/AI-Offline/models/$TR_MODEL"
 out="$(PATH="$T/browser-bin:$PATH" bash "$NEW/AI-Offline/translate-browser.sh" </dev/null 2>&1)"; rc=$?
 rm -f "$NEW/AI-Offline/models/$TR_MODEL"
-[ "$rc" = 1 ] && echo "$out" | grep -q 'Translator did not start' || die "invalid translator model (exit $rc): $out"
+# An unreadable model makes the server exit at once, so it reports an early exit, not a timeout (#153).
+[ "$rc" = 1 ] && echo "$out" | grep -q 'stopped right after it started' || die "invalid translator model (exit $rc): $out"
 echo "$out" | grep -q 'UNEXPECTED_BROWSER_OPEN' && die "failed translator opened the browser"
 
 echo "== CHECK-DRIVE from the new path"

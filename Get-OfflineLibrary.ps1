@@ -974,7 +974,12 @@ for ((attempt=0; attempt<120 && SECONDS<120; attempt++)); do
 done
 if [ "$READY" != 1 ]; then
   cat "$LOG"
-  echo "Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible)."
+  if kill -0 "$PID" 2>/dev/null; then
+    echo "Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible)."
+  else
+    wait "$PID" 2>/dev/null; SRC=$?; PID=
+    echo "The translator server stopped right after it started (exit code $SRC). The log is above."
+  fi
   exit 1
 fi
 echo "Opening $URL. First send the two languages, for example: English and Spanish."
@@ -1044,7 +1049,10 @@ try {
     }
     Start-Sleep -Milliseconds 1000
   }
-  if(-not $ready){ throw 'Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible).' }
+  if(-not $ready){
+    if($server.HasExited){ throw "The translator server stopped right after it started (exit code $($server.ExitCode)). The log is below. On Windows, security software or Smart App Control can block llama-server.exe or its DLLs." }
+    throw 'Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible).'
+  }
   Write-Host "Opening $url. First send the two languages, for example: English and Spanish."
   Write-Host 'Use a private browser window for sensitive conversations. Closing the tab does not stop the server.'
   try { Start-Process $url } catch { Write-Host "Could not open the browser. Open $url manually." }
@@ -1080,7 +1088,11 @@ function PlaceDoc($srcName,$destPath,$title){
     }
   }
 }
-if($Only){ Log 'docs: already on the drive (not placed again by -Only)' } else {
+if($Only){
+  Log 'docs: already on the drive (not placed again by -Only)'
+  # -Only writes just the piece it adds, including that piece's own guide (#152).
+  if($Only -contains 'translate'){ PlaceDoc 'HOW-TO-TRANSLATE.md' (Join-Path $Root 'AI-Offline\HOW-TO-TRANSLATE') 'Offline translator - How To'; Log 'docs: refreshed HOW-TO-TRANSLATE for -Only translate' }
+} else {
 PlaceDoc 'START-HERE.md'            (Join-Path $Root 'START-HERE')                                  'Offline Emergency Kit - Start Here'
 PlaceDoc 'I-NEED-TO.md'             (Join-Path $Root 'I-NEED-TO')                                   'I need to - Emergency Quick Index'
 PlaceDoc 'EMERGENCY-ESSENTIALS.md'  (Join-Path $Root 'EMERGENCY-ESSENTIALS')                        'Emergency essentials - print this one page'
