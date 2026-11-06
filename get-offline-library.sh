@@ -883,7 +883,8 @@ if [ -z "$ONLY" ]; then
   if [ ! -f "$setup" ]; then
     setup="$ROOT/AI-Offline/install-doc-qa.sh"
     rm -f "$setup"
-    fetch "$REPO_RAW/doc-qa/install.sh" "$setup"
+    # Not fetch: a failed helper download must not fail a library that otherwise installed.
+    curl -fLsS --retry 3 -A "$UA" "$REPO_RAW/doc-qa/install.sh" -o "$setup" 2>/dev/null || true
   fi
   if [ -s "$setup" ]; then
     . "$setup"

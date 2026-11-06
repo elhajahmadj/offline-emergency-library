@@ -941,12 +941,16 @@ if(-not $Only){
   if(-not (Test-Path -LiteralPath $setup)){
     $setup = Join-Path $Root 'AI-Offline\install-doc-qa.ps1'
     if(Test-Path -LiteralPath $setup){ Remove-Item -LiteralPath $setup -Force }
-    Fetch "$RepoRaw/doc-qa/install.ps1" $setup
+    # Not Fetch: a failed helper download must not fail a library that otherwise installed.
+    $global:LASTEXITCODE = $null
+    curl.exe -fLsS --retry 3 -A (UA) "$RepoRaw/doc-qa/install.ps1" -o $setup 2>$null
   }
-  try {
-    . $setup
-    $DocQaFailures = Install-ManualQA $Root $scriptDir
-  } catch { $DocQaFailures = 1; Log "doc-QA ERROR: $($_.Exception.Message)" }
+  if(Test-Path -LiteralPath $setup){
+    try {
+      . $setup
+      $DocQaFailures = Install-ManualQA $Root $scriptDir
+    } catch { $DocQaFailures = 1; Log "doc-QA ERROR: $($_.Exception.Message)" }
+  } else { $DocQaFailures = 1; Log 'doc-QA ERROR: reader setup helper unavailable; re-run when online' }
 }
 
 # ================================================================ README index
