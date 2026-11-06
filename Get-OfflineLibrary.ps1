@@ -700,40 +700,48 @@ if(-not $SkipMaps){
     Log 'mapviewer: OsmAndMapCreator'
     # "latest" URLs keep their file name across new editions: fetch by remote size (#57)
     $mcu = 'https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip'
-    Fetch-Sized $mcu $mc (Remote-Size $mcu) -Soft
-    # unpack to a new folder; replace the working viewer only if the unpack worked.
-    # (PowerShell 5.1 Expand-Archive can "succeed" on a damaged zip with 0 files, so check the file.)
-    $appNew = Join-Path $mvd 'app.new'
-    if(Test-Path $appNew){ Remove-Item $appNew -Recurse -Force }
-    try{ Expand-Archive $mc -DestinationPath $appNew -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
-    # if the zip nested everything in a single subfolder, pull it up to \app.new
-    if((Test-Path $appNew) -and -not (Test-Path (Join-Path $appNew 'OsmAndMapCreator.bat'))){
-      $inner = Get-ChildItem $appNew -Directory | Select-Object -First 1
-      if($inner -and (Test-Path (Join-Path $inner.FullName 'OsmAndMapCreator.bat'))){
-        Get-ChildItem $inner.FullName -Force | Move-Item -Destination $appNew -Force
+    # Each download gets its own try, so a rebuilt-nightly soft failure keeps any existing copy,
+    # logs a note like bash, and still lets the other download run (#179).
+    $gotViewer = $true
+    try{ Fetch-Sized $mcu $mc (Remote-Size $mcu) -Soft }catch{ Log "  note: $($_.Exception.Message)"; $gotViewer = $false }
+    if($gotViewer){
+      # unpack to a new folder; replace the working viewer only if the unpack worked.
+      # (PowerShell 5.1 Expand-Archive can "succeed" on a damaged zip with 0 files, so check the file.)
+      $appNew = Join-Path $mvd 'app.new'
+      if(Test-Path $appNew){ Remove-Item $appNew -Recurse -Force }
+      try{ Expand-Archive $mc -DestinationPath $appNew -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
+      # if the zip nested everything in a single subfolder, pull it up to \app.new
+      if((Test-Path $appNew) -and -not (Test-Path (Join-Path $appNew 'OsmAndMapCreator.bat'))){
+        $inner = Get-ChildItem $appNew -Directory | Select-Object -First 1
+        if($inner -and (Test-Path (Join-Path $inner.FullName 'OsmAndMapCreator.bat'))){
+          Get-ChildItem $inner.FullName -Force | Move-Item -Destination $appNew -Force
+        }
       }
-    }
-    if(Test-Path (Join-Path $appNew 'OsmAndMapCreator.bat')){
-      $app = Join-Path $mvd 'app'; if(Test-Path $app){ Remove-Item $app -Recurse -Force }
-      Move-Item $appNew $app
-    } else {
-      Remove-Item $appNew -Recurse -Force -ErrorAction SilentlyContinue
-      Log '  mapviewer ERROR: could not unpack OsmAndMapCreator.zip (old viewer kept). Delete it and re-run.'
+      if(Test-Path (Join-Path $appNew 'OsmAndMapCreator.bat')){
+        $app = Join-Path $mvd 'app'; if(Test-Path $app){ Remove-Item $app -Recurse -Force }
+        Move-Item $appNew $app
+      } else {
+        Remove-Item $appNew -Recurse -Force -ErrorAction SilentlyContinue
+        Log '  mapviewer ERROR: could not unpack OsmAndMapCreator.zip (old viewer kept). Delete it and re-run.'
+      }
     }
     $jz = Join-Path $mvd 'jre.zip'
     Log 'mapviewer: portable Java runtime'
     $jru = 'https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jre/hotspot/normal/eclipse'
-    Fetch-Sized $jru $jz (Remote-Size $jru) -Soft
-    $tmp = Join-Path $mvd '_jre_tmp'
-    if(Test-Path $tmp){ Remove-Item $tmp -Recurse -Force }
-    try{ Expand-Archive $jz -DestinationPath $tmp -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
-    $jreSrc = Get-ChildItem $tmp -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
-    if($jreSrc -and (Test-Path (Join-Path $jreSrc.FullName 'bin\java.exe'))){
-      $jreDst = Join-Path $mvd 'jre'
-      if(Test-Path $jreDst){ Remove-Item $jreDst -Recurse -Force }
-      Move-Item $jreSrc.FullName $jreDst
-    } else { Log '  mapviewer ERROR: could not unpack jre.zip (old Java kept). Delete it and re-run.' }
-    Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
+    $gotJava = $true
+    try{ Fetch-Sized $jru $jz (Remote-Size $jru) -Soft }catch{ Log "  note: $($_.Exception.Message)"; $gotJava = $false }
+    if($gotJava){
+      $tmp = Join-Path $mvd '_jre_tmp'
+      if(Test-Path $tmp){ Remove-Item $tmp -Recurse -Force }
+      try{ Expand-Archive $jz -DestinationPath $tmp -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
+      $jreSrc = Get-ChildItem $tmp -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
+      if($jreSrc -and (Test-Path (Join-Path $jreSrc.FullName 'bin\java.exe'))){
+        $jreDst = Join-Path $mvd 'jre'
+        if(Test-Path $jreDst){ Remove-Item $jreDst -Recurse -Force }
+        Move-Item $jreSrc.FullName $jreDst
+      } else { Log '  mapviewer ERROR: could not unpack jre.zip (old Java kept). Delete it and re-run.' }
+      Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
+    }
   }catch{ Log "mapviewer ERROR: $($_.Exception.Message)" }
 
   # helper: unzip the downloaded .obf.zip map files into an \obf folder the viewer can read
