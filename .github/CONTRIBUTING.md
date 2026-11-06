@@ -63,7 +63,8 @@ items you checked.
 7. **Default behavior.** The installer still asks only where to save, maps still default
    to US, and anything new and large is opt-in (off by default).
 8. **CHANGELOG fragment.** A user-facing change adds one file in `changelog.d/` (Added /
-   Changed / Fixed), with credit, and does **not** edit `CHANGELOG.md`. See
+   Changed / Fixed), starting with `- **Title.**` and ending with credit plus `PR #N`
+   naming the PR it ships in, and does **not** edit `CHANGELOG.md`. See
    `changelog.d/README.md` for the name and format.
 9. **Evidence.** The PR says what was run, on which OS, at which commit, and what was
    **not** tested. CI is green. If you can, run it yourself and post what you ran.

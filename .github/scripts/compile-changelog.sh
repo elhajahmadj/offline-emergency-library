@@ -1,16 +1,21 @@
 #!/usr/bin/env bash
 # Prints the pending fragments in changelog.d/ as Added / Changed / Fixed sections.
 # At release time: paste the output into CHANGELOG.md, then `git rm changelog.d/*.*.md`.
-# Also run by CI, so a badly named fragment fails the PR that added it.
+# Also run by CI, so a badly named or formatted fragment fails its PR.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)/changelog.d"
 shopt -s nullglob
 
 for f in *; do
   case "$f" in
-    README.md | *.added.md | *.changed.md | *.fixed.md) ;;
-    *) echo "changelog.d/$f: name must be <slug>.added.md, <slug>.changed.md or <slug>.fixed.md" >&2; exit 1 ;;
+    README.md) continue ;;
+    *.added.md | *.changed.md | *.fixed.md) ;;
+    *) echo "changelog.d/$f: name must be <slug>.added.md, <slug>.changed.md or <slug>.fixed.md; see changelog.d/README.md" >&2; exit 1 ;;
   esac
+  if ! head -n 1 "$f" | grep -q '^- \*\*' || ! grep -Eq 'PR #[0-9]+' "$f"; then
+    echo "changelog.d/$f: must start with '- **' and contain PR #<digits>; see changelog.d/README.md" >&2
+    exit 1
+  fi
 done
 
 for pair in added:Added changed:Changed fixed:Fixed; do

@@ -11,7 +11,7 @@
 - [ ] Default behavior preserved (asks only where to save; maps default to US)
 - [ ] New download sources: license named and linked in this PR, URL added to `.github/scripts/check-links.sh`
 - [ ] I did **not** edit `SHA256SUMS.txt` or `CHANGELOG.md` (a workflow updates the sums after merge)
-- [ ] User-facing change: I added a fragment in `changelog.d/` (see `changelog.d/README.md`)
+- [ ] User-facing change: I added a fragment in `changelog.d/` with credit and PR number (format in `changelog.d/README.md`)
 
 ## Tested on
 - OS(s):

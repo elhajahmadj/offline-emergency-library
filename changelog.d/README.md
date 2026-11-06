@@ -13,8 +13,14 @@ same lines.
     _[@you](https://github.com/you) - PR #N._
   ```
 
-- Preview the result with `bash .github/scripts/compile-changelog.sh` (CI runs it too and
-  fails on a badly named fragment).
+- The PR number is only known after opening the PR. Open a draft PR, add its number
+  to the fragment's credit, then push the update before requesting review.
+- Preview the result with `bash .github/scripts/compile-changelog.sh` (CI runs it too).
+  It rejects bad filenames, fragments that do not start with `- **`, and fragments
+  without `PR #<digits>`. Reviewers still check the full format and that the number
+  names the PR shipping the change.
+- Run `bash .github/scripts/check-changelog.sh` when changing the compiler. CI runs
+  these offline fixtures too, including malformed fragments and wrapped bullets.
 
 At release time the maintainer runs that script, pastes the output under the new version
 heading in `CHANGELOG.md`, and removes the fragments with `git rm changelog.d/*.*.md`.

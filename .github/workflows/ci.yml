@@ -21,8 +21,10 @@ jobs:
         run: bash -n get-offline-library.sh
       - name: Browser-only additions preserve OsmAnd metadata
         run: bash .github/scripts/check-browser-map-isolation.sh
-      - name: Changelog fragments are named correctly
+      - name: Changelog fragments have valid names and content
         run: bash .github/scripts/compile-changelog.sh > /dev/null
+      - name: Changelog compiler regression checks
+        run: bash .github/scripts/check-changelog.sh
       - name: Launcher parity (bash vs PowerShell installer)
         run: bash .github/scripts/check-launchers.sh
       - name: MedlinePlus page CSP hash (inline script allowed by hash)
