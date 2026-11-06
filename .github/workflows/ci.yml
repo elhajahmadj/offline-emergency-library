@@ -19,6 +19,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Bash syntax check
         run: bash -n get-offline-library.sh
+      - name: Browser-only additions preserve OsmAnd metadata
+        run: bash .github/scripts/check-browser-map-isolation.sh
       - name: Verify SHA256SUMS are in sync
         run: |
           fail=0

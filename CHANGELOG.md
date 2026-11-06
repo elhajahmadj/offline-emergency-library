@@ -226,6 +226,11 @@ hardware.
   page is not updated. Resolves #91. _[@boostedchaos](https://github.com/boostedchaos) - PR #97._
 
 ### Fixed
+- **Browser-only additions preserve OsmAnd region metadata.** Bash now uses temporary
+  files for the region size lookup when adding `--only browser-maps`, keeping an
+  existing drive's OsmAnd index and file list unchanged. Normal map installs still
+  retain those files. Resolves #125.
+  _[@EnragedAntelope](https://github.com/EnragedAntelope)._
 - Self-check: verify the desktop map viewer program and Java runtime are present (#100) (@imsurya26)
 - **Windows self-check no longer passes the AI engine when Windows blocks it.** When Smart App
   Control (or another app-control policy) blocks `llama-cli.exe`, PowerShell throws and keeps the
