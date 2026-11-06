@@ -515,7 +515,6 @@ $pdfs = @(
  @{id='fm-90-3-desert-operations-1993';                      n='FM 90-3 Desert Operations.pdf';                   d='Manuals\ArmyFieldManuals'}
  @{id='tm-10-412-armed-forces-recipe-service-2003';          n='TM 10-412 Armed Forces Recipe Service.pdf';       d='Manuals\ArmyFieldManuals'}
  @{id='FM2110MCRP411.1DFieldHygieneAndSanitation';           n='FM 21-10 Field Hygiene and Sanitation.pdf';       d='Manuals\ArmyFieldManuals'}
- @{id='fm-5-34-engineer-field-data-w-change-3-1999';         n='FM 5-34 Engineer Field Data.pdf';                 d='Manuals\ArmyFieldManuals'}
  @{id='armyfm5428concreteandmasonry';                        n='FM 5-428 Concrete and Masonry.pdf';               d='Manuals\ArmyFieldManuals'}
  @{id='TM5-295';                                             n='TM 5-295 Water Supply and Water Purification.pdf'; d='Manuals\ArmyFieldManuals'}
  @{id='where-there-is-no-doctor';                            n='Where There Is No Doctor.pdf';                    d='Medical\Manuals-PDF'}
