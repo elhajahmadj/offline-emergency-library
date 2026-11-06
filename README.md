@@ -64,7 +64,9 @@ Smaller drive, another country's maps, or extra content? See
 | **Repair archive** | iFixit — cars, appliances, electronics, phones | ~3.4 GB | Kiwix |
 | **DIY archive** | Appropedia — plumbing, electrical, construction, energy, water, food | ~0.6 GB | Kiwix |
 | **Medical** | Offline medical Wikipedia (WikiMed) | ~1.8 GB | Kiwix |
-| **Survival & preparedness** | FEMA *Are You Ready?*, EPA water disinfection, knots guide (public domain) | ~40 MB | Browser (PDF) |
+| **Survival & preparedness** | FEMA *Are You Ready?*, EPA water disinfection, knots guide, *Hunting with the Bow & Arrow* (Pope, 1923) (public domain) | ~55 MB | Browser (PDF) |
+| **Household DIY** | *The Boy Mechanic, Vol. 1: 700 Things to Do* (1913, public domain) — make-it-yourself projects from common materials; dated, some projects unsafe by modern standards (see manuals README) | ~50 MB | Browser (PDF) |
+| **Natural medicine** | *King's American Dispensatory* (Felter & Lloyd) + Culpeper's *Complete Herbal* (public domain) — historical herbal/medicinal-plant references, **not** current medical advice (see [medical guide](docs/Medical-READ-ME-FIRST.md)) | ~175 MB | Browser (PDF) |
 | **Education** *(opt-in)* | Khan Academy archive (one file, all videos) **or** Kolibri app (pick subjects/low-res) | KA ZIM ~168 GB; Kolibri = your choice | Kiwix / Kolibri app |
 | **Offline translator** *(opt-in)* | Two-way text translator for talking with someone who speaks another language; a small multilingual AI model (Qwen3 4B, Apache 2.0) on the bundled llama.cpp engine, `-Translate` / `--translate`. Good for widely spoken languages, weak or unusable for some others ([guide](docs/HOW-TO-TRANSLATE.md)) | ~2.5 GB | CPU, ~6 GB RAM |
 | **Extra archives** *(opt-in)* | Wikivoyage travel guide + Wikibooks open textbooks (English, with images), `-ExtraZims` / `--extra-zims` | ~5.8 GB | Kiwix |
@@ -209,10 +211,11 @@ medical and survival archives, PDF manuals, Kiwix reader, phone apps and regiona
 maps. It skips full Wikipedia, the 8B/7B models, GPT4All, iFixit and Appropedia.
 Only the 3B chat and web-UI launchers are written on a fresh lite install.
 
-Because lite omits GPT4All, a lite drive has **no source-citing AI** — only the plain 3B
-chat. Treat its answers as leads and verify anything safety-critical against the manuals; to
-add the citing **LocalDocs** workflow, re-run without the lite flag (details in
-`HOW-TO-RUN-OFFLINE-AI`).
+Lite still includes the **Ask the manuals** reader (`AI-Offline\Manual-QA\`): it searches
+downloaded manual text, shows the passages behind an answer, and links each one to the
+original PDF. It uses the 3B model, so no extra download is needed. It omits GPT4All, so
+the **LocalDocs** workflow for indexing your own folders needs a non-lite install (details
+in `HOW-TO-ASK-YOUR-DOCS`).
 
 ```powershell
 .\Get-OfflineLibrary.ps1 -Destination "E:\" -Lite -Region US_delaware
@@ -470,6 +473,10 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 | EPA *Emergency Disinfection of Drinking Water* | US government work (public domain) | Yes |
 | USDA *Canning, Freezing, Storing Garden Produce* (AIB 410, 1977) | US government work (public domain) | Yes |
 | Verrill, *Knots, Splices and Rope Work* (1912) | Public domain in the US (published 1912) | Yes |
+| Pope, *Hunting with the Bow and Arrow* (1923) | Public domain in the US (published 1923) | Yes |
+| *The Boy Mechanic, Vol. 1* (1913) | Public domain in the US (published 1913) | Yes |
+| *King's American Dispensatory* (Felter & Lloyd, 1898/1905) | Public domain in the US (pre-1929) | Yes |
+| Culpeper, *The Complete Herbal* (1653; this ed. pre-1929) | Public domain | Yes |
 | MedlinePlus health topics (opt-in) | Public domain (US NLM) — **summaries only** | Yes |
 | iFixit repair archive | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) | **No — non-commercial** |
 | *A Practical Guide to Prolonged Casualty Care* | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) | **No — non-commercial** |

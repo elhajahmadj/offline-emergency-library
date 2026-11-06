@@ -8,14 +8,21 @@ _Last verified: 2026-11-06_
 
 - Status: issue 72 documents the tested chat context limit; issue 102 corrects state
   browser-map estimates and uses a conservative space budget; browser-only additions
-  preserve existing OsmAnd region metadata (issue 125).
+  preserve existing OsmAnd region metadata (issue 125); issue 75 adds opt-in browser
+  translator launchers alongside the terminal translator; issue 63 adds a ready-to-use
+  manual Q&A reader (`doc-qa/`) that reuses the bundled llama.cpp server and model (the
+  GPT4All database is deliberately not shipped because its stored paths do not survive
+  relocation).
 - Works: aria2 fallback, cancellation and partial-file protection have offline regression checks;
-  an offline CLI regression covers existing and absent OsmAnd folders, selected browser maps and region size estimates.
-- In progress: maintainer review of the context-limit documentation, the estimator correction and the browser-only metadata fix;
-  review of the PR that moves `SHA256SUMS.txt` to a post-merge workflow and `CHANGELOG.md` entries to `changelog.d/` fragments.
-- Known gaps: independent Swahili and Somali language review is still required.
+  an offline CLI regression covers existing and absent OsmAnd folders, selected browser maps and region size estimates;
+  Windows browser translation and shutdown passed runtime QA; generated checks cover parity and ownership;
+  the manual reader's source pairing (PDF hash to text hash), installer parity and relocation have an
+  offline regression check, and text freshness is checked in CI.
+- In progress: maintainer review of the context-limit documentation, the estimator correction, the browser-only metadata fix, issue 75 (per-OS CI) and the manual reader.
+- Known gaps: native macOS double-click testing and independent Swahili and Somali language review.
 - Deep docs: `evaluations/issue-73/README.md` describes the interpreter protocol;
-  `evaluations/issue-76/README.md` describes the CPU model comparison.
+  `evaluations/issue-76/README.md` describes the CPU model comparison;
+  `docs/HOW-TO-TRANSLATE.md` describes browser requirements and local chat storage.
 
 ## Files PRs must not edit
 
@@ -31,4 +38,8 @@ Repository checks and contribution requirements are maintained in
 The evaluation is a separate Windows PowerShell script, not part of installation.
 Its invocation, limits, and raw result format are documented next to it.
 Windows CI also runs `.github/scripts/check-fetch.ps1` with Windows PowerShell 5.1
-to exercise the installer's real downloader against local executable fixtures.
+to exercise the installer's real downloader against local executable fixtures, and
+`.github/scripts/check-doc-qa.ps1` for reader source pairing and relocation.
+`.github/scripts/check-doc-sources.sh` verifies that published manual text still matches
+`sources.tsv`; a changed publisher file must be reviewed, not silently re-hashed.
+Maintenance notes for the reader live in `doc-qa/README.md`.
