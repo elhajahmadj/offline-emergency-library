@@ -21,6 +21,13 @@ hardware.
   Splices and Rope Work*** (A. Hyatt Verrill, 1912, public domain, 150+ illustrations). All are
   public domain, so they restore the survival/water/food/knots coverage dropped with the zimgit
   ZIMs (#122) without the licensing problem. Follow-up sources are tracked in #78/#130.
+- **Manual Q&A that works on first launch.** `AI-Offline/Manual-QA/` is a browser reader
+  served by the bundled llama.cpp server: it finds passages in the downloaded manual text,
+  asks the 3B model to answer from those passages only, and links each passage to the PDF.
+  No collection setup, embedding model, Python runtime or internet is needed, and it is
+  included in lite installs too. PDFs whose text is unavailable or has changed are listed
+  instead of being answered from stale text. Source pairing and a scheduled text-freshness
+  check keep it current. Resolves #63. _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #144._
 - **Interpreter temperature comparison.** `evaluations/issue-73/` records paired
   interpreter replies and chrF++ scores at 0 and 0.2, including repetition and
   mistranslation failures. The existing 0.2 default is retained in both installers.
