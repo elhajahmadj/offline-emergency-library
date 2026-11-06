@@ -5,4 +5,4 @@
   flag-removal advice) are no longer shown for a selection install; and a UTF-16 selection file
   is now refused in PowerShell too, matching bash, so the same file behaves the same on every
   OS. `check-catalog.sh` covers the new cases. Resolves #167.
-  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #PENDING._
+  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #176._
