@@ -143,8 +143,10 @@ $DlTty = -not [Console]::IsOutputRedirected
 function Fetch($url,$out){
   if($UseAria){
     $ariaProg = if($DlTty){ '--summary-interval=1' } else { '--summary-interval=0' }
+    # A native program that cannot start leaves LASTEXITCODE unchanged (#132).
+    $global:LASTEXITCODE = $null
     aria2c -c -x16 -s16 -k1M --max-tries=10 --retry-wait=5 --console-log-level=warn $ariaProg --follow-metalink=mem --allow-overwrite=false --auto-file-renaming=false -d (Split-Path $out -Parent) -o (Split-Path $out -Leaf) $url
-    if($LASTEXITCODE -eq 0){ return }
+    if($LASTEXITCODE -eq 0 -and (Test-Path $out -PathType Leaf)){ return }
     # Stop, do not fall back to curl, on Ctrl+C (aria2 exit 7) or when aria2 left a
     # part-done file: it is preallocated with gaps, so 'curl -C -' would keep a corrupt
     # copy. aria2 resumes it from its .aria2 control file on the next run.
@@ -155,6 +157,7 @@ function Fetch($url,$out){
     Log '  (aria2 failed, falling back to curl)'
   }
   $curlProg = if($DlTty){ '-#' } else { '-sS' }
+  $global:LASTEXITCODE = $null
   curl.exe -fL -C - --retry 10 --retry-delay 5 --retry-all-errors $curlProg -o $out $url
   if($LASTEXITCODE -ne 0 -or -not (Test-Path $out -PathType Leaf) -or (Get-Item $out).Length -eq 0){
     Log "ERROR: download failed: $url -> $out. Re-run the installer to resume."
@@ -481,7 +484,8 @@ if($MedlinePlus){
     $sd = if($PSScriptRoot){$PSScriptRoot}else{(Get-Location).Path}
     $lp = Join-Path $sd 'medlineplus\MedlinePlus.html'; $tpl = Join-Path $md '_MedlinePlus.html'
     if(Test-Path $lp){ Copy-Item $lp $tpl -Force }
-    else { curl.exe -fLsS "$RepoRaw/medlineplus/MedlinePlus.html" -A (UA) -o $tpl
+    else { $global:LASTEXITCODE = $null
+      curl.exe -fLsS "$RepoRaw/medlineplus/MedlinePlus.html" -A (UA) -o $tpl
       if($LASTEXITCODE -ne 0){ Log 'ERROR: download failed: medlineplus/MedlinePlus.html'; exit 1 } }
     $page = [System.IO.File]::ReadAllText($tpl, [System.Text.Encoding]::UTF8)
     $mark = '<script type="text/xml" id="data"></script>'
@@ -883,6 +887,7 @@ function PlaceDoc($srcName,$destPath,$title){
     $lp = Join-Path $localDocs ($base + $ext)
     if(Test-Path $lp){ Copy-Item $lp $dest -Force }
     else {
+      $global:LASTEXITCODE = $null
       curl.exe -fLsS "$RepoRaw/docs/$base$ext" -A (UA) -o $dest
       if($LASTEXITCODE -ne 0){ Log "ERROR: documentation download failed: $base$ext"; exit 1 }
     }
@@ -916,6 +921,7 @@ foreach($f in 'CHECK-DRIVE.sh','check-drive.ps1','CHECK-DRIVE.bat'){
   $lp = Join-Path (Join-Path $scriptDir 'drive') $f
   if(Test-Path $lp){ Copy-Item $lp $dest -Force }
   else {
+    $global:LASTEXITCODE = $null
     curl.exe -fLsS "$RepoRaw/drive/$f" -A (UA) -o $dest
     if($LASTEXITCODE -ne 0){ Log "ERROR: download failed: drive/$f"; exit 1 }
   }

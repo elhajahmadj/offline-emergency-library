@@ -68,7 +68,9 @@ jobs:
       - name: Engine, launchers, move, run from the new path
         if: runner.os == 'Windows'
         shell: powershell
-        run: .\.github\scripts\check-smoke.ps1
+        run: |
+          .\.github\scripts\check-fetch.ps1
+          .\.github\scripts\check-smoke.ps1
 
   links:
     name: Upstream source health

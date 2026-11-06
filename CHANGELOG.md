@@ -237,6 +237,11 @@ hardware.
   as broken ZIMs and PDFs ("FINISHED WITH PROBLEMS: 2 self-check(s) failed"), and the README
   index listed them. Both now leave out `._*`, as `CHECKSUMS-SHA256.txt` already did. Resolves
   #123. _[@boostedchaos](https://github.com/boostedchaos)._
+- **Windows downloader launch failures.** A blocked or broken aria2 now falls back
+  to curl instead of treating an earlier program's exit code as download success.
+  Checked curl downloads also reject a failure to start, including when an old
+  destination file exists. Cancellation and aria2 partial-file protection remain
+  intact. Resolves #132. _[@EnragedAntelope](https://github.com/EnragedAntelope)._
 - **Desktop viewer needs internet on Windows and macOS: the docs and launchers now say so.** The bundled OsmAndMapCreator has only the Linux offline renderer, so on Windows and macOS it draws online tiles from `tile.osmand.net` and shows a blank map with no internet (reproduced on Windows 11 and macOS). HOW-TO-VIEW-MAPS, the README, START-HERE, POWER-AND-DEVICES and both viewer launchers no longer call it an offline viewer; they point to browser maps (US) or an Android phone. `VIEW-MAPS-ON-PC.sh` also launched a second viewer when the first exited non-zero (`sh ... || bash ...`); it now launches once. Addresses #15. _Tested by [@boostedchaos](https://github.com/boostedchaos) - issue #15._
 - **The upstream link check no longer fails on one-off errors.** `check-links.sh` retries a
   failed URL up to 3 times (5xx, timeouts, resets) before counting it as dead, and sends the
