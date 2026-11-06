@@ -4,13 +4,14 @@ Portable installers assemble an offline reference library. Read
 `.github/CONTRIBUTING.md` and the PR template before changing files.
 
 ## Current state
-_Last verified: 2026-11-05_
+_Last verified: 2026-11-06_
 
-- Status: issue 76 adds a reproducible CPU model comparison; no lineup change.
+- Status: issue 73 records a paired interpreter temperature comparison; 0.2 retained.
 - Works: the existing installers and their platform smoke checks are unchanged.
-- In progress: maintainer review of the measured comparison.
+- In progress: maintainer review of the temperature comparison.
 - Known gaps: independent Swahili and Somali language review is still required.
-- Deep docs: `evaluations/issue-76/README.md` describes the measurement protocol.
+- Deep docs: `evaluations/issue-73/README.md` describes the interpreter protocol;
+  `evaluations/issue-76/README.md` describes the CPU model comparison.
 
 ## Checks
 

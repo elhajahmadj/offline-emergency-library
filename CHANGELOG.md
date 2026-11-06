@@ -12,6 +12,10 @@ Contributor-driven reliability and portability work, from people running the kit
 hardware.
 
 ### Added
+- **Interpreter temperature comparison.** `evaluations/issue-73/` records paired
+  interpreter replies and chrF++ scores at 0 and 0.2, including repetition and
+  mistranslation failures. The existing 0.2 default is retained in both installers.
+  Resolves #73. _[@EnragedAntelope](https://github.com/EnragedAntelope)._
 - **macOS double-click starter: `install.command`.** The Mac twin of `install.bat`: double-click
   it in Finder and it runs `get-offline-library.sh` from the same folder, or downloads it from
   GitHub first when the file is on its own. It waits for Return before it exits. README
