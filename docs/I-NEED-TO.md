@@ -87,6 +87,7 @@ explains health problems and tests in plain language (English and Spanish), in a
 |---|---|
 | **Fix a phone, appliance, car or electronics** | `Manuals\Repair-iFixit\` (in **Kiwix**) |
 | **Fix plumbing, wiring, a well or construction** | `Manuals\DIY-Appropedia\` (in **Kiwix**) |
+| **Weld, forge or machine metal / repair metal parts** | [TM 9-237 Welding](Manuals/Metalworking/TM%209-237%20Welding%20Theory%20and%20Application.pdf) · [Practical Blacksmithing](Manuals/Metalworking/Practical%20Blacksmithing%20%281888%29.pdf) · [Elements of Machine Work](Manuals/Metalworking/Elements%20of%20Machine%20Work%20%281910%29.pdf) |
 | **Keep a phone or device charged off-grid** | [Power and devices](POWER-AND-DEVICES.html) — battery sizing, solar/car charging, low-power setups |
 
 ---

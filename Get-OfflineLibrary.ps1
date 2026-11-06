@@ -336,7 +336,7 @@ try {
 # ---------------------------------------------------------------- folder tree
 $dirs = @(
  'AI-Offline','AI-Offline\engine','AI-Offline\models','AI-Offline\DocReader-GPT4All',
- 'Manuals','Manuals\ArmyFieldManuals','Manuals\Repair-iFixit','Manuals\DIY-Appropedia','Manuals\Household-DIY',
+ 'Manuals','Manuals\ArmyFieldManuals','Manuals\Repair-iFixit','Manuals\DIY-Appropedia','Manuals\Household-DIY','Manuals\Metalworking',
  'Manuals\Survival-Preparedness','Manuals\Radio-Communications','Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015',
  'Medical','Medical\WikiMed','Medical\Manuals-PDF','Medical\Natural-Medicine','Medical\Emergency-Childbirth',
  'Wikipedia','OsmAnd','Kiwix-Reader','Kiwix-Reader\app','Phone-Apps','Education'
@@ -616,6 +616,10 @@ $pdfs = @(
  @{id='hunting-with-the-bow-and-arrow';                       n='Hunting with the Bow and Arrow (Pope 1923).pdf';   d='Manuals\Survival-Preparedness'}
  # Household do-it-yourself from common materials (public domain). Dated; some projects unsafe by modern standards -- see Manuals\READ-ME-FIRST
  @{id='boymechanicthing01unse';                              n='The Boy Mechanic Vol 1 - 700 Things to Do (1913).pdf'; d='Manuals\Household-DIY'}
+ # Metalworking trades (public domain; #130): welding, forging and machine-shop work.
+ @{id='TM9-237';                                             n='TM 9-237 Welding Theory and Application.pdf';      d='Manuals\Metalworking'}
+ @{id='practicalblacksm00rich';                              n='Practical Blacksmithing (1888).pdf';               d='Manuals\Metalworking'}
+ @{id='textbookofelemen00smitrich';                          n='Elements of Machine Work (1910).pdf';              d='Manuals\Metalworking'}
  # Natural-medicine historical references (public domain; historical, NOT current medical advice -- see Medical\READ-ME-FIRST)
  @{id='kingsamericandis01kinguoft';                          n='Kings American Dispensatory Vol 1.pdf';            d='Medical\Natural-Medicine'}
  @{id='kingsamericandis02kinguoft';                          n='Kings American Dispensatory Vol 2.pdf';            d='Medical\Natural-Medicine'}

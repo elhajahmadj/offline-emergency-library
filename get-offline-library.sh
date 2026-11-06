@@ -324,7 +324,7 @@ log "Platform: $PLAT/$CPU   Destination: $ROOT"
 # ---- folder tree ----
 [ -n "$ONLY" ] && log "Adding to the finished library: $ONLY (nothing else is downloaded)"
 for d in AI-Offline AI-Offline/engine AI-Offline/models AI-Offline/DocReader-GPT4All \
-         Manuals Manuals/ArmyFieldManuals Manuals/Repair-iFixit Manuals/DIY-Appropedia Manuals/Household-DIY \
+         Manuals Manuals/ArmyFieldManuals Manuals/Repair-iFixit Manuals/DIY-Appropedia Manuals/Household-DIY Manuals/Metalworking \
          Manuals/Survival-Preparedness Manuals/Radio-Communications Manuals/Food-Preservation/USDA-Complete-Guide-to-Home-Canning-2015 \
          Medical Medical/WikiMed Medical/Manuals-PDF Medical/Natural-Medicine Medical/Emergency-Childbirth \
          Wikipedia OsmAnd Kiwix-Reader Phone-Apps Education; do
@@ -701,6 +701,12 @@ get_pdf "hunting-with-the-bow-and-arrow" "Hunting with the Bow and Arrow (Pope 1
 DIY="$ROOT/Manuals/Household-DIY"
 # The Boy Mechanic, Volume 1: 700 Things for Boys to Do (1913; public domain). Dated; some projects are unsafe by modern standards -- see Manuals/READ-ME-FIRST.
 get_pdf "boymechanicthing01unse" "The Boy Mechanic Vol 1 - 700 Things to Do (1913).pdf" "$DIY"
+# Metalworking trades (public domain; #130): welding, forging and machine-shop work for repairing
+# and making metal parts and tools. Core skills are timeless; use modern safety gear and ventilation.
+MW="$ROOT/Manuals/Metalworking"
+get_pdf "TM9-237"                    "TM 9-237 Welding Theory and Application.pdf" "$MW"
+get_pdf "practicalblacksm00rich"     "Practical Blacksmithing (1888).pdf" "$MW"
+get_pdf "textbookofelemen00smitrich" "Elements of Machine Work (1910).pdf" "$MW"
 # Natural-medicine historical references (public domain; historical, NOT current medical advice -- see Medical/READ-ME-FIRST):
 NAT="$ROOT/Medical/Natural-Medicine"
 # King's American Dispensatory (Felter & Lloyd; public domain): the major eclectic materia medica of medicinal plants.
