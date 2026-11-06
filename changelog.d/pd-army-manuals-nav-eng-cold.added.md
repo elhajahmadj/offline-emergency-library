@@ -4,4 +4,4 @@
   construction data, and cold-weather survival. All US-government works in the public domain
   (FM 3-25.26 and FM 31-70 also carry a Public Domain Mark), bundled from Internet Archive with
   their source text tracked in `doc-qa/sources.tsv`. Linked from I-NEED-TO (navigate, stay warm,
-  hypothermia). Part of #130. _[@elhajahmadj](https://github.com/elhajahmadj) - PR #PENDING._
+  hypothermia). Part of #130. _[@elhajahmadj](https://github.com/elhajahmadj) - PR #183._
