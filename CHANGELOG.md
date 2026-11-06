@@ -252,6 +252,12 @@ hardware.
   resume. A Windows CPU test of llama.cpp b12110 still rejected an oversized
   chat with `--context-shift`, so launcher flags stay unchanged. Resolves #72.
   _[@EnragedAntelope](https://github.com/EnragedAntelope)._
+- **Safer space estimates.** State browser maps use roughly 0.4 of the OsmAnd
+  download size, plus the world map. Space warnings now use a conservative budget
+  for the full selection instead of subtracting every byte in the destination:
+  unrelated files, unpacked maps and partial downloads cannot hide a warning.
+  Re-runs may need less space, as the installer now explains. Resolves #102.
+  _[@EnragedAntelope](https://github.com/EnragedAntelope)._
 - **Desktop viewer needs internet on Windows and macOS: the docs and launchers now say so.** The bundled OsmAndMapCreator has only the Linux offline renderer, so on Windows and macOS it draws online tiles from `tile.osmand.net` and shows a blank map with no internet (reproduced on Windows 11 and macOS). HOW-TO-VIEW-MAPS, the README, START-HERE, POWER-AND-DEVICES and both viewer launchers no longer call it an offline viewer; they point to browser maps (US) or an Android phone. `VIEW-MAPS-ON-PC.sh` also launched a second viewer when the first exited non-zero (`sh ... || bash ...`); it now launches once. Addresses #15. _Tested by [@boostedchaos](https://github.com/boostedchaos) - issue #15._
 - **The upstream link check no longer fails on one-off errors.** `check-links.sh` retries a
   failed URL up to 3 times (5xx, timeouts, resets) before counting it as dead, and sends the

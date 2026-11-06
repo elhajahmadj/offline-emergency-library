@@ -230,8 +230,8 @@ if((-not $SkipMaps) -or $BmOnly){
   if(-not $SkipMaps){ $est["maps for '$Region' + desktop viewer"] = [math]::Round($mapGB + 0.5, 1) }
   if($BrowserMaps){
     $rt = @(($Region -split '[,; ]') | Where-Object { $_ } | ForEach-Object { (Resolve-RegionToken $_.Trim()).ToLower() })
-    # all of the US ~15.4 GB; single states roughly match their OsmAnd size; always + the world map
-    $bm = if(@($rt | Where-Object { $_ -in 'us','world','northamerica' }).Count){ 15.4 } elseif(@($rt | Where-Object { $_.StartsWith('us_') }).Count){ $mapGB } else { 0 }
+    # all of the US ~15.4 GB; states ~0.4 of their OsmAnd size (#102); always + the world map
+    $bm = if(@($rt | Where-Object { $_ -in 'us','world','northamerica' }).Count){ 15.4 } elseif(@($rt | Where-Object { $_.StartsWith('us_') }).Count){ 0.4 * $mapGB } else { 0 }
     $est['browser maps'] = [math]::Round($bm + 0.2, 1)
   }
 }
@@ -243,17 +243,18 @@ $estGB = [math]::Round(($est.Values | Measure-Object -Sum).Sum, 1)
 try {
   $drive = (Get-Item $Root).PSDrive
   $freeGB = [math]::Round((Get-PSDrive $drive.Name).Free/1GB,1)
-  $haveGB = [math]::Round(((Get-ChildItem -LiteralPath $Root -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum)/1GB,1)
-  if($Only){ $haveGB = 0 }   # the rest of the drive is not part of this estimate
-  $needGB = [math]::Round([math]::Max(0.0, $estGB - $haveGB), 1)
+  # Folder bytes do not prove this selection's downloads are complete: they can be
+  # unrelated files, old editions, unpacked maps or preallocated partial files (#102).
+  $needGB = $estGB
   function Gb($x){ ([double]$x).ToString('0.0', [cultureinfo]::InvariantCulture) }   # same text on every locale
   Log "Destination: $Root   (free space: $(Gb $freeGB) GB)"
   Log "Space estimate for this selection: about $(Gb $estGB) GB"
   foreach($k in $est.Keys){ Log ("  {0,6} GB  {1}" -f (Gb $est[$k]), $k) }
   if($Kolibri){ Log '     (Kolibri content is not counted: you pick it in the app)' }
-  Log "Already in the folder: $(Gb $haveGB) GB. Still to download: about $(Gb $needGB) GB. Free: $(Gb $freeGB) GB."
+  Log "Conservative space budget: $(Gb $needGB) GB. Free: $(Gb $freeGB) GB."
+  Log "Existing files are not subtracted; a re-run may need less space."
   if($needGB -gt $freeGB){
-    Log "WARNING: NOT ENOUGH SPACE. This needs about $(Gb $needGB) GB more, but only $(Gb $freeGB) GB is free."
+    Log "WARNING: NOT ENOUGH SPACE for the full selection. Budget about $(Gb $needGB) GB, but only $(Gb $freeGB) GB is free."
     Log '  Use a bigger drive, free up space, or choose less: -Lite, -SkipWikipedia (49 GB), -SkipModels (9 GB),'
     Log '  a smaller -Region, -SkipMaps, or leave off an opt-in. Press Ctrl+C now to stop and re-run.'
   }

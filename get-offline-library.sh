@@ -280,13 +280,13 @@ EST=""; est(){ EST="$EST$1|$2
 [ "$SKIP_WIKI" = 0 ] && est 49.1 "Wikipedia"
 [ "$SKIP_MAPS" = 0 ] && est "$(awk -v m="$MAP_MB" 'BEGIN{printf "%.1f", m/1024 + 0.5}')" "maps for '$REGION' + desktop viewer"
 if [ "$BROWSER_MAPS" = 1 ] && { [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; }; then
-  # all of the US ~15.4 GB; single states roughly match their OsmAnd size; always + the world map
+  # all of the US ~15.4 GB; states ~0.4 of their OsmAnd size (#102); always + the world map
   bm=0
   for tok in $(printf '%s' "$REGION" | tr ',;' '  '); do
     tl="$(alias_region "$tok" | tr 'A-Z' 'a-z')"
     case "$tl" in us|world|northamerica) bm=all ;; us_*) [ "$bm" = all ] || bm=state ;; esac
   done
-  case "$bm" in all) bmgb=15.4 ;; state) bmgb="$(awk -v m="$MAP_MB" 'BEGIN{print m/1024}')" ;; *) bmgb=0 ;; esac
+  case "$bm" in all) bmgb=15.4 ;; state) bmgb="$(awk -v m="$MAP_MB" 'BEGIN{print 0.4*m/1024}')" ;; *) bmgb=0 ;; esac
   est "$(awk -v b="$bmgb" 'BEGIN{printf "%.1f", b + 0.2}')" "browser maps"
 fi
 [ "$EDU" = 1 ] && est 168 "Khan Academy"
@@ -295,16 +295,17 @@ fi
 [ "$MEDLINEPLUS" = 1 ] && est 0.1 "MedlinePlus health topics"
 EST_GB="$(printf '%s' "$EST" | awk -F'|' '{s+=$1} END{printf "%.1f", s}')"
 FREE_GB="$(df -Pk "$ROOT" 2>/dev/null | awk 'NR==2{printf "%.1f", $4/1048576}')"
-HAVE_GB="$(du -sk "$ROOT" 2>/dev/null | awk '{printf "%.1f", $1/1048576}')"
-[ -n "$ONLY" ] && HAVE_GB=0   # the rest of the drive is not part of this estimate
-NEED_GB="$(awk -v e="$EST_GB" -v h="${HAVE_GB:-0}" 'BEGIN{n=e-h; if(n<0)n=0; printf "%.1f", n}')"
+# Folder bytes do not prove this selection's downloads are complete: they can be
+# unrelated files, old editions, unpacked maps or preallocated partial files (#102).
+NEED_GB="$EST_GB"
 log "Space estimate for this selection: about $EST_GB GB"
 printf '%s' "$EST" | while IFS='|' read -r g n; do log "$(awk -v g="$g" -v n="$n" 'BEGIN{printf "  %6.1f GB  %s", g, n}')"; done
 [ "$KOLIBRI" = 1 ] && log "     (Kolibri content is not counted: you pick it in the app)"
 if [ -n "$FREE_GB" ]; then
-  log "Already in the folder: ${HAVE_GB:-0} GB. Still to download: about $NEED_GB GB. Free: $FREE_GB GB."
+  log "Conservative space budget: $NEED_GB GB. Free: $FREE_GB GB."
+  log "Existing files are not subtracted; a re-run may need less space."
   if awk -v n="$NEED_GB" -v f="$FREE_GB" 'BEGIN{exit !(n>f)}'; then
-    log "WARNING: NOT ENOUGH SPACE. This needs about $NEED_GB GB more, but only $FREE_GB GB is free."
+    log "WARNING: NOT ENOUGH SPACE for the full selection. Budget about $NEED_GB GB, but only $FREE_GB GB is free."
     log "  Use a bigger drive, free up space, or choose less: --lite, --skip-wikipedia (49 GB), --skip-models (9 GB),"
     log "  a smaller --region, --skip-maps, or leave off an opt-in. Press Ctrl+C now to stop and re-run."
   fi
