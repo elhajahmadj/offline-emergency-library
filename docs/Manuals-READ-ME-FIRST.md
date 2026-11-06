@@ -12,7 +12,7 @@ Practical manuals for survival, repair, and self-sufficiency. **Two kinds of fil
 
 | Folder | Read with | Contents |
 |---|---|---|
-| `ArmyFieldManuals\` | Browser (PDF) | US Army field/technical manuals (public domain): survival, first aid, **field hygiene & sanitation (FM 21-10)**, hand tools, carpentry, **concrete & masonry (FM 5-428)**, **water supply & purification (TM 5-295, 1942 — see note in "I need to…")**, **auto mechanics (TM 9-8000)**, rigging, desert ops, field cooking |
+| `ArmyFieldManuals\` | Browser (PDF) | US Army field/technical manuals (public domain): survival, first aid, **field hygiene & sanitation (FM 21-10)**, hand tools, carpentry, **concrete & masonry (FM 5-428)**, **water supply & purification (TM 5-295, 1942 — see note in "I need to…")**, **auto mechanics (TM 9-8000)**, rigging, desert ops, field cooking, **map reading & land navigation (FM 3-25.26)**, **engineer field data (FM 5-34)**, **cold-weather survival (FM 31-70)** |
 | `Repair-iFixit\` | Kiwix (.zim) | iFixit repair guides — **cars, appliances, electronics, phones, tools** |
 | `DIY-Appropedia\` | Kiwix (.zim) | Appropedia — **plumbing, electrical/wiring, construction, energy, water, food, farming** |
 | `Survival-Preparedness\` | Browser (PDF) | FEMA *Are You Ready?* (citizen preparedness), EPA *Emergency Disinfection of Drinking Water*, *Knots, Splices and Rope Work* (Verrill, 1912), and *Hunting with the Bow and Arrow* (Pope, 1923) — all public domain |

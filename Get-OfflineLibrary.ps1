@@ -590,6 +590,10 @@ $pdfs = @(
  @{id='FM2110MCRP411.1DFieldHygieneAndSanitation';           n='FM 21-10 Field Hygiene and Sanitation.pdf';       d='Manuals\ArmyFieldManuals'}
  @{id='armyfm5428concreteandmasonry';                        n='FM 5-428 Concrete and Masonry.pdf';               d='Manuals\ArmyFieldManuals'}
  @{id='TM5-295';                                             n='TM 5-295 Water Supply and Water Purification.pdf'; d='Manuals\ArmyFieldManuals'}
+ # More public-domain US Army manuals (#130): navigation, engineering and cold-weather survival.
+ @{id='FM3-25x26';                                           n='FM 3-25.26 Map Reading and Land Navigation.pdf';  d='Manuals\ArmyFieldManuals'}
+ @{id='FM_5_34_E_F_D_2003';                                  n='FM 5-34 Engineer Field Data (2003).pdf';          d='Manuals\ArmyFieldManuals'}
+ @{id='fm-31-70-basic-cold-weather-manual-1968';             n='FM 31-70 Basic Cold Weather Manual (1968).pdf';   d='Manuals\ArmyFieldManuals'}
  @{id='where-there-is-no-doctor';                            n='Where There Is No Doctor.pdf';                    d='Medical\Manuals-PDF'}
  @{id='where-there-is-no-dentist-web-full-book';             n='Where There Is No Dentist.pdf';                   d='Medical\Manuals-PDF'}
  # Advanced care when help is delayed: USUHS + Henry M. Jackson Foundation, 2025, CC BY-NC-SA 4.0 (not public domain)
