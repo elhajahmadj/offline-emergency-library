@@ -209,10 +209,11 @@ medical and survival archives, PDF manuals, Kiwix reader, phone apps and regiona
 maps. It skips full Wikipedia, the 8B/7B models, GPT4All, iFixit and Appropedia.
 Only the 3B chat and web-UI launchers are written on a fresh lite install.
 
-Because lite omits GPT4All, a lite drive has **no source-citing AI** — only the plain 3B
-chat. Treat its answers as leads and verify anything safety-critical against the manuals; to
-add the citing **LocalDocs** workflow, re-run without the lite flag (details in
-`HOW-TO-RUN-OFFLINE-AI`).
+Lite still includes the **Ask the manuals** reader (`AI-Offline\Manual-QA\`): it searches
+downloaded manual text, shows the passages behind an answer, and links each one to the
+original PDF. It uses the 3B model, so no extra download is needed. It omits GPT4All, so
+the **LocalDocs** workflow for indexing your own folders needs a non-lite install (details
+in `HOW-TO-ASK-YOUR-DOCS`).
 
 ```powershell
 .\Get-OfflineLibrary.ps1 -Destination "E:\" -Lite -Region US_delaware

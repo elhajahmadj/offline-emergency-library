@@ -426,9 +426,9 @@ else
   printf '%s\n' \
     "GPT4All (offline document Q&A) is NOT included in a --lite install." \
     "" \
-    "This lite drive has only the plain AI chat (the 3B model), which does not cite" \
-    "sources. Treat its answers as leads and verify anything safety-critical against the" \
-    "manuals on this drive." \
+    "This lite drive includes the source-citing manual reader:" \
+    "  AI-Offline/Manual-QA/start-docs.sh" \
+    "It uses the 3B model and downloaded source text. Check the original PDF before acting." \
     "" \
     "To add GPT4All and its source-citing LocalDocs workflow:" \
     "  - re-run the installer into this same drive WITHOUT --lite, or" \
@@ -876,6 +876,21 @@ place_doc "Education-READ-ME-FIRST" "$ROOT/Education/READ-ME-FIRST"
 place_doc "HOW-TO-KOLIBRI"          "$ROOT/Education/HOW-TO-KOLIBRI"
 fi
 
+# ================================================================ manual Q&A
+DOC_QA_FAILED=0
+if [ -z "$ONLY" ]; then
+  setup="$SCRIPTDIR/doc-qa/install.sh"
+  if [ ! -f "$setup" ]; then
+    setup="$ROOT/AI-Offline/install-doc-qa.sh"
+    rm -f "$setup"
+    fetch "$REPO_RAW/doc-qa/install.sh" "$setup"
+  fi
+  if [ -s "$setup" ]; then
+    . "$setup"
+    install_manual_qa "$ROOT" "$SCRIPTDIR" || DOC_QA_FAILED=1
+  else log "doc-QA ERROR: setup helper missing"; DOC_QA_FAILED=1; fi
+fi
+
 # CHECK-DRIVE scripts (#28), placed before the index so README.html lists them.
 for f in CHECK-DRIVE.sh check-drive.ps1 CHECK-DRIVE.bat; do
   if [ -f "$SCRIPTDIR/drive/$f" ]; then cp "$SCRIPTDIR/drive/$f" "$ROOT/$f"
@@ -967,6 +982,7 @@ SC_FAIL=0
 sc_pass(){ log "  PASS  $*"; }
 sc_warn(){ log "  WARN  $*"; }
 sc_fail(){ log "  FAIL  $*"; SC_FAIL=$((SC_FAIL+1)); }
+[ "$DOC_QA_FAILED" = 0 ] || sc_warn "manual Q&A source coverage is incomplete (see doc-QA lines above); those PDFs still open directly"
 E="$ROOT/AI-Offline/engine"
 # 1. Every engine folder has its program (a failed unpack leaves a folder empty).
 if [ -f "$E/BUILD.txt" ]; then

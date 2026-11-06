@@ -25,8 +25,10 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 > - **PDFs and these guides (.html)** open in **Edge or any web browser** — no software.
 > - **`.zim` archives** open in **Kiwix** (portable, no install) — see
 >   `E:\Kiwix-Reader\`.
-> - **Ask questions of the bundled docs** = **GPT4All LocalDocs** - see
->   `E:\AI-Offline\DocReader-GPT4All\`.
+> - **Ask questions of the bundled docs** = **Ask the manuals** - run
+>   `AI-Offline\Manual-QA\START-DOCS.bat` (`start-docs.sh` on macOS/Linux), then open
+>   `http://127.0.0.1:8081/AI-Offline/Manual-QA/`. GPT4All LocalDocs can also index
+>   folders of your own files.
 
 ---
 
@@ -35,7 +37,8 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 | Folder | What it is | How to open | Guide |
 |---|---|---|---|
 | `AI-Offline\` | Offline AI chat - your helper for brainstorming, checklists and summaries (3 models, CPU + GPU) | Double-click a `CHAT-*.bat` | `AI-Offline\HOW-TO-RUN-OFFLINE-AI.html` |
-| `AI-Offline\DocReader-GPT4All\` | Ask the **bundled manuals** questions (shows the sources it used) - recommended for medical & survival | Install once, then offline | `...\HOW-TO-ASK-YOUR-DOCS.html` |
+| `AI-Offline\Manual-QA\` | Ask the **bundled manuals** questions (shows the passages it used and links the PDFs) - works with no setup | `START-DOCS.bat` / `start-docs.sh`, then the local page | `AI-Offline\HOW-TO-ASK-YOUR-DOCS.html` |
+| `AI-Offline\DocReader-GPT4All\` | Optional: index **your own** PDFs and notes with LocalDocs | Install once, then offline | `...\HOW-TO-ASK-YOUR-DOCS.html` |
 | `Manuals\` | Survival & repair manuals (Army FMs, iFixit, Appropedia, FEMA/EPA/knots) | PDF→browser, ZIM→Kiwix | `Manuals\READ-ME-FIRST.html` |
 | `Manuals\Radio-Communications\` | How ham/CB/shortwave radio works + emergency comms | Browser | `RADIO-GUIDE.html` |
 | `Medical\` | Offline medical Wikipedia + first-aid books | ZIM→Kiwix, PDF→browser | `Medical\READ-ME-FIRST.html` |
@@ -65,6 +68,7 @@ are opt-in).
 | `AI-Offline\TRANSLATE.bat` / `translate.sh` | Offline **translator** (Qwen3 4B); see `AI-Offline\HOW-TO-TRANSLATE.html` | with `-Translate` / `--translate` |
 | `OsmAnd\MapViewer-Desktop\VIEW-MAPS-ON-PC` | Open the **desktop map viewer** (OsmAndMapCreator); first run unzips the maps. **Needs internet on Windows and macOS** (draws online tiles); offline, use browser maps (US) or a phone | with maps |
 | `Maps-Browser\OPEN-MAPS.bat` / `.sh` | **Street maps in a web browser** (opt-in browser maps); opens `http://localhost:8097` | with `-BrowserMaps` / `--browser-maps` |
+| `AI-Offline\Manual-QA\START-DOCS.bat` / `start-docs.sh` | **Ask the manuals** with source passages and PDF links - starts a local server, then open `http://127.0.0.1:8081/AI-Offline/Manual-QA/` | always |
 | `CHECK-DRIVE.bat` / `.sh` | **Re-check every file** on the drive for damage and print only the problems | always |
 
 > **Windows vs macOS/Linux:** the chat / Web-UI / translator launchers, `OPEN-MAPS` and
@@ -87,9 +91,9 @@ are opt-in).
 - **I want to chat with an AI offline:** `AI-Offline\` → double-click `CHAT-3B-light.bat`
   (great for brainstorming and summaries; for anything safety-critical, follow the manuals).
 - **I want the AI to answer from my manuals - recommended for medical & survival questions:**
-  set up `DocReader-GPT4All` (see its guide); its **LocalDocs** feature answers from the
-  bundled docs and *shows the sources it used*, so you can check them. Point it at
-  `Manuals\ArmyFieldManuals` and `Medical\Manuals-PDF`, ask away.
+  open `AI-Offline\Manual-QA\START-DOCS.bat` (`start-docs.sh` on macOS/Linux), then open
+  `http://127.0.0.1:8081/AI-Offline/Manual-QA/` and ask. The page shows the passages it used
+  and links each one to the PDF, so you can check them. No setup or internet is needed.
 - **I need to fix something (car/appliance/plumbing/electrical):** open Kiwix →
   `Manuals\Repair-iFixit` and `Manuals\DIY-Appropedia`.
 - **Medical / first aid:** open Kiwix → `Medical\WikiMed`; or read the PDFs in

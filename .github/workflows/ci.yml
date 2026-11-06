@@ -77,6 +77,10 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .github/scripts/check-map-refresh.ps1
+      - name: Manual Q&A source pairing and relocation (PowerShell and Git Bash)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: .\.github\scripts\check-doc-qa.ps1
 
   links:
     name: Upstream source health
@@ -87,3 +91,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash .github/scripts/check-links.sh
+      - name: Verify manual Q&A source text
+        run: bash .github/scripts/check-doc-sources.sh
