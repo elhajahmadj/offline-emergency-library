@@ -5,4 +5,4 @@
   "did not start within 120 seconds". The PowerShell launcher also notes that security software
   or Smart App Control can block `llama-server.exe` or its DLLs. A genuine slow start or an
   occupied port still shows the timeout message. Resolves #153.
-  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #PENDING._
+  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #170._

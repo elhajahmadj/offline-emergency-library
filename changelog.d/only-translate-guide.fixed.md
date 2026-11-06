@@ -3,4 +3,4 @@
   `AI-Offline/HOW-TO-TRANSLATE` (`.md` + `.html`), so the guide names the `TRANSLATE-BROWSER.bat`
   / `translate-browser.command` / `translate-browser.sh` launchers written in the same run.
   Every other doc is still left untouched, so the `--only` rule from #74 holds for the rest.
-  Resolves #152. _[@elhajahmadj](https://github.com/elhajahmadj) - PR #PENDING._
+  Resolves #152. _[@elhajahmadj](https://github.com/elhajahmadj) - PR #170._
