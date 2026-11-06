@@ -11,8 +11,9 @@ while IFS=$'\t' read -r pdf algorithm pdfhash url texthash mode attribution; do
     text/*) path="doc-qa/$url" ;;
     https://archive.org/download/*)
       path="$tmp/$texthash.txt"
-      if ! curl -fLsS --connect-timeout 15 --max-time 90 "$url" -o "$path"; then
-        echo "FAIL: source unavailable: $pdf"; fail=1; continue
+      # Archive's download nodes answer a transient 500 under load; retry before calling it down.
+      if ! curl -fLsS --connect-timeout 15 --max-time 90 --retry 6 --retry-all-errors --retry-delay 5 "$url" -o "$path"; then
+        echo "FAIL: source unavailable after retries: $pdf"; fail=1; continue
       fi ;;
     *) echo "FAIL: unrecognized text URL for $pdf"; fail=1; continue ;;
   esac
