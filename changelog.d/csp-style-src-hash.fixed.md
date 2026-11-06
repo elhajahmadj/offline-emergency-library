@@ -4,4 +4,4 @@
   now also reads `style-src`: it hashes every inline `<style>`, rejects `'unsafe-inline'` in
   `script-src` or `style-src`, and flags un-hashable inline `style="..."` attributes, so a stale
   style hash or a re-opened inline hole fails CI. Resolves #106 and #157.
-  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #PENDING._
+  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #169._
