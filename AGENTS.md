@@ -12,7 +12,8 @@ _Last verified: 2026-11-06_
   translator launchers alongside the terminal translator; issue 63 adds a ready-to-use
   manual Q&A reader (`doc-qa/`) that reuses the bundled llama.cpp server and model (the
   GPT4All database is deliberately not shipped because its stored paths do not survive
-  relocation).
+  relocation). Issue 160 improves lexical retrieval with frequency scoring and
+  topic headings, covered by an offline question set.
 - Works: aria2 fallback, cancellation and partial-file protection have offline regression checks;
   large-model chat launchers follow the model selection in both installers (issue 168);
   changelog compilation rejects invalid bullet starts and missing numeric PR references,
@@ -53,3 +54,5 @@ translator selections. It runs in the existing lint job on PRs and the weekly sc
 For the milestone 2 picker (#139), also exercise a fresh non-Lite selection containing
 `core`, `gpt4all-repair` and `wikipedia` without `models` on both installers; verify
 the large models and their launchers are absent while the core chat remains available.
+`node --test doc-qa/retrieval.test.mjs` checks ranking without inference; the CI
+lint job runs it on PRs and the existing weekly schedule.

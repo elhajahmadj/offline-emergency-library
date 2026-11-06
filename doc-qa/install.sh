@@ -13,7 +13,7 @@ install_manual_qa(){
   out="$root/AI-Offline/Manual-QA"
   base="https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/doc-qa"
   mkdir -p "$out/text"
-  for name in index.html reader.css reader.mjs START-DOCS.bat start-docs.sh sources.tsv; do
+  for name in index.html reader.css reader.mjs retrieval.mjs START-DOCS.bat start-docs.sh sources.tsv; do
     target="$out/$name"
     if [ -f "$src/doc-qa/$name" ]; then cp "$src/doc-qa/$name" "$target"
     else

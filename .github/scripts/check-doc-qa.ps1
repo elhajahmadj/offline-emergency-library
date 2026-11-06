@@ -11,7 +11,7 @@ function Log($message){ Write-Host $message }
 function Fetch($url, $out){ throw "Unexpected network access: $url -> $out" }
 try {
   New-Item -ItemType Directory -Force (Join-Path $src 'doc-qa\text') | Out-Null
-  foreach($file in 'index.html','reader.css','reader.mjs','START-DOCS.bat','start-docs.sh'){
+  foreach($file in 'index.html','reader.css','reader.mjs','retrieval.mjs','START-DOCS.bat','start-docs.sh'){
     Copy-Item (Join-Path $repo "doc-qa\$file") (Join-Path $src "doc-qa\$file")
   }
   $rows = @()
@@ -57,7 +57,7 @@ install_manual_qa "$1" "$2"
     $ready = [IO.File]::ReadAllText((Join-Path $root "$relative\ready.tsv")).Trim()
     Require ($ready -ceq $expected) 'Ready sources did not preserve both fixture documents'
   }
-  foreach($file in 'index.html','reader.css','reader.mjs','START-DOCS.bat','start-docs.sh','start-docs.command','ready.tsv','missing.txt'){
+  foreach($file in 'index.html','reader.css','reader.mjs','retrieval.mjs','START-DOCS.bat','start-docs.sh','start-docs.command','ready.tsv','missing.txt'){
     Require ((Get-FileHash (Join-Path $psRoot "$relative\$file")).Hash -eq
              (Get-FileHash (Join-Path $shRoot "$relative\$file")).Hash) "Installer mismatch: $file"
   }

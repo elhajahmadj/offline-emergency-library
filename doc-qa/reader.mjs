@@ -1,4 +1,5 @@
 // No libraries or external endpoints: the bundled llama-server serves this page and inference.
+import { words, sourcePassages, selectPassages } from "./retrieval.mjs";
 const question = document.querySelector("#question");
 const submit = document.querySelector("#submit");
 const status = document.querySelector("#status");
@@ -6,8 +7,6 @@ const answer = document.querySelector("#answer");
 const sourceList = document.querySelector("#sources");
 const coverage = document.querySelector("#coverage");
 const passages = [];
-const stop = new Set("a an and are as at be by do does for from how i in is it of on or that the this to what when which with".split(" "));
-const words = text => [...new Set(text.toLowerCase().match(/[a-z]{3,}/g) ?? [])].filter(word => !stop.has(word));
 
 async function localText(path) {
   const response = await fetch(path, { signal: AbortSignal.timeout(30000), cache: "no-store" });
@@ -38,16 +37,7 @@ try {
     }
     const text = await localText(file);
     if (!text.trim()) throw new Error(`Empty source text: ${pdf}`);
-    // A leading "#SOURCE" line carries the license; it is not manual text and must not shift pages.
-    for (const [pageIndex, pageText] of text.replace(/^(#SOURCE [^\n]*\n)+/, "").split("\f").entries()) {
-      // Overlap keeps sentences on a chunk boundary available to retrieval.
-      for (let start = 0; start < pageText.length; start += 900) {
-        // OCR text carries hard line breaks; collapse whitespace so passages read as prose.
-        const excerpt = pageText.slice(start, start + 1200).replace(/\s+/g, " ").trim();
-        if (!excerpt) continue;
-        passages.push({ pdf, page: mode === "pages" ? pageIndex + 1 : 0, text: excerpt, terms: new Set(words(excerpt)) });
-      }
-    }
+    passages.push(...sourcePassages({ pdf, text, mode }));
   }
   const unavailable = missing.trim() ? missing.trim().split(/\r?\n/).map(line => line.split(" - ")[0]) : [];
   coverage.textContent = unavailable.length
@@ -78,18 +68,7 @@ document.querySelector("#ask").addEventListener("submit", async event => {
     status.textContent = "Enter a question with searchable words.";
     return;
   }
-  const frequency = new Map(terms.map(term => [term, passages.filter(p => p.terms.has(term)).length]));
-  const ranked = passages.map(p => ({
-    passage: p,
-    score: terms.reduce((sum, term) => sum + (p.terms.has(term) ? Math.log(1 + passages.length / (1 + frequency.get(term))) : 0), 0)
-  })).filter(p => p.score > 0).sort((a, b) => b.score - a.score);
-  const selected = [];
-  // Avoid spending the small model's context on adjacent, largely identical chunks.
-  for (const result of ranked) {
-    if (selected.some(p => p.pdf === result.passage.pdf && p.text.includes(result.passage.text.slice(0, 250)))) continue;
-    selected.push(result.passage);
-    if (selected.length === 3) break;
-  }
+  const selected = selectPassages(passages, question.value.trim());
   if (!selected.length) {
     status.textContent = "No matching passages. Try words used in the manuals or open a PDF directly.";
     return;

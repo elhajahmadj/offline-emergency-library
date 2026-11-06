@@ -83,6 +83,22 @@ license and acknowledgements before redistributing modified text.
 
 ## Ongoing checks
 
+Run `node --test doc-qa/retrieval.test.mjs` after changing the reader, chunking,
+ranking, or bundled source text. The CI lint job runs this offline question set
+on PRs and on the existing weekly schedule. It checks general burn care against
+eye-burn, sea-survival and contents distractors, word inflections, adjacent
+bleeding/water questions, and empty or unmatched queries. It also searches the
+bundled USUHS text for its general burns chapter. No inference model is needed.
+
+Retrieval uses shared query/passage normalization, BM25-style term frequency
+and length scoring, a concise heading bonus for single-topic queries, and a penalty for repeated
+contents-style page references. These are lexical heuristics, not a medical
+relevance guarantee. Keep the question set small and add a case when a reported
+ranking failure is reproduced. When an edition or OCR payload changes, inspect
+the selected passages on the real reader before updating expectations; do not
+change expected sources solely to make the test pass. Keep the three-passage
+limit and verify both general questions and narrower questions such as eye burns.
+
 The per-OS CI smoke job runs `.github/scripts/check-doc-launchers.sh` on Linux
 and macOS and `.github/scripts/check-doc-launchers.ps1` on Windows. These offline
 checks execute the shipped launchers against stub engines after moving the

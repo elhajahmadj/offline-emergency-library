@@ -14,7 +14,7 @@ function Install-ManualQA($Root, $SourceDir) {
   $out = Join-Path $Root 'AI-Offline\Manual-QA'
   New-Item -ItemType Directory -Force (Join-Path $out 'text') | Out-Null
   $base = 'https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/doc-qa'
-  foreach($name in 'index.html','reader.css','reader.mjs','START-DOCS.bat','start-docs.sh','sources.tsv'){
+  foreach($name in 'index.html','reader.css','reader.mjs','retrieval.mjs','START-DOCS.bat','start-docs.sh','sources.tsv'){
     $local = Join-Path $SourceDir "doc-qa\$name"
     $target = Join-Path $out $name
     if(Test-Path -LiteralPath $local){ Copy-Item -LiteralPath $local -Destination $target -Force }
