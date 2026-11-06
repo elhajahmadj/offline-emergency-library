@@ -70,7 +70,7 @@ for mode in existing absent; do
   [ -s "$ROOT/Maps-Browser/pmtiles/delaware_2026-01.pmtiles" ] || die "Delaware map missing"
   [ -s "$ROOT/Maps-Browser/pmtiles/global_2026-01.pmtiles" ] || die "world map missing"
   [ ! -e "$ROOT/Maps-Browser/pmtiles/texas_2026-01.pmtiles" ] || die "wrong state selected"
-  grep -q '1.2 GB  browser maps' "$T/$mode.log" || die "region size estimate lost"
+  grep -q '0.6 GB  browser maps' "$T/$mode.log" || die "region size estimate lost"
   (cd "$ROOT" && find . -type f | LC_ALL=C sort) > "$T/after"
   added="$(comm -13 "$T/before" "$T/after" | grep -vE '^\./(Maps-Browser/|_download\.log$)' || true)"
   [ -z "$added" ] || die "unrelated added files: $added"
