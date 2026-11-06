@@ -83,6 +83,17 @@ license and acknowledgements before redistributing modified text.
 
 ## Ongoing checks
 
+The per-OS CI smoke job runs `.github/scripts/check-doc-launchers.sh` on Linux
+and macOS and `.github/scripts/check-doc-launchers.ps1` on Windows. These offline
+checks execute the shipped launchers against stub engines after moving the
+library to a path with spaces. They verify engine discovery and server arguments,
+including the relative model and web-root paths. Unix fixtures keep the version
+subdirectory found in release archives; Windows fixtures use the flat zip layout.
+When llama.cpp changes its archive layout, update the fixtures against the
+actual archive and run these checks alongside the real-engine smoke test.
+The existing weekly CI schedule reruns them; no separate maintenance job is needed.
+Stub checks do not prove inference or native macOS Finder double-click behavior.
+
 Run the offline helper regression when changing the manifest or setup code,
 plus the repository's syntax, launcher parity, and per-OS smoke checks.
 The scheduled source check must report changed or unavailable text instead of

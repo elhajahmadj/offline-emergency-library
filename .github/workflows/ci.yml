@@ -84,6 +84,13 @@ jobs:
         env:
           OEL_PS: powershell.exe
         run: bash .github/scripts/check-catalog.sh
+      - name: Manual Q&A launcher execution (macOS and Linux)
+        if: runner.os != 'Windows'
+        run: bash .github/scripts/check-doc-launchers.sh
+      - name: Manual Q&A launcher execution (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: .\.github\scripts\check-doc-launchers.ps1
 
   links:
     name: Upstream source health

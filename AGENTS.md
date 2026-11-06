@@ -16,6 +16,7 @@ _Last verified: 2026-11-06_
 - Works: aria2 fallback, cancellation and partial-file protection have offline regression checks;
   changelog compilation rejects invalid bullet starts and missing numeric PR references,
   with offline fixture regressions in the lint job;
+  manual reader launchers have offline per-OS execution checks after relocation;
   an offline CLI regression covers existing and absent OsmAnd folders, selected browser maps and region size estimates;
   Windows browser translation and shutdown passed runtime QA; generated checks cover parity and ownership;
   the manual reader's source pairing (PDF hash to text hash), installer parity and relocation have an
