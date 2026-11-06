@@ -4,4 +4,4 @@
   filling the food-*production* gap next to the existing canning/preservation guides. All public
   domain (verified each item's rights page), bundled from Internet Archive with their source text
   tracked in `doc-qa/sources.tsv`. Flagged "dated" (skip the old pesticide/medication advice) and
-  linked from I-NEED-TO. Part of #130. _[@elhajahmadj](https://github.com/elhajahmadj) - PR #PENDING._
+  linked from I-NEED-TO. Part of #130. _[@elhajahmadj](https://github.com/elhajahmadj) - PR #184._
