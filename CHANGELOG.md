@@ -21,6 +21,12 @@ hardware.
   Splices and Rope Work*** (A. Hyatt Verrill, 1912, public domain, 150+ illustrations). All are
   public domain, so they restore the survival/water/food/knots coverage dropped with the zimgit
   ZIMs (#122) without the licensing problem. Follow-up sources are tracked in #78/#130.
+- **Offline translator in the browser.** Opt-in Translate now also writes
+  `TRANSLATE-BROWSER.bat`, macOS `translate-browser.command` and `translate-browser.sh`, using llama.cpp's bundled UI
+  with the existing interpreter prompt and temperature 0.2. The launchers wait
+  for their own local server before opening the browser and stop it when finished.
+  The terminal translator remains available. The guide explains browser chat storage.
+  Resolves #75. _[@EnragedAntelope](https://github.com/EnragedAntelope)._
 - **Interpreter temperature comparison.** `evaluations/issue-73/` records paired
   interpreter replies and chrF++ scores at 0 and 0.2, including repetition and
   mistranslation failures. The existing 0.2 default is retained in both installers.
