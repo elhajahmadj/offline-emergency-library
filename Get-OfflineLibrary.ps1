@@ -337,7 +337,7 @@ try {
 $dirs = @(
  'AI-Offline','AI-Offline\engine','AI-Offline\models','AI-Offline\DocReader-GPT4All',
  'Manuals','Manuals\ArmyFieldManuals','Manuals\Repair-iFixit','Manuals\DIY-Appropedia','Manuals\Household-DIY',
- 'Manuals\Survival-Preparedness','Manuals\Radio-Communications','Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015',
+ 'Manuals\Survival-Preparedness','Manuals\Radio-Communications','Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015','Manuals\Food-Growing',
  'Medical','Medical\WikiMed','Medical\Manuals-PDF','Medical\Natural-Medicine','Medical\Emergency-Childbirth',
  'Wikipedia','OsmAnd','Kiwix-Reader','Kiwix-Reader\app','Phone-Apps','Education'
 )
@@ -620,6 +620,10 @@ $pdfs = @(
  @{id='kingsamericandis01kinguoft';                          n='Kings American Dispensatory Vol 1.pdf';            d='Medical\Natural-Medicine'}
  @{id='kingsamericandis02kinguoft';                          n='Kings American Dispensatory Vol 2.pdf';            d='Medical\Natural-Medicine'}
  @{id='53357467.6000.emory.edu';                             n='Culpepers Complete Herbal.pdf';                    d='Medical\Natural-Medicine'}
+ # Food growing & raising animals (public-domain classics; #130). Core skills timeless; some pest/chemical advice is dated.
+ @{id='productiveveget00lloy';                               n='Productive Vegetable Growing (Lloyd).pdf';         d='Manuals\Food-Growing'}
+ @{id='productivepoult02lewigoog';                           n='Productive Poultry Husbandry (Lewis 1913).pdf';    d='Manuals\Food-Growing'}
+ @{id='cu31924003227729';                                    n='Langstroth on the Hive and the Honey-Bee (1904).pdf'; d='Manuals\Food-Growing'}
 )
 foreach($p in $pdfs){
   if($Only){ Log 'pdf: manuals not touched (-Only)'; break }
