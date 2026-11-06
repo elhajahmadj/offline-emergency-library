@@ -256,7 +256,7 @@ runs 100% offline afterward:
 | Health topics (optional) | medlineplus.gov/xml.html (MedlinePlus health topic XML, US National Library of Medicine; public domain) |
 
 **Verify the installer before running it.** Each script's SHA-256 is published in
-[`SHA256SUMS.txt`](SHA256SUMS.txt) and CI checks they stay in sync.
+[`SHA256SUMS.txt`](SHA256SUMS.txt), which a workflow regenerates after every merge to `main`.
 
 ```bash
 # macOS / Linux
