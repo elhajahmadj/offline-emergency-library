@@ -641,7 +641,7 @@ foreach($z in $zips){
   $fingerprint = (Get-FileHash -LiteralPath $z.FullName -Algorithm SHA256).Hash
   if(-not (Test-Path -LiteralPath $target -PathType Leaf) -or
      -not (Test-Path -LiteralPath $stamp -PathType Leaf) -or
-     (Get-Content -LiteralPath $stamp -Raw).Trim() -ne $fingerprint){
+     (Get-Content -LiteralPath $stamp -TotalCount 1) -ne $fingerprint){
     Write-Host ("[{0}/{1}] unzipping {2}" -f $i,$zips.Count,$z.Name)
     $stage = Join-Path $obf ('.prepare-' + [guid]::NewGuid().ToString('N'))
     try{

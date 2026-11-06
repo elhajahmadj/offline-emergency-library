@@ -73,6 +73,10 @@ try {
     [IO.File]::SetLastWriteTimeUtc($target, $sentinel)
     RunHelper
     Assert ($helperExit -eq 0 -and [IO.File]::GetLastWriteTimeUtc($target) -eq $sentinel) "$kind unchanged archive skips rewriting"
+    Get-ChildItem -LiteralPath (Split-Path $target) -File |
+      Where-Object { $_.FullName -ne $target } | ForEach-Object { [IO.File]::WriteAllText($_.FullName, '') }
+    RunHelper
+    Assert ($helperExit -eq 0 -and [IO.File]::ReadAllText($target) -eq 'NEW') "$kind empty stamp safely regenerated"
     # Old installs have a map but no stamp. They must be refreshed once.
     Get-ChildItem -LiteralPath (Split-Path $target) -File |
       Where-Object { $_.FullName -ne $target } | Remove-Item -Force
