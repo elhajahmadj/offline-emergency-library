@@ -64,6 +64,7 @@ Smaller drive, another country's maps, or extra content? See
 | **Repair archive** | iFixit — cars, appliances, electronics, phones | ~3.4 GB | Kiwix |
 | **DIY archive** | Appropedia — plumbing, electrical, construction, energy, water, food | ~0.6 GB | Kiwix |
 | **Medical** | Offline medical Wikipedia (WikiMed) | ~1.8 GB | Kiwix |
+| **Survival & preparedness** | FEMA *Are You Ready?*, EPA water disinfection, knots guide (public domain) | ~40 MB | Browser (PDF) |
 | **Education** *(opt-in)* | Khan Academy archive (one file, all videos) **or** Kolibri app (pick subjects/low-res) | KA ZIM ~168 GB; Kolibri = your choice | Kiwix / Kolibri app |
 | **Offline translator** *(opt-in)* | Two-way text translator for talking with someone who speaks another language; a small multilingual AI model (Qwen3 4B, Apache 2.0) on the bundled llama.cpp engine, `-Translate` / `--translate`. Good for widely spoken languages, weak or unusable for some others ([guide](docs/HOW-TO-TRANSLATE.md)) | ~2.5 GB | CPU, ~6 GB RAM |
 | **Extra archives** *(opt-in)* | Wikivoyage travel guide + Wikibooks open textbooks (English, with images), `-ExtraZims` / `--extra-zims` | ~5.8 GB | Kiwix |

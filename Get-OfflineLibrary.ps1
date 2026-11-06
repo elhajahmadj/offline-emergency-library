@@ -260,7 +260,7 @@ try {
 $dirs = @(
  'AI-Offline','AI-Offline\engine','AI-Offline\models','AI-Offline\DocReader-GPT4All',
  'Manuals','Manuals\ArmyFieldManuals','Manuals\Repair-iFixit','Manuals\DIY-Appropedia',
- 'Manuals\Radio-Communications','Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015',
+ 'Manuals\Survival-Preparedness','Manuals\Radio-Communications','Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015',
  'Medical','Medical\WikiMed','Medical\Manuals-PDF',
  'Wikipedia','OsmAnd','Kiwix-Reader','Kiwix-Reader\app','Phone-Apps','Education'
 )
@@ -525,6 +525,12 @@ $pdfs = @(
  @{u='https://nchfp.uga.edu/papers/guide/GUIDE05_HomeCan_rev0715.pdf'; n='5 Poultry, Red Meats, and Seafoods.pdf'; d='Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015'}
  @{u='https://nchfp.uga.edu/papers/guide/GUIDE06_HomeCan_rev0715.pdf'; n='6 Fermented Foods and Pickled Vegetables.pdf'; d='Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015'}
  @{u='https://nchfp.uga.edu/papers/guide/GUIDE07_HomeCan_rev0715.pdf'; n='7 Jams and Jellies.pdf'; d='Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015'}
+ # Canning, Freezing, Storing Garden Produce (USDA Agriculture Information Bulletin 410; US-government work, public domain)
+ @{id='canningfreezings00unit';                              n='USDA Canning, Freezing, Storing Garden Produce (AIB 410).pdf'; d='Manuals\Food-Preservation'}
+ # Survival & preparedness (public domain)
+ @{id='FemaEmergencyHandbook-areYouReady';                   n='FEMA Are You Ready - Citizen Preparedness.pdf';    d='Manuals\Survival-Preparedness'}
+ @{id='knotssplicesrope00verr';                              n='Knots, Splices and Rope Work (Verrill).pdf';       d='Manuals\Survival-Preparedness'}
+ @{u='https://19january2021snapshot.epa.gov/sites/static/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf'; n='EPA Emergency Disinfection of Drinking Water.pdf'; d='Manuals\Survival-Preparedness'}
 )
 foreach($p in $pdfs){
   if($Only){ Log 'pdf: manuals not touched (-Only)'; break }
