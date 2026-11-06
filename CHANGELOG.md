@@ -231,6 +231,11 @@ hardware.
   page is not updated. Resolves #91. _[@boostedchaos](https://github.com/boostedchaos) - PR #97._
 
 ### Fixed
+- **Windows self-check no longer passes the AI engine when Windows blocks it.** When Smart App
+  Control (or another app-control policy) blocks `llama-cli.exe`, PowerShell throws and keeps the
+  old exit code, so the check read 0 and printed "PASS AI engine starts" with no version. It now
+  clears the exit code first and fails with a hint (Windows Security > App & browser control).
+  Resolves #124. _[@boostedchaos](https://github.com/boostedchaos)._
 - **macOS + exFAT: the self-check and README index skip macOS's hidden `._` files.** On an exFAT
   or FAT32 drive, macOS writes a `._<name>` file beside every file. The bash self-check read them
   as broken ZIMs and PDFs ("FINISHED WITH PROBLEMS: 2 self-check(s) failed"), and the README
