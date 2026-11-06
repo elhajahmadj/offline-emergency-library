@@ -905,7 +905,7 @@ echo The AI is a helper for finding and summarizing info - for anything safety-c
 "%~dp0engine\x64\llama-cli.exe" -m "%~dp0models\Llama-3.2-3B-Instruct-Q4_K_M.gguf" -c 4096
 pause
 "@
-if(-not $Lite){
+if(-not $Lite -and -not $SkipModels){
 WriteBat (Join-Path $ao 'CHAT-8B-smart.bat') @"
 @echo off
 title Offline AI - Llama 3.1 8B (smart)
@@ -965,7 +965,7 @@ function WriteSh($name,$tool,$model,$gpu,$argv,$note){
 }
 if(-not $Only){
 WriteSh 'chat-3B-light.sh'   'llama-cli'    'Llama-3.2-3B-Instruct-Q4_K_M.gguf'      '0' '-c 4096' 'Offline AI - Llama 3.2 3B (light). Ctrl+C to quit.'
-if(-not $Lite){
+if(-not $Lite -and -not $SkipModels){
 WriteSh 'chat-8B-smart.sh'   'llama-cli'    'Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf' '0' '-c 4096' 'Offline AI - Llama 3.1 8B (smart). Ctrl+C to quit.'
 WriteSh 'chat-GPU-Qwen7B.sh' 'llama-cli'    'Qwen2.5-7B-Instruct-Q4_K_M.gguf'        '1' '-c 4096 -ngl 99' 'Offline AI - Qwen2.5 7B on the GPU (Metal on a Mac, Vulkan on Linux).'
 }

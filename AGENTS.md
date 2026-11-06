@@ -14,6 +14,7 @@ _Last verified: 2026-11-06_
   GPT4All database is deliberately not shipped because its stored paths do not survive
   relocation).
 - Works: aria2 fallback, cancellation and partial-file protection have offline regression checks;
+  large-model chat launchers follow the model selection in both installers (issue 168);
   changelog compilation rejects invalid bullet starts and missing numeric PR references,
   with offline fixture regressions in the lint job;
   manual reader launchers have offline per-OS execution checks after relocation;
@@ -46,3 +47,9 @@ to exercise the installer's real downloader against local executable fixtures, a
 `.github/scripts/check-doc-sources.sh` verifies that published manual text still matches
 `sources.tsv`; a changed publisher file must be reviewed, not silently re-hashed.
 Maintenance notes for the reader live in `doc-qa/README.md`.
+`.github/scripts/check-launchers.sh` runs model placement with local download fixtures
+and checks generated launcher model references across full, Lite, skipped-model and
+translator selections. It runs in the existing lint job on PRs and the weekly schedule.
+For the milestone 2 picker (#139), also exercise a fresh non-Lite selection containing
+`core`, `gpt4all-repair` and `wikipedia` without `models` on both installers; verify
+the large models and their launchers are absent while the core chat remains available.

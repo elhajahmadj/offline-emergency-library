@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Launcher parity: get-offline-library.sh and Get-OfflineLibrary.ps1 must write the same
 # AI-Offline launchers (.sh and .bat), so a drive built on any OS works on every OS.
-# Runs only the launcher section of each installer into a temp folder (no downloads),
-# for the full and the --lite / -Lite set, and compares the files byte for byte.
+# Runs the model and launcher sections into a temp folder (no network downloads),
+# for full, Lite and skipped-model sets, and compares the files byte for byte.
+# Runs the real model section with local download fixtures too: no launcher may
+# name a model that section did not place (#168).
 # Needs bash, pwsh and perl. Used by CI (lint job).
 set -u
 cd "$(dirname "$0")/../.." || exit 1
@@ -13,6 +15,13 @@ fail=0
 sed -n '/^AO="\$ROOT\/AI-Offline"/,/^# =* documentation/p' get-offline-library.sh > "$T/sec.sh"
 # CRLF like a Windows checkout (.gitattributes: *.ps1 eol=crlf), whatever this checkout has.
 sed -n '/^function WriteBat/,/^# =* documentation/p' Get-OfflineLibrary.ps1 | tr -d '\r' | sed 's/$/\r/' > "$T/sec.ps1"
+sed -n '/^# =* 2\. AI models/,/^# =* 3\. GPT4All/p' get-offline-library.sh > "$T/models.sh"
+sed -n '/^# =* 2\. AI models/,/^# =* 3\. GPT4All/p' Get-OfflineLibrary.ps1 | tr -d '\r' > "$T/models.ps1"
+for f in models.sh models.ps1; do
+  if [ "$(grep -c . "$T/$f")" -lt 10 ] || ! tail -n 1 "$T/$f" | grep -q '^# =* 3\. GPT4All'; then
+    echo "FAIL: model section not found ($f)"; exit 1
+  fi
+done
 for f in sec.sh sec.ps1; do
   n=$(grep -c . "$T/$f")
   # Both ends must be found: without the end marker sed runs to the end of the file,
@@ -26,19 +35,36 @@ done
 eval "$(grep -m1 '^TR_MODEL=' get-offline-library.sh)"
 for translate in 0 1; do
 for lite in 0 1; do
-  sh_out="$T/sh-tr$translate-lite$lite/AI-Offline"; ps_out="$T/ps-tr$translate-lite$lite/AI-Offline"
-  mkdir -p "$sh_out" "$ps_out"
-  ( set +u; ROOT="$T/sh-tr$translate-lite$lite"; LITE=$lite; TRANSLATE=$translate; log(){ :; }; . "$T/sec.sh" ) || { echo "FAIL: bash launcher section exited non-zero (lite=$lite translate=$translate)"; fail=1; }
+for skip in 0 1; do
+  # Lite implies SkipModels in both installers, before either section runs.
+  skip_models=$skip; [ "$lite" = 1 ] && skip_models=1
+  sh_out="$T/sh-tr$translate-lite$lite-skip$skip/AI-Offline"; ps_out="$T/ps-tr$translate-lite$lite-skip$skip/AI-Offline"
+  mkdir -p "$sh_out/models" "$ps_out/models"
+  ( set +u; ROOT="${sh_out%/AI-Offline}"; LITE=$lite; SKIP_MODELS=$skip_models; TRANSLATE=$translate; ONLY=""; log(){ :; }; fetch(){ printf fixture > "$2"; }; . "$T/models.sh"; . "$T/sec.sh" ) || { echo "FAIL: bash sections exited non-zero (lite=$lite skip=$skip translate=$translate)"; fail=1; }
   if [ "$lite" = 1 ]; then L='$true'; else L='$false'; fi
+  if [ "$skip_models" = 1 ]; then S='$true'; else S='$false'; fi
   if [ "$translate" = 1 ]; then TR='$true'; else TR='$false'; fi
-  pwsh -NoProfile -NonInteractive -Command "\$ErrorActionPreference='Stop'; \$Root='$T/ps-tr$translate-lite$lite'; \$Lite=$L; \$Translate=$TR; \$TrModel='$TR_MODEL'; function Log(\$m){}; . '$T/sec.ps1'" \
+  pwsh -NoProfile -NonInteractive -Command "\$ErrorActionPreference='Stop'; \$Root='${ps_out%/AI-Offline}'; \$Lite=$L; \$SkipModels=$S; \$Translate=$TR; \$Only=@(); function Log(\$m){}; function Fetch(\$url,\$out){ [IO.File]::WriteAllText(\$out,'fixture') }; . '$T/models.ps1'; . '$T/sec.ps1'" \
     || { echo "FAIL: PowerShell launcher section exited non-zero (lite=$lite)"; fail=1; }
   # Set-Content ends a file with the OS newline: CRLF on Windows, LF here. Make the last
   # line end like it does on Windows; every other line comes from the CRLF source above.
   for b in "$ps_out"/*.bat; do [ -e "$b" ] && perl -0pi -e 's/(?<!\r)\n\z/\r\n/' "$b"; done
 
   ns=$(ls "$sh_out" | wc -l | tr -d ' '); np=$(ls "$ps_out" | wc -l | tr -d ' ')
-  echo "== lite=$lite translate=$translate: bash wrote $ns files, PowerShell wrote $np"
+  echo "== lite=$lite skip=$skip translate=$translate: bash wrote $ns files, PowerShell wrote $np"
+  for out in "$sh_out" "$ps_out"; do
+    # Check generated artifacts, not the source spelling of their model argument.
+    for model in $(grep -hoE '[A-Za-z0-9_.-]+\.gguf' "$out"/*.* | sort -u); do
+      [ -s "$out/models/$model" ] || { echo "FAIL: $out launcher names missing model $model"; fail=1; }
+    done
+    for launcher in chat-8B-smart.sh chat-GPU-Qwen7B.sh CHAT-8B-smart.bat CHAT-GPU-Qwen7B.bat; do
+      if [ "$lite$skip_models" = 00 ]; then
+        [ -s "$out/$launcher" ] || { echo "FAIL: full install lost $launcher"; fail=1; }
+      else
+        [ ! -e "$out/$launcher" ] || { echo "FAIL: skipped models still wrote $launcher"; fail=1; }
+      fi
+    done
+  done
   if [ "$ns" -lt 4 ] || [ "$np" -lt 4 ]; then echo "FAIL: too few launchers written (expected at least 4)"; fail=1; fi
   if diff -r "$sh_out" "$ps_out" > "$T/diff.txt"; then
     ls "$sh_out" | sed 's/^/  same: /'
@@ -50,6 +76,7 @@ for lite in 0 1; do
   for s in "$sh_out"/*.sh "$sh_out"/*.command; do [ -e "$s" ] && grep -q $'\r' "$s" && { echo "FAIL: $(basename "$s") has CR line ends"; fail=1; }; done
   for p in "$sh_out"/*.ps1; do [ -e "$p" ] && [ "$(grep -cE $'[^\r]$|^$' "$p")" != 0 ] && { echo "FAIL: $(basename "$p") has a line without CRLF"; fail=1; }; done
   if [ "$translate" = 0 ] && find "$sh_out" -iname '*translat*' | grep -q .; then echo "FAIL: translator must remain opt-in"; fail=1; fi
+done
 done
 done
 
