@@ -8,18 +8,21 @@ _Last verified: 2026-11-06_
 
 - Status: issue 72 documents the tested chat context limit; issue 102 corrects state
   browser-map estimates and uses a conservative space budget; browser-only additions
-  preserve existing OsmAnd region metadata (issue 125); issue 63 adds a ready-to-use
+  preserve existing OsmAnd region metadata (issue 125); issue 75 adds opt-in browser
+  translator launchers alongside the terminal translator; issue 63 adds a ready-to-use
   manual Q&A reader (`doc-qa/`) that reuses the bundled llama.cpp server and model (the
   GPT4All database is deliberately not shipped because its stored paths do not survive
   relocation).
 - Works: aria2 fallback, cancellation and partial-file protection have offline regression checks;
-  an offline CLI regression covers existing and absent OsmAnd folders, selected browser maps and region size estimates.
-- Works: the manual reader's source pairing (PDF hash to text hash), installer parity and
-  relocation have an offline regression check; text freshness is checked in CI.
-- In progress: maintainer review of the context-limit documentation, the estimator correction, the browser-only metadata fix and the manual reader.
-- Known gaps: independent Swahili and Somali language review is still required.
+  an offline CLI regression covers existing and absent OsmAnd folders, selected browser maps and region size estimates;
+  Windows browser translation and shutdown passed runtime QA; generated checks cover parity and ownership;
+  the manual reader's source pairing (PDF hash to text hash), installer parity and relocation have an
+  offline regression check, and text freshness is checked in CI.
+- In progress: maintainer review of the context-limit documentation, the estimator correction, the browser-only metadata fix, issue 75 (per-OS CI) and the manual reader.
+- Known gaps: native macOS double-click testing and independent Swahili and Somali language review.
 - Deep docs: `evaluations/issue-73/README.md` describes the interpreter protocol;
-  `evaluations/issue-76/README.md` describes the CPU model comparison.
+  `evaluations/issue-76/README.md` describes the CPU model comparison;
+  `docs/HOW-TO-TRANSLATE.md` describes browser requirements and local chat storage.
 
 ## Checks
 
