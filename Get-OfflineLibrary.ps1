@@ -614,6 +614,10 @@ $pdfs = @(
  @{u='https://www.epa.gov/sites/default/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf'; n='EPA Emergency Disinfection of Drinking Water.pdf'; d='Manuals\Survival-Preparedness'}
  # Hunting with the Bow and Arrow, Saxton Pope (1923; public domain): making and shooting bows, hunting game
  @{id='hunting-with-the-bow-and-arrow';                       n='Hunting with the Bow and Arrow (Pope 1923).pdf';   d='Manuals\Survival-Preparedness'}
+ # Live off the land: fishing, trapping and outdoor living (public domain; #130).
+ @{id='bookofcampingwoo01keph';                              n='The Book of Camping and Woodcraft (Kephart 1910).pdf'; d='Manuals\Survival-Preparedness'}
+ @{id='deadfalls-and-snares-by-a.-r.-harding-1907';          n='Deadfalls and Snares (Harding 1907).pdf';          d='Manuals\Survival-Preparedness'}
+ @{id='scienceoffishing00hard';                              n='Science of Fishing (Harding 1922).pdf';            d='Manuals\Survival-Preparedness'}
  # Household do-it-yourself from common materials (public domain). Dated; some projects unsafe by modern standards -- see Manuals\READ-ME-FIRST
  @{id='boymechanicthing01unse';                              n='The Boy Mechanic Vol 1 - 700 Things to Do (1913).pdf'; d='Manuals\Household-DIY'}
  # Natural-medicine historical references (public domain; historical, NOT current medical advice -- see Medical\READ-ME-FIRST)

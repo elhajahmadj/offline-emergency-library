@@ -697,6 +697,10 @@ get_pdf "knotssplicesrope00verr" "Knots, Splices and Rope Work (Verrill).pdf" "$
 get_pdf_url "https://www.epa.gov/sites/default/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf" "EPA Emergency Disinfection of Drinking Water.pdf" "$SP"
 # Hunting with the Bow and Arrow, Saxton Pope (1923; public domain): making and shooting bows, hunting game.
 get_pdf "hunting-with-the-bow-and-arrow" "Hunting with the Bow and Arrow (Pope 1923).pdf" "$SP"
+# Live off the land: fishing, trapping and outdoor living (public domain; #130).
+get_pdf "bookofcampingwoo01keph"                     "The Book of Camping and Woodcraft (Kephart 1910).pdf" "$SP"
+get_pdf "deadfalls-and-snares-by-a.-r.-harding-1907" "Deadfalls and Snares (Harding 1907).pdf" "$SP"
+get_pdf "scienceoffishing00hard"                     "Science of Fishing (Harding 1922).pdf" "$SP"
 # Household do-it-yourself from common materials (public domain):
 DIY="$ROOT/Manuals/Household-DIY"
 # The Boy Mechanic, Volume 1: 700 Things for Boys to Do (1913; public domain). Dated; some projects are unsafe by modern standards -- see Manuals/READ-ME-FIRST.
