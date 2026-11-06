@@ -37,7 +37,7 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 | Folder | What it is | How to open | Guide |
 |---|---|---|---|
 | `AI-Offline\` | Offline AI chat - your helper for brainstorming, checklists and summaries (3 models, CPU + GPU) | Double-click a `CHAT-*.bat` | `AI-Offline\HOW-TO-RUN-OFFLINE-AI.html` |
-| `AI-Offline\Manual-QA\` | Ask the **bundled manuals** questions (shows the passages it used and links the PDFs) - works with no setup | `START-DOCS.bat` / `start-docs.sh`, then the local page | `AI-Offline\HOW-TO-ASK-YOUR-DOCS.html` |
+| `AI-Offline\Manual-QA\` | Ask the **bundled manuals** questions (shows the passages it used and links the PDFs) - works with no setup | `START-DOCS.bat` / `start-docs.sh`, then the local page | `AI-Offline\DocReader-GPT4All\HOW-TO-ASK-YOUR-DOCS.html` |
 | `AI-Offline\DocReader-GPT4All\` | Optional: index **your own** PDFs and notes with LocalDocs | Install once, then offline | `...\HOW-TO-ASK-YOUR-DOCS.html` |
 | `Manuals\` | Survival & repair manuals (Army FMs, iFixit, Appropedia, FEMA/EPA/knots) | PDF→browser, ZIM→Kiwix | `Manuals\READ-ME-FIRST.html` |
 | `Manuals\Radio-Communications\` | How ham/CB/shortwave radio works + emergency comms | Browser | `RADIO-GUIDE.html` |
