@@ -466,7 +466,6 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 | US Army field/technical manuals | US government works (public domain) ⸸ | Yes |
 | USDA *Complete Guide to Home Canning* (AIB 539) | US government work (public domain) | Yes |
 | MedlinePlus health topics (opt-in) | Public domain (US NLM) — **summaries only** | Yes |
-| Kiwix `zimgit` collections (post-disaster, water, food, knots, medicine) | **Mixed — the catalog states no license, and some items are all rights reserved** (e.g. SAS Survival Handbook, Foxfire). Under review in [#122](https://github.com/elhajahmadj/offline-emergency-library/issues/122) | **No** |
 | iFixit repair archive | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) | **No — non-commercial** |
 | *A Practical Guide to Prolonged Casualty Care* | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) | **No — non-commercial** |
 | WHO childbirth / maternal-health references | [CC BY-NC-SA 3.0 IGO](https://creativecommons.org/licenses/by-nc-sa/3.0/igo/) | **No — non-commercial** |
@@ -485,16 +484,8 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 > distribution-restricted ("U.S. Government agencies and their contractors only"), and
 > *FM 21-11 First Aid for Soldiers* contains American Heart Association copyrighted material.
 > The rest are public-release US government works.
->
-> **⚠️ zimgit collections:** the five `zimgit-*` ZIMs ship on every drive but are collections
-> of other people's PDFs with **no stated license**, and some items are all rights reserved
-> (SAS Survival Handbook, Foxfire). This conflicts with the kit's free/open-only rule and is
-> under review in [#122](https://github.com/elhajahmadj/offline-emergency-library/issues/122) —
-> they may be removed.
 
 **In short: do not sell a drive made with this kit; giving copies away is fine.** Several
 sources above are non-commercial (iFixit, Prolonged Casualty Care, the WHO references,
 the Hesperian books, OsmAnd's bundled artwork, and the opt-in Khan Academy archive), which
-blocks reselling a loaded drive even though giving copies away is allowed. The `zimgit`
-collections are **not openly licensed at all** (see above) and are being reviewed for
-removal — do not rely on them being redistributable.
+blocks reselling a loaded drive even though giving copies away is allowed.
