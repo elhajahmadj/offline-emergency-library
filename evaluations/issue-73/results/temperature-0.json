@@ -1,0 +1,1558 @@
+{
+  "temperature": 0,
+  "chrf++": 52.48013382248941,
+  "incomplete_translations": 1,
+  "metric_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+  "records": [
+    {
+      "setup": "English and Spanish",
+      "turn": 0,
+      "input": "English and Spanish",
+      "reference": null,
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "709"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Ready"
+            }
+          }
+        ],
+        "created": 1793935162,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_tokens": 108,
+          "total_tokens": 110,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-bdwo17szkKtanIuTT0pbdyJHUpe16xIP",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 108,
+          "prompt_ms": 847.309,
+          "prompt_per_token_ms": 7.845453703703703,
+          "prompt_per_second": 127.4623543477055,
+          "predicted_n": 2,
+          "predicted_ms": 51.203,
+          "predicted_per_token_ms": 51.203,
+          "predicted_per_second": 19.53010565787161
+        }
+      }
+    },
+    {
+      "setup": "English and Spanish",
+      "turn": 1,
+      "input": "Do you have any allergies to medicine?",
+      "reference": "\u00bfTiene alergias a alg\u00fan medicamento?",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "759"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "\u00bfTienes alguna alergia a medicamentos?"
+            }
+          }
+        ],
+        "created": 1793935163,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 127,
+          "total_tokens": 139,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-zSUTrGSRKq693P0Ou4vhN3vMuuvNwALv",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 127,
+          "prompt_ms": 972.698,
+          "prompt_per_token_ms": 7.65903937007874,
+          "prompt_per_second": 130.56467680616183,
+          "predicted_n": 12,
+          "predicted_ms": 487.413,
+          "predicted_per_token_ms": 44.310272727272725,
+          "predicted_per_second": 22.568130107321718
+        }
+      }
+    },
+    {
+      "setup": "English and Spanish",
+      "turn": 2,
+      "input": "Me duele el pecho desde las 3 de la manana y me cuesta respirar.",
+      "reference": "My chest has been hurting since 3 in the morning and I am having trouble breathing.",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "778"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "I have a chest pain since 3 a.m. and it's hard to breathe."
+            }
+          }
+        ],
+        "created": 1793935165,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 19,
+          "prompt_tokens": 169,
+          "total_tokens": 188,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-iEaGS7efNK95R9fWJrMp6c9zOyy915U2",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 169,
+          "prompt_ms": 1260.459,
+          "prompt_per_token_ms": 7.45833727810651,
+          "prompt_per_second": 134.07814137548306,
+          "predicted_n": 19,
+          "predicted_ms": 920.632,
+          "predicted_per_token_ms": 51.14622222222222,
+          "predicted_per_second": 19.551786164287144
+        }
+      }
+    },
+    {
+      "setup": "English and Spanish",
+      "turn": 3,
+      "input": "Necesitamos agua potable para cinco personas.",
+      "reference": "We need drinking water for five people.",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "759"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "We need potable water for five people."
+            }
+          }
+        ],
+        "created": 1793935167,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 10,
+          "prompt_tokens": 209,
+          "total_tokens": 219,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-JXWyeZQTvJz6YqHcVzGKqv92sYFeL8KQ",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 209,
+          "prompt_ms": 1528.457,
+          "prompt_per_token_ms": 7.313191387559809,
+          "prompt_per_second": 136.7392082341865,
+          "predicted_n": 10,
+          "predicted_ms": 412.636,
+          "predicted_per_token_ms": 45.848444444444446,
+          "predicted_per_second": 21.810990800608767
+        }
+      }
+    },
+    {
+      "setup": "Spanish and English",
+      "turn": 0,
+      "input": "Spanish and English",
+      "reference": null,
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "710"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Ready"
+            }
+          }
+        ],
+        "created": 1793935168,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_tokens": 108,
+          "total_tokens": 110,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-6BgY1ZwOIPuPXepm1H9NZNvZE3YvuFVx",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 108,
+          "prompt_ms": 831.45,
+          "prompt_per_token_ms": 7.698611111111112,
+          "prompt_per_second": 129.89355944434422,
+          "predicted_n": 2,
+          "predicted_ms": 48.168,
+          "predicted_per_token_ms": 48.168,
+          "predicted_per_second": 20.760670984886232
+        }
+      }
+    },
+    {
+      "setup": "Spanish and English",
+      "turn": 1,
+      "input": "Tengo diabetes y necesito insulina.",
+      "reference": "I have diabetes and I need insulin.",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "742"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "I have diabetes and I need insulin."
+            }
+          }
+        ],
+        "created": 1793935170,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 9,
+          "prompt_tokens": 129,
+          "total_tokens": 138,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-A32k0ZXh2He0yvdAZkA5iAIoVh88agpC",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 129,
+          "prompt_ms": 938.369,
+          "prompt_per_token_ms": 7.274178294573644,
+          "prompt_per_second": 137.47257209051023,
+          "predicted_n": 9,
+          "predicted_ms": 375.952,
+          "predicted_per_token_ms": 46.994,
+          "predicted_per_second": 21.279312252627996
+        }
+      }
+    },
+    {
+      "setup": "Spanish and English",
+      "turn": 2,
+      "input": "Do you have any allergies to medicine?",
+      "reference": "\u00bfTiene alergias a alg\u00fan medicamento?",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "747"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Tienes alguna alergia a medicamentos?"
+            }
+          }
+        ],
+        "created": 1793935171,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 11,
+          "prompt_tokens": 155,
+          "total_tokens": 166,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-Teceqgd03gxoUvtSFYvkFng7KX7JyHEh",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 155,
+          "prompt_ms": 1207.471,
+          "prompt_per_token_ms": 7.7901354838709675,
+          "prompt_per_second": 128.36747217945606,
+          "predicted_n": 11,
+          "predicted_ms": 476.01,
+          "predicted_per_token_ms": 47.601,
+          "predicted_per_second": 21.007962017604672
+        }
+      }
+    },
+    {
+      "setup": "English and Arabic",
+      "turn": 0,
+      "input": "English and Arabic",
+      "reference": null,
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "710"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Ready"
+            }
+          }
+        ],
+        "created": 1793935172,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_tokens": 108,
+          "total_tokens": 110,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-GtA957iBK1tl2y8gxYx90R7U3GNoDjtY",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 108,
+          "prompt_ms": 875.787,
+          "prompt_per_token_ms": 8.10913888888889,
+          "prompt_per_second": 123.31765600539858,
+          "predicted_n": 2,
+          "predicted_ms": 46.338,
+          "predicted_per_token_ms": 46.338,
+          "predicted_per_second": 21.580560231343604
+        }
+      }
+    },
+    {
+      "setup": "English and Arabic",
+      "turn": 1,
+      "input": "Do you have any allergies to medicine?",
+      "reference": "\u0647\u0644 \u0644\u062f\u064a\u0643 \u0623\u064a \u062d\u0633\u0627\u0633\u064a\u0629 \u062a\u062c\u0627\u0647 \u0627\u0644\u0623\u062f\u0648\u064a\u0629\u061f",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "769"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "\u0647\u0644 \u0644\u062f\u064a\u0643 \u0623\u064a \u062a\u062d\u0633\u0633 \u0645\u0646 \u0627\u0644\u0623\u062f\u0648\u064a\u0629\u061f"
+            }
+          }
+        ],
+        "created": 1793935174,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 127,
+          "total_tokens": 139,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-EUQglthcWEeLknt3eNpeWy0suoxoa7eT",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 127,
+          "prompt_ms": 937.477,
+          "prompt_per_token_ms": 7.381708661417322,
+          "prompt_per_second": 135.46999019709284,
+          "predicted_n": 12,
+          "predicted_ms": 479.108,
+          "predicted_per_token_ms": 43.55527272727273,
+          "predicted_per_second": 22.959332760045754
+        }
+      }
+    },
+    {
+      "setup": "English and Arabic",
+      "turn": 2,
+      "input": "\u0646\u062d\u0646 \u0628\u062d\u0627\u062c\u0629 \u0625\u0644\u0649 \u0637\u0628\u064a\u0628",
+      "reference": "We need a doctor.",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "723"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "We need a doctor"
+            }
+          }
+        ],
+        "created": 1793935175,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 5,
+          "prompt_tokens": 156,
+          "total_tokens": 161,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-rbCSCx7G4RutffOKAQMVqzdhdmS88Rfe",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 156,
+          "prompt_ms": 1118.135,
+          "prompt_per_token_ms": 7.167532051282051,
+          "prompt_per_second": 139.51803673080622,
+          "predicted_n": 5,
+          "predicted_ms": 188.836,
+          "predicted_per_token_ms": 47.209,
+          "predicted_per_second": 21.18240166070029
+        }
+      }
+    },
+    {
+      "setup": "Arabic and English",
+      "turn": 0,
+      "input": "Arabic and English",
+      "reference": null,
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "710"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Ready"
+            }
+          }
+        ],
+        "created": 1793935176,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_tokens": 109,
+          "total_tokens": 111,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-diymfNc4kXVMwIdBXFb83L0VBTuksulh",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 109,
+          "prompt_ms": 840.053,
+          "prompt_per_token_ms": 7.706908256880734,
+          "prompt_per_second": 129.75371792017884,
+          "predicted_n": 2,
+          "predicted_ms": 51.779,
+          "predicted_per_token_ms": 51.779,
+          "predicted_per_second": 19.31284883833214
+        }
+      }
+    },
+    {
+      "setup": "Arabic and English",
+      "turn": 1,
+      "input": "\u0623\u064a\u0646 \u0627\u0644\u0645\u0633\u062a\u0634\u0641\u0649\u061f",
+      "reference": "Where is the hospital?",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "729"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Where is the hospital?"
+            }
+          }
+        ],
+        "created": 1793935177,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 6,
+          "prompt_tokens": 126,
+          "total_tokens": 132,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-1BmH9ZU9x4celMSPjkWCICvUzpa6325P",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 126,
+          "prompt_ms": 1024.179,
+          "prompt_per_token_ms": 8.128404761904763,
+          "prompt_per_second": 123.02536958871445,
+          "predicted_n": 6,
+          "predicted_ms": 259.51,
+          "predicted_per_token_ms": 51.902,
+          "predicted_per_second": 19.267080266656393
+        }
+      }
+    },
+    {
+      "setup": "Arabic and English",
+      "turn": 2,
+      "input": "Do you have any allergies to medicine?",
+      "reference": "\u0647\u0644 \u0644\u062f\u064a\u0643 \u0623\u064a \u062d\u0633\u0627\u0633\u064a\u0629 \u062a\u062c\u0627\u0647 \u0627\u0644\u0623\u062f\u0648\u064a\u0629\u061f",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "767"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "\u0647\u0644 \u0644\u062f\u064a\u0643 \u0623\u064a \u062a\u062d\u0633\u0633 \u0644\u0644\u0639\u0642\u0627\u0642\u064a\u0631\u061f"
+            }
+          }
+        ],
+        "created": 1793935179,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 149,
+          "total_tokens": 161,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-pxYFM78EfTW7V5OWUtCiedMbc1Q6h6gS",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 149,
+          "prompt_ms": 1090.502,
+          "prompt_per_token_ms": 7.318805369127516,
+          "prompt_per_second": 136.63432070734396,
+          "predicted_n": 12,
+          "predicted_ms": 499.124,
+          "predicted_per_token_ms": 45.37490909090909,
+          "predicted_per_second": 22.038611647606608
+        }
+      }
+    },
+    {
+      "setup": "English and Ukrainian",
+      "turn": 0,
+      "input": "English and Ukrainian",
+      "reference": null,
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "710"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Ready"
+            }
+          }
+        ],
+        "created": 1793935180,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_tokens": 108,
+          "total_tokens": 110,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-2qzcQoJgum7Q6jBSTTMZOqQLM2qdtc3m",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 108,
+          "prompt_ms": 779.762,
+          "prompt_per_token_ms": 7.220018518518518,
+          "prompt_per_second": 138.5037998773985,
+          "predicted_n": 2,
+          "predicted_ms": 45.882,
+          "predicted_per_token_ms": 45.882,
+          "predicted_per_second": 21.795039449021402
+        }
+      }
+    },
+    {
+      "setup": "English and Ukrainian",
+      "turn": 1,
+      "input": "Do you have any allergies to medicine?",
+      "reference": "\u0427\u0438 \u0454 \u0443 \u0432\u0430\u0441 \u0430\u043b\u0435\u0440\u0433\u0456\u044f \u043d\u0430 \u043b\u0456\u043a\u0438?",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "757"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "\u0423 \u0432\u0430\u0441 \u0454 \u0430\u043b\u0435\u0440\u0433\u0456\u044f \u0434\u043e \u043b\u0456\u043a\u0456\u0432?"
+            }
+          }
+        ],
+        "created": 1793935181,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 17,
+          "prompt_tokens": 127,
+          "total_tokens": 144,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-j2uro5JQWIFPa28mWPAEyfe10L0ycSp9",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 127,
+          "prompt_ms": 919.137,
+          "prompt_per_token_ms": 7.237299212598424,
+          "prompt_per_second": 138.17309062740375,
+          "predicted_n": 17,
+          "predicted_ms": 713.467,
+          "predicted_per_token_ms": 44.5916875,
+          "predicted_per_second": 22.425704342317164
+        }
+      }
+    },
+    {
+      "setup": "English and Ukrainian",
+      "turn": 2,
+      "input": "\u0414\u0435 \u043c\u043e\u0436\u043d\u0430 \u043f\u0435\u0440\u0435\u043d\u043e\u0447\u0443\u0432\u0430\u0442\u0438?",
+      "reference": "Where can I stay overnight?",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "735"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Where can you stay overnight?"
+            }
+          }
+        ],
+        "created": 1793935183,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 7,
+          "prompt_tokens": 164,
+          "total_tokens": 171,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-JzQaeCBBiEMkdX7iLVBpu7bzR6SfaMuz",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 164,
+          "prompt_ms": 1161.744,
+          "prompt_per_token_ms": 7.08380487804878,
+          "prompt_per_second": 141.16707295238882,
+          "predicted_n": 7,
+          "predicted_ms": 271.608,
+          "predicted_per_token_ms": 45.268,
+          "predicted_per_second": 22.09066006892286
+        }
+      }
+    },
+    {
+      "setup": "English and Hindi",
+      "turn": 0,
+      "input": "English and Hindi",
+      "reference": null,
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "708"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Ready"
+            }
+          }
+        ],
+        "created": 1793935184,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_tokens": 108,
+          "total_tokens": 110,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-wxqq11I6U4mERWTyrarMjsGwkVMeC9gH",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 108,
+          "prompt_ms": 781.465,
+          "prompt_per_token_ms": 7.235787037037038,
+          "prompt_per_second": 138.20196681873148,
+          "predicted_n": 2,
+          "predicted_ms": 44.03,
+          "predicted_per_token_ms": 44.03,
+          "predicted_per_second": 22.71178741766977
+        }
+      }
+    },
+    {
+      "setup": "English and Hindi",
+      "turn": 1,
+      "input": "Do you have any allergies to medicine?",
+      "reference": "\u0915\u094d\u092f\u093e \u0906\u092a\u0915\u094b \u0915\u093f\u0938\u0940 \u0926\u0935\u093e \u0938\u0947 \u090f\u0932\u0930\u094d\u091c\u0940 \u0939\u0948?",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "803"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "\u0915\u094d\u092f\u093e \u0906\u092a\u0915\u094b \u0915\u093f\u0938\u0940 \u0926\u0935\u093e \u0915\u0947 \u0905\u0932\u0930\u094d\u091c\u0940 \u0939\u0948?"
+            }
+          }
+        ],
+        "created": 1793935186,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 31,
+          "prompt_tokens": 127,
+          "total_tokens": 158,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-pUKVnQLcb7QusZecQGeNtcfPjIn7DarP",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 127,
+          "prompt_ms": 923.014,
+          "prompt_per_token_ms": 7.267826771653543,
+          "prompt_per_second": 137.59271256990687,
+          "predicted_n": 31,
+          "predicted_ms": 1383.35,
+          "predicted_per_token_ms": 46.111666666666665,
+          "predicted_per_second": 21.686485704991505
+        }
+      }
+    },
+    {
+      "setup": "English and Hindi",
+      "turn": 2,
+      "input": "\u092e\u0941\u091d\u0947 \u092c\u0941\u0916\u093e\u0930 \u0939\u0948\u0964",
+      "reference": "I have a fever.",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "721"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "I have fever."
+            }
+          }
+        ],
+        "created": 1793935187,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 5,
+          "prompt_tokens": 181,
+          "total_tokens": 186,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-fOHc8YmiyHQBTxTUyDUhPfwgAgulYmOV",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 181,
+          "prompt_ms": 1268.843,
+          "prompt_per_token_ms": 7.01018232044199,
+          "prompt_per_second": 142.64964223312103,
+          "predicted_n": 5,
+          "predicted_ms": 175.287,
+          "predicted_per_token_ms": 43.82175,
+          "predicted_per_second": 22.81971851877207
+        }
+      }
+    },
+    {
+      "setup": "English and Chinese",
+      "turn": 0,
+      "input": "English and Chinese",
+      "reference": null,
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "710"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Ready"
+            }
+          }
+        ],
+        "created": 1793935188,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_tokens": 108,
+          "total_tokens": 110,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-fe66hUQmQHz05DDtReI6EyznbGhcEtsJ",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 108,
+          "prompt_ms": 808.321,
+          "prompt_per_token_ms": 7.4844537037037036,
+          "prompt_per_second": 133.6102860126113,
+          "predicted_n": 2,
+          "predicted_ms": 43.939,
+          "predicted_per_token_ms": 43.939,
+          "predicted_per_second": 22.75882473429072
+        }
+      }
+    },
+    {
+      "setup": "English and Chinese",
+      "turn": 1,
+      "input": "Do you have any allergies to medicine?",
+      "reference": "\u4f60\u5bf9\u4efb\u4f55\u836f\u7269\u8fc7\u654f\u5417\uff1f",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "750"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "\u4f60\u5bf9\u836f\u7269\u6709\u4efb\u4f55\u8fc7\u654f\u5417\uff1f"
+            }
+          }
+        ],
+        "created": 1793935189,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 8,
+          "prompt_tokens": 127,
+          "total_tokens": 135,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-cJD56HZmsb8fLN5aGRwgPMYa7Nttmz2W",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 127,
+          "prompt_ms": 911.099,
+          "prompt_per_token_ms": 7.174007874015748,
+          "prompt_per_second": 139.39209679738426,
+          "predicted_n": 8,
+          "predicted_ms": 320.003,
+          "predicted_per_token_ms": 45.71471428571429,
+          "predicted_per_second": 21.87479492379759
+        }
+      }
+    },
+    {
+      "setup": "English and Chinese",
+      "turn": 2,
+      "input": "\u6211\u7684\u5b69\u5b50\u53d1\u70e7\u4e86\u3002",
+      "reference": "My child has a fever.",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "731"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "My child has a fever."
+            }
+          }
+        ],
+        "created": 1793935191,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 7,
+          "prompt_tokens": 149,
+          "total_tokens": 156,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-4CWYddC5B3r34gXLW9LNJXinChr5HsYM",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 149,
+          "prompt_ms": 1083.415,
+          "prompt_per_token_ms": 7.2712416107382545,
+          "prompt_per_second": 137.52809403598806,
+          "predicted_n": 7,
+          "predicted_ms": 264.633,
+          "predicted_per_token_ms": 44.1055,
+          "predicted_per_second": 22.672909274353543
+        }
+      }
+    },
+    {
+      "setup": "English and French",
+      "turn": 0,
+      "input": "English and French",
+      "reference": null,
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "709"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Ready"
+            }
+          }
+        ],
+        "created": 1793935192,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_tokens": 108,
+          "total_tokens": 110,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-icnaror2iEF09B8vsl9clN7X3vbMleAx",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 108,
+          "prompt_ms": 775.445,
+          "prompt_per_token_ms": 7.180046296296297,
+          "prompt_per_second": 139.27486797903137,
+          "predicted_n": 2,
+          "predicted_ms": 42.87,
+          "predicted_per_token_ms": 42.87,
+          "predicted_per_second": 23.326335432703523
+        }
+      }
+    },
+    {
+      "setup": "English and French",
+      "turn": 1,
+      "input": "J'ai besoin d'un medecin tout de suite.",
+      "reference": "I need a doctor right away.",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "742"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "I need a doctor right away."
+            }
+          }
+        ],
+        "created": 1793935193,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 8,
+          "prompt_tokens": 131,
+          "total_tokens": 139,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-1bS302pSSmLHxKMbuw9oEr099LRVQEw0",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 131,
+          "prompt_ms": 998.978,
+          "prompt_per_token_ms": 7.625786259541984,
+          "prompt_per_second": 131.1340189673847,
+          "predicted_n": 8,
+          "predicted_ms": 313.541,
+          "predicted_per_token_ms": 44.79157142857143,
+          "predicted_per_second": 22.3256288651245
+        }
+      }
+    },
+    {
+      "setup": "English and French",
+      "turn": 2,
+      "input": "Do you have any allergies to medicine?",
+      "reference": "Avez-vous des allergies aux m\u00e9dicaments ?",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "765"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Avez-vous toute all\u00e9rgie \u00e0 un m\u00e9dicament ?"
+            }
+          }
+        ],
+        "created": 1793935195,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 15,
+          "prompt_tokens": 156,
+          "total_tokens": 171,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-Y5cGDr5ago6ZDFeaRBd10GOtPzIBBzrc",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 156,
+          "prompt_ms": 1127.642,
+          "prompt_per_token_ms": 7.228474358974359,
+          "prompt_per_second": 138.3417786850791,
+          "predicted_n": 15,
+          "predicted_ms": 638.269,
+          "predicted_per_token_ms": 45.59064285714286,
+          "predicted_per_second": 21.934325495989935
+        }
+      }
+    },
+    {
+      "setup": "English and Swahili",
+      "turn": 0,
+      "input": "English and Swahili",
+      "reference": null,
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "710"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Ready"
+            }
+          }
+        ],
+        "created": 1793935196,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_tokens": 110,
+          "total_tokens": 112,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-MwIqLApHylXHIWil4giYCQU20XNTEn53",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 110,
+          "prompt_ms": 887.511,
+          "prompt_per_token_ms": 8.068281818181818,
+          "prompt_per_second": 123.94212578773671,
+          "predicted_n": 2,
+          "predicted_ms": 50.689,
+          "predicted_per_token_ms": 50.689,
+          "predicted_per_second": 19.72814614610665
+        }
+      }
+    },
+    {
+      "setup": "English and Swahili",
+      "turn": 1,
+      "input": "Mtoto wangu ana homa kali.",
+      "reference": "My child has a high fever.",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "735"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "My child has a fever today."
+            }
+          }
+        ],
+        "created": 1793935197,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 8,
+          "prompt_tokens": 130,
+          "total_tokens": 138,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-MYxy0NwSUAhiPEJUJHjtlkH3pmuckhm4",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 130,
+          "prompt_ms": 1096.368,
+          "prompt_per_token_ms": 8.4336,
+          "prompt_per_second": 118.57332574464048,
+          "predicted_n": 8,
+          "predicted_ms": 392.618,
+          "predicted_per_token_ms": 56.08828571428571,
+          "predicted_per_second": 17.829034837934074
+        }
+      }
+    },
+    {
+      "setup": "English and Swahili",
+      "turn": 2,
+      "input": "Do you have any allergies to medicine?",
+      "reference": "Je, una mzio wowote wa dawa?",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "749"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Kuna jinsi ya kuzingatia kwa kisasa?"
+            }
+          }
+        ],
+        "created": 1793935199,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 17,
+          "prompt_tokens": 155,
+          "total_tokens": 172,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-QsddQ0tbGHFIxYTPFEMpKGMaKX15RiW5",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 155,
+          "prompt_ms": 1302.653,
+          "prompt_per_token_ms": 8.404212903225806,
+          "prompt_per_second": 118.9879422992923,
+          "predicted_n": 17,
+          "predicted_ms": 808.055,
+          "predicted_per_token_ms": 50.5034375,
+          "predicted_per_second": 19.800632382696723
+        }
+      }
+    },
+    {
+      "setup": "English and Amharic",
+      "turn": 0,
+      "input": "English and Amharic",
+      "reference": null,
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "710"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Ready"
+            }
+          }
+        ],
+        "created": 1793935200,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_tokens": 110,
+          "total_tokens": 112,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-Vfsl3pfhlFc9o6GYomfHtjh0lBplulsW",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 110,
+          "prompt_ms": 930.401,
+          "prompt_per_token_ms": 8.45819090909091,
+          "prompt_per_second": 118.22859175774747,
+          "predicted_n": 2,
+          "predicted_ms": 48.772,
+          "predicted_per_token_ms": 48.772,
+          "predicted_per_second": 20.503567620766013
+        }
+      }
+    },
+    {
+      "setup": "English and Amharic",
+      "turn": 1,
+      "input": "Do you have any allergies to medicine?",
+      "reference": "\u1208\u1218\u12f5\u1283\u1292\u1275 \u12a0\u1208\u122d\u1302 \u12a0\u1208\u1265\u12ce\u1275?",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "1036"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "length",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "\u1270\u1235\u1270\u12ab\u12ed \u12a5\u1295\u12f0 \u12a0\u1235\u1270\u12eb\u12e8\u1275 \u12a0\u12ed\u12f0\u122d\u1235\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed\u1206\u1295\u121d \u12a0\u12ed"
+            }
+          }
+        ],
+        "created": 1793935208,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 150,
+          "prompt_tokens": 129,
+          "total_tokens": 279,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-YnGNDHlRpYl2LKRpzOgCQeZ0FrZlgUZ4",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 129,
+          "prompt_ms": 986.983,
+          "prompt_per_token_ms": 7.6510310077519375,
+          "prompt_per_second": 130.70133933411216,
+          "predicted_n": 150,
+          "predicted_ms": 7043.982,
+          "predicted_per_token_ms": 47.27504697986577,
+          "predicted_per_second": 21.152808170151484
+        }
+      }
+    },
+    {
+      "setup": "English and Amharic",
+      "turn": 2,
+      "input": "\u12cd\u1203 \u12eb\u1235\u1348\u120d\u1308\u129b\u120d\u1362",
+      "reference": "I need water.",
+      "status": 200,
+      "headers": {
+        "Server": "llama.cpp",
+        "Access-Control-Allow-Origin": "",
+        "Content-Type": "application/json; charset=utf-8",
+        "Connection": "close",
+        "Content-Length": "747"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Does it have any allergies to medicine?"
+            }
+          }
+        ],
+        "created": 1793935211,
+        "model": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 9,
+          "prompt_tokens": 302,
+          "total_tokens": 311,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-eCsm3pAkCC1oerjXOttRfI9xNnvrTjUF",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 302,
+          "prompt_ms": 2197.655,
+          "prompt_per_token_ms": 7.277003311258278,
+          "prompt_per_second": 137.41920365116454,
+          "predicted_n": 9,
+          "predicted_ms": 383.744,
+          "predicted_per_token_ms": 47.968,
+          "predicted_per_second": 20.847231487658437
+        }
+      }
+    }
+  ]
+}

@@ -12,6 +12,10 @@ Contributor-driven reliability and portability work, from people running the kit
 hardware.
 
 ### Added
+- **Interpreter temperature comparison.** `evaluations/issue-73/` records paired
+  interpreter replies and chrF++ scores at 0 and 0.2, including repetition and
+  mistranslation failures. The existing 0.2 default is retained in both installers.
+  Resolves #73. _[@EnragedAntelope](https://github.com/EnragedAntelope)._
 - **macOS double-click starter: `install.command`.** The Mac twin of `install.bat`: double-click
   it in Finder and it runs `get-offline-library.sh` from the same folder, or downloads it from
   GitHub first when the file is on its own. It waits for Return before it exits. README
@@ -189,6 +193,19 @@ hardware.
   makes no network requests. Off by default. Resolves #64.
   _[@EnragedAntelope](https://github.com/EnragedAntelope) - PR #87._
 
+### Removed
+- **Dropped the five `zimgit-*` Kiwix collections (post-disaster, water, food preparation,
+  knots, medicine).** They are collections of third-party PDFs with no stated license, and
+  some items are all rights reserved (for example the SAS Survival Handbook and Foxfire), so
+  they do not meet this project's rule that everything bundled is free, openly licensed, or
+  public domain (#59). The goal of this kit is to help people, and to be a clean library
+  anyone can use however they like without taking something that is not ours to give — so we
+  removed them rather than risk the project being taken down over a licensing complaint.
+  Survival, water, food and first-aid are still covered by the public-domain US Army field
+  manuals (FM 21-76 covers water, food, knots and shelter), the USDA home-canning guide,
+  Appropedia, WikiMed and the Hesperian/WHO PDFs. A license-cleared replacement for the knots
+  guide is tracked in #78. Resolves #122.
+
 ### Changed
 - **Lite no longer leaves the AI's trust gap silent.** `--lite` / `-Lite` still omits GPT4All
   (keeping the preset lean — forcing it back in would undo the #32/#39 sizing work), but a lite
@@ -210,6 +227,16 @@ hardware.
 
 ### Fixed
 - Self-check: verify the desktop map viewer program and Java runtime are present (#100) (@imsurya26)
+- **Windows self-check no longer passes the AI engine when Windows blocks it.** When Smart App
+  Control (or another app-control policy) blocks `llama-cli.exe`, PowerShell throws and keeps the
+  old exit code, so the check read 0 and printed "PASS AI engine starts" with no version. It now
+  clears the exit code first and fails with a hint (Windows Security > App & browser control).
+  Resolves #124. _[@boostedchaos](https://github.com/boostedchaos)._
+- **macOS + exFAT: the self-check and README index skip macOS's hidden `._` files.** On an exFAT
+  or FAT32 drive, macOS writes a `._<name>` file beside every file. The bash self-check read them
+  as broken ZIMs and PDFs ("FINISHED WITH PROBLEMS: 2 self-check(s) failed"), and the README
+  index listed them. Both now leave out `._*`, as `CHECKSUMS-SHA256.txt` already did. Resolves
+  #123. _[@boostedchaos](https://github.com/boostedchaos)._
 - **Desktop viewer needs internet on Windows and macOS: the docs and launchers now say so.** The bundled OsmAndMapCreator has only the Linux offline renderer, so on Windows and macOS it draws online tiles from `tile.osmand.net` and shows a blank map with no internet (reproduced on Windows 11 and macOS). HOW-TO-VIEW-MAPS, the README, START-HERE, POWER-AND-DEVICES and both viewer launchers no longer call it an offline viewer; they point to browser maps (US) or an Android phone. `VIEW-MAPS-ON-PC.sh` also launched a second viewer when the first exited non-zero (`sh ... || bash ...`); it now launches once. Addresses #15. _Tested by [@boostedchaos](https://github.com/boostedchaos) - issue #15._
 - **The upstream link check no longer fails on one-off errors.** `check-links.sh` retries a
   failed URL up to 3 times (5xx, timeouts, resets) before counting it as dead, and sends the

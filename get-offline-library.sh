@@ -240,8 +240,8 @@ log "Platform: $PLAT/$CPU   Destination: $ROOT"
 [ -n "$ONLY" ] && log "Adding to the finished library: $ONLY (nothing else is downloaded)"
 for d in AI-Offline AI-Offline/engine AI-Offline/models AI-Offline/DocReader-GPT4All \
          Manuals Manuals/ArmyFieldManuals Manuals/Repair-iFixit Manuals/DIY-Appropedia \
-         Manuals/Survival-Water-Food Manuals/Radio-Communications Manuals/Food-Preservation/USDA-Complete-Guide-to-Home-Canning-2015 \
-         Medical Medical/WikiMed Medical/zimgit-medicine Medical/Manuals-PDF \
+         Manuals/Radio-Communications Manuals/Food-Preservation/USDA-Complete-Guide-to-Home-Canning-2015 \
+         Medical Medical/WikiMed Medical/Manuals-PDF \
          Wikipedia OsmAnd Kiwix-Reader Phone-Apps Education; do
   [ -z "$ONLY" ] && mkdir -p "$ROOT/$d"
 done
@@ -443,12 +443,13 @@ if [ "$LITE" = 0 ]; then
   add_zim "https://download.kiwix.org/zim/ifixit/"    "ifixit_en_all_"            "$ROOT/Manuals/Repair-iFixit"
   add_zim "https://download.kiwix.org/zim/other/"     "appropedia_en_all_maxi_"   "$ROOT/Manuals/DIY-Appropedia"
 fi
-add_zim "https://download.kiwix.org/zim/other/"     "zimgit-post-disaster_en_"  "$ROOT/Manuals/Survival-Water-Food"
-add_zim "https://download.kiwix.org/zim/other/"     "zimgit-water_en_"          "$ROOT/Manuals/Survival-Water-Food"
-add_zim "https://download.kiwix.org/zim/other/"     "zimgit-food-preparation_en_" "$ROOT/Manuals/Survival-Water-Food"
-add_zim "https://download.kiwix.org/zim/other/"     "zimgit-knots_en_"          "$ROOT/Manuals/Survival-Water-Food"
+# NOTE: the zimgit-* collections (post-disaster, water, food-preparation, knots, medicine)
+# were removed in #122: they are collections of third-party PDFs with no stated license, and
+# some items are all rights reserved (e.g. the SAS Survival Handbook, Foxfire). This kit only
+# ships content that is free, openly licensed, or public domain. Survival/water/food/first-aid
+# are covered by the Army field manuals, USDA canning guide, Appropedia, WikiMed and the
+# Hesperian/WHO PDFs. A license-cleared replacement for knots is tracked in #78.
 add_zim "https://download.kiwix.org/zim/wikipedia/" "wikipedia_en_medicine_maxi_" "$ROOT/Medical/WikiMed"
-add_zim "https://download.kiwix.org/zim/other/"     "zimgit-medicine_en_"       "$ROOT/Medical/zimgit-medicine"
 fi
 
 # ================================================================ 5b. Education (opt-in)
@@ -864,39 +865,39 @@ hsz(){ du -h "$1" 2>/dev/null | cut -f1; }
   [ -f "$ROOT/START-HERE.html" ] && printf '%s' "<p>&#128073; New here? Start with <a href='START-HERE.html'><b>START-HERE.html</b></a>.</p>"
   # guides
   printf '%s' "<h2>&#128214; Guides &amp; Documentation</h2><table><tr><th>Guide</th><th>Folder</th><th>Open</th></tr>"
-  find "$ROOT" -type f -name '*.html' ! -name 'README.html' | sort | while read -r f; do
+  find "$ROOT" -type f ! -name '._*' -name '*.html' ! -name 'README.html' | sort | while read -r f; do
     rel="$(relp "$f")"; dir="$(dirname "$rel")"; [ "$dir" = "." ] && dir='(root)'
     mdrel="${rel%.html}.md"; ml=""; [ -f "$ROOT/$mdrel" ] && ml=" &middot; <a href='$mdrel'>md</a>"
     printf '%s' "<tr><td>$(nicen "$f")</td><td class='muted'>$dir</td><td><a href='$rel'>HTML</a>$ml</td></tr>"
   done
   printf '%s' "</table>"
   # pdfs
-  if find "$ROOT" -type f -name '*.pdf' | grep -q .; then
+  if find "$ROOT" -type f ! -name '._*' -name '*.pdf' | grep -q .; then
     printf '%s' "<h2>&#128218; Manuals &amp; Books (PDF)</h2><table><tr><th>Document</th><th>Folder</th><th>Size</th><th>Open</th></tr>"
-    find "$ROOT" -type f -name '*.pdf' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(nicen "$f")</td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td><td><a href='$rel'>PDF</a></td></tr>"; done
+    find "$ROOT" -type f ! -name '._*' -name '*.pdf' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(nicen "$f")</td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td><td><a href='$rel'>PDF</a></td></tr>"; done
     printf '%s' "</table>"
   fi
   # zims
-  if find "$ROOT" -type f -name '*.zim' | grep -q .; then
+  if find "$ROOT" -type f ! -name '._*' -name '*.zim' | grep -q .; then
     printf '%s' "<h2>&#127760; Offline Archives (ZIM &mdash; open with Kiwix)</h2><table><tr><th>Archive</th><th>Folder</th><th>Size</th><th>File</th></tr>"
-    find "$ROOT" -type f -name '*.zim' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(nicen "$f")</td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td><td><a href='$rel'>open</a></td></tr>"; done
+    find "$ROOT" -type f ! -name '._*' -name '*.zim' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(nicen "$f")</td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td><td><a href='$rel'>open</a></td></tr>"; done
     printf '%s' "</table>"
   fi
   # programs
   printf '%s' "<h2>&#9881; Programs &amp; Launchers</h2><table><tr><th>Item</th><th>Folder</th></tr>"
-  { find "$ROOT" -type f \( -name '*.bat' -o -name '*.sh' -o -name '*.command' -o -name '*.appimage' -o -name '*.run' -o -name '*.dmg' \); find "$ROOT" -type f -name '*.exe' | grep -iE 'installer|kiwix-desktop'; } | sort -u | while read -r f; do rel="$(relp "$f")"; dir="$(dirname "$rel")"; [ "$dir" = "." ] && dir='(root)'; printf '%s' "<tr><td><a href='$rel'>$(basename "$f")</a></td><td class='muted'>$dir</td></tr>"; done
+  { find "$ROOT" -type f ! -name '._*' \( -name '*.bat' -o -name '*.sh' -o -name '*.command' -o -name '*.appimage' -o -name '*.run' -o -name '*.dmg' \); find "$ROOT" -type f ! -name '._*' -name '*.exe' | grep -iE 'installer|kiwix-desktop'; } | sort -u | while read -r f; do rel="$(relp "$f")"; dir="$(dirname "$rel")"; [ "$dir" = "." ] && dir='(root)'; printf '%s' "<tr><td><a href='$rel'>$(basename "$f")</a></td><td class='muted'>$dir</td></tr>"; done
   printf '%s' "</table>"
   # apks
-  if find "$ROOT" -type f -name '*.apk' | grep -q .; then
+  if find "$ROOT" -type f ! -name '._*' -name '*.apk' | grep -q .; then
     printf '%s' "<h2>&#128241; Phone Apps (Android APK)</h2><table><tr><th>App</th><th>Folder</th><th>Size</th></tr>"
-    find "$ROOT" -type f -name '*.apk' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td><a href='$rel'>$(basename "$f")</a></td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td></tr>"; done
+    find "$ROOT" -type f ! -name '._*' -name '*.apk' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td><a href='$rel'>$(basename "$f")</a></td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td></tr>"; done
     printf '%s' "</table>"
   fi
   # data
-  if find "$ROOT" -type f \( -name '*.bz2' -o -name '*.obf.zip' \) | grep -q .; then
+  if find "$ROOT" -type f ! -name '._*' \( -name '*.bz2' -o -name '*.obf.zip' \) | grep -q .; then
     printf '%s' "<h2>&#128451; Data</h2><table><tr><th>Item</th><th>Folder</th><th>Size</th></tr>"
-    find "$ROOT" -type f -name '*.bz2' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(basename "$f") <span class='muted'>(Wikipedia)</span></td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td></tr>"; done
-    mc=$(find "$ROOT" -type f -name '*.obf.zip' | wc -l | tr -d ' ')
+    find "$ROOT" -type f ! -name '._*' -name '*.bz2' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(basename "$f") <span class='muted'>(Wikipedia)</span></td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td></tr>"; done
+    mc=$(find "$ROOT" -type f ! -name '._*' -name '*.obf.zip' | wc -l | tr -d ' ')
     [ "$mc" -gt 0 ] && printf '%s' "<tr><td>Offline US maps - $mc files</td><td class='muted'>OsmAnd</td><td>$(du -ch "$ROOT"/OsmAnd/*.obf.zip 2>/dev/null | tail -1 | cut -f1)</td></tr>"
     printf '%s' "</table>"
   fi
@@ -985,7 +986,7 @@ while IFS= read -r f; do
   if [ "$m" != 5a494d04 ] || [ -z "$cs" ] || [ "$sz" != "$((cs + 16))" ]; then zbad="$zbad
         $(relp "$f")"; fi
 done <<ZEOF
-$(find "$ROOT" -type f -name '*.zim' | LC_ALL=C sort)
+$(find "$ROOT" -type f ! -name '._*' -name '*.zim' | LC_ALL=C sort)
 ZEOF
 if [ "$zt" = 0 ]; then sc_warn "no Kiwix archives (.zim) found"
 elif [ -z "$zbad" ]; then sc_pass "$zt Kiwix archives (.zim): header and size OK"
@@ -997,7 +998,7 @@ while IFS= read -r f; do
   [ "$(head -c 4 "$f" 2>/dev/null)" = "%PDF" ] || pbad="$pbad
         $(relp "$f")"
 done <<PEOF
-$(find "$ROOT" -type f -name '*.pdf' | LC_ALL=C sort)
+$(find "$ROOT" -type f ! -name '._*' -name '*.pdf' | LC_ALL=C sort)
 PEOF
 if [ "$pt" = 0 ]; then sc_warn "no PDF manuals found"
 elif [ -z "$pbad" ]; then sc_pass "$pt PDF files: all start with %PDF"

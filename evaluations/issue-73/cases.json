@@ -1,0 +1,33 @@
+[
+  {"setup":"English and Spanish","turns":[
+    {"input":"Do you have any allergies to medicine?","reference":"\u00bfTiene alergias a alg\u00fan medicamento?"},
+    {"input":"Me duele el pecho desde las 3 de la manana y me cuesta respirar.","reference":"My chest has been hurting since 3 in the morning and I am having trouble breathing."},
+    {"input":"Necesitamos agua potable para cinco personas.","reference":"We need drinking water for five people."}]},
+  {"setup":"Spanish and English","turns":[
+    {"input":"Tengo diabetes y necesito insulina.","reference":"I have diabetes and I need insulin."},
+    {"input":"Do you have any allergies to medicine?","reference":"\u00bfTiene alergias a alg\u00fan medicamento?"}]},
+  {"setup":"English and Arabic","turns":[
+    {"input":"Do you have any allergies to medicine?","reference":"\u0647\u0644 \u0644\u062f\u064a\u0643 \u0623\u064a \u062d\u0633\u0627\u0633\u064a\u0629 \u062a\u062c\u0627\u0647 \u0627\u0644\u0623\u062f\u0648\u064a\u0629\u061f"},
+    {"input":"\u0646\u062d\u0646 \u0628\u062d\u0627\u062c\u0629 \u0625\u0644\u0649 \u0637\u0628\u064a\u0628","reference":"We need a doctor."}]},
+  {"setup":"Arabic and English","turns":[
+    {"input":"\u0623\u064a\u0646 \u0627\u0644\u0645\u0633\u062a\u0634\u0641\u0649\u061f","reference":"Where is the hospital?"},
+    {"input":"Do you have any allergies to medicine?","reference":"\u0647\u0644 \u0644\u062f\u064a\u0643 \u0623\u064a \u062d\u0633\u0627\u0633\u064a\u0629 \u062a\u062c\u0627\u0647 \u0627\u0644\u0623\u062f\u0648\u064a\u0629\u061f"}]},
+  {"setup":"English and Ukrainian","turns":[
+    {"input":"Do you have any allergies to medicine?","reference":"\u0427\u0438 \u0454 \u0443 \u0432\u0430\u0441 \u0430\u043b\u0435\u0440\u0433\u0456\u044f \u043d\u0430 \u043b\u0456\u043a\u0438?"},
+    {"input":"\u0414\u0435 \u043c\u043e\u0436\u043d\u0430 \u043f\u0435\u0440\u0435\u043d\u043e\u0447\u0443\u0432\u0430\u0442\u0438?","reference":"Where can I stay overnight?"}]},
+  {"setup":"English and Hindi","turns":[
+    {"input":"Do you have any allergies to medicine?","reference":"\u0915\u094d\u092f\u093e \u0906\u092a\u0915\u094b \u0915\u093f\u0938\u0940 \u0926\u0935\u093e \u0938\u0947 \u090f\u0932\u0930\u094d\u091c\u0940 \u0939\u0948?"},
+    {"input":"\u092e\u0941\u091d\u0947 \u092c\u0941\u0916\u093e\u0930 \u0939\u0948\u0964","reference":"I have a fever."}]},
+  {"setup":"English and Chinese","turns":[
+    {"input":"Do you have any allergies to medicine?","reference":"\u4f60\u5bf9\u4efb\u4f55\u836f\u7269\u8fc7\u654f\u5417\uff1f"},
+    {"input":"\u6211\u7684\u5b69\u5b50\u53d1\u70e7\u4e86\u3002","reference":"My child has a fever."}]},
+  {"setup":"English and French","turns":[
+    {"input":"J'ai besoin d'un medecin tout de suite.","reference":"I need a doctor right away."},
+    {"input":"Do you have any allergies to medicine?","reference":"Avez-vous des allergies aux m\u00e9dicaments ?"}]},
+  {"setup":"English and Swahili","turns":[
+    {"input":"Mtoto wangu ana homa kali.","reference":"My child has a high fever."},
+    {"input":"Do you have any allergies to medicine?","reference":"Je, una mzio wowote wa dawa?"}]},
+  {"setup":"English and Amharic","turns":[
+    {"input":"Do you have any allergies to medicine?","reference":"\u1208\u1218\u12f5\u1283\u1292\u1275 \u12a0\u1208\u122d\u1302 \u12a0\u1208\u1265\u12ce\u1275?"},
+    {"input":"\u12cd\u1203 \u12eb\u1235\u1348\u120d\u1308\u129b\u120d\u1362","reference":"I need water."}]}
+]
