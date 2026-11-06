@@ -263,9 +263,9 @@ try {
 # ---------------------------------------------------------------- folder tree
 $dirs = @(
  'AI-Offline','AI-Offline\engine','AI-Offline\models','AI-Offline\DocReader-GPT4All',
- 'Manuals','Manuals\ArmyFieldManuals','Manuals\Repair-iFixit','Manuals\DIY-Appropedia',
+ 'Manuals','Manuals\ArmyFieldManuals','Manuals\Repair-iFixit','Manuals\DIY-Appropedia','Manuals\Household-DIY',
  'Manuals\Survival-Preparedness','Manuals\Radio-Communications','Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015',
- 'Medical','Medical\WikiMed','Medical\Manuals-PDF',
+ 'Medical','Medical\WikiMed','Medical\Manuals-PDF','Medical\Natural-Medicine',
  'Wikipedia','OsmAnd','Kiwix-Reader','Kiwix-Reader\app','Phone-Apps','Education'
 )
 if(-not $Only){ foreach($d in $dirs){ New-Item -ItemType Directory -Force (Join-Path $Root $d) | Out-Null } }
@@ -536,6 +536,14 @@ $pdfs = @(
  @{id='FemaEmergencyHandbook-areYouReady';                   n='FEMA Are You Ready - Citizen Preparedness.pdf';    d='Manuals\Survival-Preparedness'}
  @{id='knotssplicesrope00verr';                              n='Knots, Splices and Rope Work (Verrill).pdf';       d='Manuals\Survival-Preparedness'}
  @{u='https://www.epa.gov/sites/default/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf'; n='EPA Emergency Disinfection of Drinking Water.pdf'; d='Manuals\Survival-Preparedness'}
+ # Hunting with the Bow and Arrow, Saxton Pope (1923; public domain): making and shooting bows, hunting game
+ @{id='hunting-with-the-bow-and-arrow';                       n='Hunting with the Bow and Arrow (Pope 1923).pdf';   d='Manuals\Survival-Preparedness'}
+ # Household do-it-yourself from common materials (public domain). Dated; some projects unsafe by modern standards -- see Manuals\READ-ME-FIRST
+ @{id='boymechanicthing01unse';                              n='The Boy Mechanic Vol 1 - 700 Things to Do (1913).pdf'; d='Manuals\Household-DIY'}
+ # Natural-medicine historical references (public domain; historical, NOT current medical advice -- see Medical\READ-ME-FIRST)
+ @{id='kingsamericandis01kinguoft';                          n='Kings American Dispensatory Vol 1.pdf';            d='Medical\Natural-Medicine'}
+ @{id='kingsamericandis02kinguoft';                          n='Kings American Dispensatory Vol 2.pdf';            d='Medical\Natural-Medicine'}
+ @{id='53357467.6000.emory.edu';                             n='Culpepers Complete Herbal.pdf';                    d='Medical\Natural-Medicine'}
 )
 foreach($p in $pdfs){
   if($Only){ Log 'pdf: manuals not touched (-Only)'; break }
