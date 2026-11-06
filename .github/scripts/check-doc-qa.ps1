@@ -69,6 +69,7 @@ install_manual_qa "$1" "$2"
   }
   Require ((Install-ManualQA $psRoot $src) -eq 1) 'PowerShell accepted a stale medical text pair'
   Require ((RunBash $shRoot) -eq 1) 'Bash accepted a stale medical text pair'
+  $global:LASTEXITCODE = 0   # expected failure above must not become this script's exit code
   foreach($root in $psRoot,$shRoot){
     $ready = [IO.File]::ReadAllText((Join-Path $root "$relative\ready.tsv")).Trim()
     Require ($ready -ceq $expected.Split("`n")[0]) 'Stale medical source remained searchable'
@@ -84,6 +85,7 @@ install_manual_qa "$1" "$2"
   Require ($ready -notmatch [regex]::Escape($tmp)) 'Source index contains an absolute build path'
   Require ($ready.Trim() -ceq $expected.Split("`n")[0]) 'Moved drive lost its valid source'
   Write-Host 'PASS: validated source paths survive relocation to a path with spaces'
+  exit 0
 }
 finally {
   if(Test-Path -LiteralPath $tmp){ Remove-Item -LiteralPath $tmp -Recurse -Force }
