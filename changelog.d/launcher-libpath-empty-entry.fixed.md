@@ -4,4 +4,4 @@
   the variable was unset. They now use `"$LIBDIR${VAR:+:$VAR}"`, so an unset variable leaves just
   the engine's own library folder. Covers every launcher template in both installers,
   `doc-qa/start-docs.sh`, and the self-check; `check-launchers.sh` now asserts the path has no
-  empty entry. Resolves #161. _[@elhajahmadj](https://github.com/elhajahmadj) - PR #PENDING._
+  empty entry. Resolves #161. _[@elhajahmadj](https://github.com/elhajahmadj) - PR #174._

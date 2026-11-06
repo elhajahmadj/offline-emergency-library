@@ -4,4 +4,4 @@
   CSP from #169. The reader now strips `style="..."` from each summary before `DOMParser` parses
   it, so the inline styles never reach the CSP-governed document. `clean()` already drops every
   attribute but `href`, so the rendered page is identical — only the console is quiet now.
-  Resolves #171. _[@elhajahmadj](https://github.com/elhajahmadj) - PR #PENDING._
+  Resolves #171. _[@elhajahmadj](https://github.com/elhajahmadj) - PR #174._
