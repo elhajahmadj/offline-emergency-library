@@ -39,7 +39,7 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 | `AI-Offline\` | Offline AI chat - your helper for brainstorming, checklists and summaries (3 models, CPU + GPU) | Double-click a `CHAT-*.bat` | `AI-Offline\HOW-TO-RUN-OFFLINE-AI.html` |
 | `AI-Offline\Manual-QA\` | Ask the **bundled manuals** questions (shows the passages it used and links the PDFs) - works with no setup | `START-DOCS.bat` / `start-docs.command` / `start-docs.sh`, then the local page | `AI-Offline\DocReader-GPT4All\HOW-TO-ASK-YOUR-DOCS.html` |
 | `AI-Offline\DocReader-GPT4All\` | Optional: index **your own** PDFs and notes with LocalDocs | Install once, then offline | `...\HOW-TO-ASK-YOUR-DOCS.html` |
-| `Manuals\` | Survival & repair manuals (Army FMs, iFixit, Appropedia, FEMA/EPA/knots) | PDF→browser, ZIM→Kiwix | `Manuals\READ-ME-FIRST.html` |
+| `Manuals\` | Survival & repair manuals (Army FMs, iFixit, Appropedia, FEMA/EPA/knots/bow-hunting, household DIY) | PDF→browser, ZIM→Kiwix | `Manuals\READ-ME-FIRST.html` |
 | `Manuals\Radio-Communications\` | How ham/CB/shortwave radio works + emergency comms | Browser | `RADIO-GUIDE.html` |
 | `Medical\` | Offline medical Wikipedia + first-aid books | ZIM→Kiwix, PDF→browser | `Medical\READ-ME-FIRST.html` |
 | `Wikipedia\` | Full Wikipedia (all articles, no images) | Kiwix | — |
@@ -99,9 +99,9 @@ are opt-in).
 - **Medical / first aid:** open Kiwix → `Medical\WikiMed`; or read the PDFs in
   `Medical\Manuals-PDF`; Army first aid in `Manuals\ArmyFieldManuals`.
 - **Survival / water / food:** `Manuals\Survival-Preparedness` has FEMA *Are You Ready?*, the
-  EPA water-disinfection guide and a knots book; plus the Army survival PDFs in
-  `Manuals\ArmyFieldManuals`, Appropedia DIY in Kiwix, and the USDA food guides in
-  `Manuals\Food-Preservation`.
+  EPA water-disinfection guide, a knots book and a bow-hunting guide (Pope, 1923); plus the Army
+  survival PDFs in `Manuals\ArmyFieldManuals`, make-it-yourself projects in `Manuals\Household-DIY`,
+  Appropedia DIY in Kiwix, and the USDA food guides in `Manuals\Food-Preservation`.
 - **Communicate by radio:** read `Manuals\Radio-Communications\RADIO-GUIDE.html`.
 - **Learn / study (courses + video):** open `Education\` in Kiwix (if you added Khan Academy
   with `-Education` / `--education`; see `Education\READ-ME-FIRST.html`).

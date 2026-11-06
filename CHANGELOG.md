@@ -12,6 +12,14 @@ Contributor-driven reliability and portability work, from people running the kit
 hardware.
 
 ### Added
+- **More public-domain guides: bow-hunting, household DIY and historical herbals.** Four more
+  openly-usable references now ship on every drive: ***Hunting with the Bow and Arrow*** (Saxton
+  Pope, 1923) in `Manuals/Survival-Preparedness/`; ***The Boy Mechanic, Vol. 1: 700 Things to Do***
+  (1913) in the new `Manuals/Household-DIY/`; and ***King's American Dispensatory*** (Felter &
+  Lloyd) plus Culpeper's ***Complete Herbal*** in the new `Medical/Natural-Medicine/`. All are
+  public domain. The herbals are flagged as **historical references, not current medical advice**,
+  and the 1913 DIY book carries a note that some projects are unsafe by modern standards. Extends
+  the public-domain content work in #122; follow-up sources tracked in #78/#130.
 - **Public-domain survival, water, food and knots guides, replacing the removed zimgit
   collections.** Four openly-usable references now ship on every drive, in
   `Manuals/Survival-Preparedness/` and `Manuals/Food-Preservation/`: **FEMA *Are You Ready? —

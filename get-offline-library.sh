@@ -239,9 +239,9 @@ log "Platform: $PLAT/$CPU   Destination: $ROOT"
 # ---- folder tree ----
 [ -n "$ONLY" ] && log "Adding to the finished library: $ONLY (nothing else is downloaded)"
 for d in AI-Offline AI-Offline/engine AI-Offline/models AI-Offline/DocReader-GPT4All \
-         Manuals Manuals/ArmyFieldManuals Manuals/Repair-iFixit Manuals/DIY-Appropedia \
+         Manuals Manuals/ArmyFieldManuals Manuals/Repair-iFixit Manuals/DIY-Appropedia Manuals/Household-DIY \
          Manuals/Survival-Preparedness Manuals/Radio-Communications Manuals/Food-Preservation/USDA-Complete-Guide-to-Home-Canning-2015 \
-         Medical Medical/WikiMed Medical/Manuals-PDF \
+         Medical Medical/WikiMed Medical/Manuals-PDF Medical/Natural-Medicine \
          Wikipedia OsmAnd Kiwix-Reader Phone-Apps Education; do
   [ -z "$ONLY" ] && mkdir -p "$ROOT/$d"
 done
@@ -595,6 +595,19 @@ get_pdf "FemaEmergencyHandbook-areYouReady" "FEMA Are You Ready - Citizen Prepar
 get_pdf "knotssplicesrope00verr" "Knots, Splices and Rope Work (Verrill).pdf" "$SP"
 # EPA Emergency Disinfection of Drinking Water (US-government work, public domain): making water safe when the tap is unsafe.
 get_pdf_url "https://www.epa.gov/sites/default/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf" "EPA Emergency Disinfection of Drinking Water.pdf" "$SP"
+# Hunting with the Bow and Arrow, Saxton Pope (1923; public domain): making and shooting bows, hunting game.
+get_pdf "hunting-with-the-bow-and-arrow" "Hunting with the Bow and Arrow (Pope 1923).pdf" "$SP"
+# Household do-it-yourself from common materials (public domain):
+DIY="$ROOT/Manuals/Household-DIY"
+# The Boy Mechanic, Volume 1: 700 Things for Boys to Do (1913; public domain). Dated; some projects are unsafe by modern standards -- see Manuals/READ-ME-FIRST.
+get_pdf "boymechanicthing01unse" "The Boy Mechanic Vol 1 - 700 Things to Do (1913).pdf" "$DIY"
+# Natural-medicine historical references (public domain; historical, NOT current medical advice -- see Medical/READ-ME-FIRST):
+NAT="$ROOT/Medical/Natural-Medicine"
+# King's American Dispensatory (Felter & Lloyd; public domain): the major eclectic materia medica of medicinal plants.
+get_pdf "kingsamericandis01kinguoft" "Kings American Dispensatory Vol 1.pdf" "$NAT"
+get_pdf "kingsamericandis02kinguoft" "Kings American Dispensatory Vol 2.pdf" "$NAT"
+# Culpeper's Complete Herbal (public domain): classic English herbal. Historical reference only; do not attempt the remedies.
+get_pdf "53357467.6000.emory.edu" "Culpepers Complete Herbal.pdf" "$NAT"
 fi
 
 # ================================================================ 7. Wikipedia + Maps
