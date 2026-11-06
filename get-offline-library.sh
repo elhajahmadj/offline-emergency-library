@@ -633,7 +633,20 @@ echo "Preparing maps for desktop viewing (first run can take several minutes)...
 for z in "$MAPS"/*.obf.zip; do
   [ -e "$z" ] || continue
   base="$(basename "$z" .zip)"
-  [ -e "$OBF/$base" ] || unzip -o -q "$z" -d "$OBF"
+  stamp="$OBF/$base.cksum"
+  fingerprint="$(cksum < "$z")" || exit 1
+  if [ -f "$OBF/$base" ] && [ -f "$stamp" ] && [ "$(cat "$stamp")" = "$fingerprint" ]; then continue; fi
+  # Stage first: a damaged replacement must not destroy the previous map.
+  stage="$(mktemp -d "$OBF/.prepare-XXXXXX")" || exit 1
+  trap 'rm -rf "$stage"' EXIT
+  if ! unzip -o -q "$z" -d "$stage" || [ ! -f "$stage/$base" ]; then
+    echo "ERROR: could not unpack $z (previous map kept)." >&2
+    exit 1
+  fi
+  mv -f "$stage/$base" "$OBF/$base" || exit 1
+  printf '%s\n' "$fingerprint" > "$stamp" || exit 1
+  rm -rf "$stage"
+  trap - EXIT
 done
 echo "Maps ready in: $OBF"
 echo "If the map area stays BLANK: on macOS this viewer draws online map tiles, not the"

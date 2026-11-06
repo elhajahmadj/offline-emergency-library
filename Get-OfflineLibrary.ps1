@@ -628,7 +628,7 @@ if(-not $SkipMaps){
 
   # helper: unzip the downloaded .obf.zip map files into an \obf folder the viewer can read
   $prep = @'
-$ErrorActionPreference='Continue'
+$ErrorActionPreference='Stop'
 $maps = Split-Path -Parent $PSScriptRoot      # ...\OsmAnd
 $obf  = Join-Path $maps 'obf'
 New-Item -ItemType Directory -Force $obf | Out-Null
@@ -637,9 +637,21 @@ $i=0
 foreach($z in $zips){
   $i++
   $target = Join-Path $obf ($z.Name -replace '\.zip$','')
-  if(-not (Test-Path $target)){
+  $stamp = "$target.sha256"
+  $fingerprint = (Get-FileHash -LiteralPath $z.FullName -Algorithm SHA256).Hash
+  if(-not (Test-Path -LiteralPath $target -PathType Leaf) -or
+     -not (Test-Path -LiteralPath $stamp -PathType Leaf) -or
+     (Get-Content -LiteralPath $stamp -Raw).Trim() -ne $fingerprint){
     Write-Host ("[{0}/{1}] unzipping {2}" -f $i,$zips.Count,$z.Name)
-    try{ Expand-Archive $z.FullName -DestinationPath $obf -Force }catch{ Write-Host "  failed: $($_.Exception.Message)" }
+    $stage = Join-Path $obf ('.prepare-' + [guid]::NewGuid().ToString('N'))
+    try{
+      New-Item -ItemType Directory $stage | Out-Null
+      Expand-Archive -LiteralPath $z.FullName -DestinationPath $stage -Force
+      $unpacked = Join-Path $stage (Split-Path -Leaf $target)
+      if(-not (Test-Path -LiteralPath $unpacked -PathType Leaf)){ throw 'Archive does not contain the expected map.' }
+      Move-Item -LiteralPath $unpacked -Destination $target -Force
+      Set-Content -LiteralPath $stamp -Value $fingerprint -Encoding ascii
+    }finally{ Remove-Item -LiteralPath $stage -Recurse -Force -ErrorAction SilentlyContinue }
   }
 }
 Write-Host "Maps ready in: $obf"
@@ -654,6 +666,7 @@ set "JAVA_HOME=%~dp0jre"
 set "PATH=%~dp0jre\bin;%PATH%"
 echo Preparing map files for desktop viewing (first run can take several minutes)...
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0prepare-maps.ps1"
+if errorlevel 1 exit /b 1
 echo.
 echo Launching the desktop map viewer...
 echo In the app, your maps are the .obf files in the  OsmAnd\obf  folder.

@@ -71,6 +71,10 @@ jobs:
         run: |
           .\.github\scripts\check-fetch.ps1
           .\.github\scripts\check-smoke.ps1
+      - name: Map refresh regression (PowerShell and Git Bash)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .github/scripts/check-map-refresh.ps1
 
   links:
     name: Upstream source health
