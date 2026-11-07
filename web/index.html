@@ -7,6 +7,9 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,Segoe UI,Roboto,Arial,sans-serif}
 .wrap{max-width:900px;margin:0 auto;padding:28px 20px 90px}
 h1{font-size:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin:0 0 4px}
+.topbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.topnav a{color:var(--muted);text-decoration:none;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap}
+.topnav a:hover{color:var(--ink);border-color:var(--accent)}
 .lead{color:var(--muted);margin:0 0 20px}
 a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:13px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:14px 0;overflow:hidden}
@@ -37,7 +40,7 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
 .err{background:rgba(255,90,95,.12);border:1px solid var(--bad);border-radius:10px;padding:14px;margin:16px 0}
 </style>
 </head><body><div class="wrap">
-<h1>Offline Emergency Library — Picker</h1>
+<div class="topbar"><h1>Offline Emergency Library — Picker</h1><nav class="topnav"><a href="about.html">About &amp; contributors</a></nav></div>
 <p class="lead">Tick what you want, then export a <code>selection.json</code> and let the installer build a drive from it. This page works with <strong>no internet</strong> — open it straight from the folder.</p>
 
 <div id="offline-note" class="warn" style="display:none;background:rgba(246,173,85,.12);border-color:var(--accent2)"></div>
