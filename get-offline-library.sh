@@ -669,7 +669,6 @@ get_pdf "armyfm5428concreteandmasonry"                       "FM 5-428 Concrete 
 get_pdf "TM5-295"                                            "TM 5-295 Water Supply and Water Purification.pdf" "$AFM"
 # More public-domain US Army manuals (#130): navigation, engineering and cold-weather survival.
 get_pdf "FM3-25x26"                                          "FM 3-25.26 Map Reading and Land Navigation.pdf" "$AFM"
-get_pdf "FM_5_34_E_F_D_2003"                                 "FM 5-34 Engineer Field Data (2003).pdf" "$AFM"
 get_pdf "fm-31-70-basic-cold-weather-manual-1968"           "FM 31-70 Basic Cold Weather Manual (1968).pdf" "$AFM"
 get_pdf "where-there-is-no-doctor"                           "Where There Is No Doctor.pdf" "$MPDF"
 get_pdf "where-there-is-no-dentist-web-full-book"            "Where There Is No Dentist.pdf" "$MPDF"

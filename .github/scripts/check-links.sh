@@ -32,7 +32,6 @@ urls=(
   "https://archive.org/metadata/armyfm5428concreteandmasonry"
   "https://archive.org/metadata/TM5-295"
   "https://archive.org/metadata/FM3-25x26"
-  "https://archive.org/metadata/FM_5_34_E_F_D_2003"
   "https://archive.org/metadata/fm-31-70-basic-cold-weather-manual-1968"
   "https://archive.org/metadata/hunting-with-the-bow-and-arrow"
   "https://archive.org/metadata/boymechanicthing01unse"
