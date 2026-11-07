@@ -36,7 +36,7 @@ urls=(
   "https://archive.org/metadata/hunting-with-the-bow-and-arrow"
   "https://archive.org/metadata/bookofcampingwoo01keph"
   "https://archive.org/metadata/deadfalls-and-snares-by-a.-r.-harding-1907"
-  "https://archive.org/metadata/scienceoffishing00hard"
+  "https://archive.org/metadata/baitanglingforco00rhearich"
   "https://archive.org/metadata/boymechanicthing01unse"
   "https://archive.org/metadata/TM9-237"
   "https://archive.org/metadata/practicalblacksm00rich"

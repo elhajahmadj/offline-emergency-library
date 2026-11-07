@@ -620,7 +620,7 @@ $pdfs = @(
  # Live off the land: fishing, trapping and outdoor living (public domain; #130).
  @{id='bookofcampingwoo01keph';                              n='The Book of Camping and Woodcraft (Kephart 1910).pdf'; d='Manuals\Survival-Preparedness'}
  @{id='deadfalls-and-snares-by-a.-r.-harding-1907';          n='Deadfalls and Snares (Harding 1907).pdf';          d='Manuals\Survival-Preparedness'}
- @{id='scienceoffishing00hard';                              n='Science of Fishing (Harding 1922).pdf';            d='Manuals\Survival-Preparedness'}
+ @{id='baitanglingforco00rhearich';                          n='Bait Angling for Common Fishes (Rhead 1907).pdf';  d='Manuals\Survival-Preparedness'}
  # Household do-it-yourself from common materials (public domain). Dated; some projects unsafe by modern standards -- see Manuals\READ-ME-FIRST
  @{id='boymechanicthing01unse';                              n='The Boy Mechanic Vol 1 - 700 Things to Do (1913).pdf'; d='Manuals\Household-DIY'}
  # Metalworking trades (public domain; #130): welding, forging and machine-shop work.
