@@ -152,8 +152,10 @@ function Resolve-RegionToken($t){ $k=$t.ToLower(); if($RegionAlias.ContainsKey($
 # ---------------------------------------------------------------- -ListRegions (discovery, no download)
 if($ListRegions){
   $tmp = Join-Path $env:TEMP 'osmand_idx.xml'
-  curl.exe -sL 'https://download.osmand.net/get_indexes' -o $tmp
-  try { [xml]$ix = Get-Content $tmp } catch { Write-Host "Could not fetch the OsmAnd region index."; return }
+  $global:LASTEXITCODE = $null
+  curl.exe -fsSL --retry 3 'https://download.osmand.net/get_indexes' -o $tmp
+  # exit 1, not return: return ends the script with exit code 0 (#192)
+  try { if($LASTEXITCODE -ne 0){ throw 'download failed' }; [xml]$ix = Get-Content $tmp } catch { Write-Host "Could not fetch the OsmAnd region index." -ForegroundColor Red; exit 1 }
   $maps = $ix.osmand_regions.region | Where-Object { $_.type -eq 'map' }
   if($Filter){
     Write-Host "Regions / sub-regions matching '$Filter' (pass any of these to -Region):"
@@ -184,7 +186,7 @@ if (-not $Destination) {
   Write-Host '  -----------------------------------'
   $Destination = Read-Host $(if($Only){ 'Where is the drive you want to add to (the folder that holds OfflineLibrary)?' } else { 'Where would you like to save these files?' })
 }
-if (-not $Destination) { Write-Host 'No destination given. Exiting.' -ForegroundColor Red; return }
+if (-not $Destination) { Write-Host 'No destination given. Exiting.' -ForegroundColor Red; exit 1 }
 $Root = Join-Path $Destination 'OfflineLibrary'
 if($Only){
   # A finished drive has CHECKSUMS-SHA256.txt (the installer's last step). Never build a new one here.
@@ -199,8 +201,10 @@ if($Only){
       Write-Host '  Nothing was downloaded. Run the installer without -Only to add it first.'; exit 1 }
   }
 }
-try { New-Item -ItemType Directory -Force $Root | Out-Null }
-catch { Write-Host "Cannot create $Root : $($_.Exception.Message)" -ForegroundColor Red; return }
+# New-Item can fail without an error (a path under a file): check the folder is there (#192).
+try { New-Item -ItemType Directory -Force $Root -ErrorAction Stop | Out-Null
+  if(-not (Test-Path -LiteralPath $Root -PathType Container)){ throw 'the folder was not created' } }
+catch { Write-Host "Cannot create $Root : $($_.Exception.Message)" -ForegroundColor Red; exit 1 }
 
 $Log = Join-Path $Root '_download.log'
 function Log($m){ $s = "{0}  {1}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $m; Add-Content $Log $s; Write-Host $s }
@@ -270,13 +274,27 @@ if($UseAria){ Log 'Downloader: aria2 (fast, multi-connection)' } else { Log "Dow
 if($Lite -and -not $PSBoundParameters.ContainsKey('Selection')){ Log "Lite preset: 3B AI, medical/survival references and maps for '$Region' (unless skipped). Size depends on region; use -Region for a small area or -SkipMaps. Re-run without -Lite to add the full library." }
 if($SelList){ Log "Selection from ${Selection}: $SelList (same as: $SelSame)" }
 if($Only){ Log "Adding to the finished library: $($Only -join ', ') (nothing else is downloaded)" }
+# Repo files fetched later (guides, map viewer, helpers) come from the commit main is on now,
+# not from a main that moved during a run of several hours (#193). Falls back to main.
+$global:LASTEXITCODE = $null
+$repoSha = "$(curl.exe -fsS --retry 3 -H 'Accept: application/vnd.github.sha' -H 'User-Agent: oel' 'https://api.github.com/repos/elhajahmadj/offline-emergency-library/commits/main' 2>$null)".Trim()
+if($LASTEXITCODE -eq 0 -and $repoSha -cmatch '^[0-9a-f]{40}$'){ $RepoRaw = $RepoRaw -replace '/main$', "/$repoSha"; Log "Repo files: commit $repoSha" }
+else { Log 'Repo files: main (could not look up its commit)' }
+# Get-RepoFile path out: one file of this repo; retries a network blip, fails on a 404 or 5xx (#193).
+function Get-RepoFile($path, $out){
+  $global:LASTEXITCODE = $null
+  curl.exe -fLsS --retry 3 --retry-all-errors -A (UA) "$RepoRaw/$path" -o $out
+  $LASTEXITCODE -eq 0
+}
 
 # OsmAnd map files for -Region, picked now so the space estimate below knows their size.
 $sel = @(); $osmErr = $null
 if((-not $SkipMaps) -or $BmOnly){   # -Only browser-maps needs the sizes for its estimate, not the maps
   try{
     $idxFile = Join-Path $env:TEMP 'osmand_idx.xml'
-    curl.exe -sL 'https://download.osmand.net/get_indexes' -o $idxFile
+    $global:LASTEXITCODE = $null
+    curl.exe -fsSL --retry 3 'https://download.osmand.net/get_indexes' -o $idxFile
+    if($LASTEXITCODE -ne 0){ throw 'could not download the OsmAnd map index' }
     [xml]$idx = Get-Content $idxFile
     $allmaps = $idx.osmand_regions.region | Where-Object { $_.type -eq 'map' }
     # resolve the -Region tokens (comma/space separated) to a file set
@@ -288,6 +306,12 @@ if((-not $SkipMaps) -or $BmOnly){   # -Only browser-maps needs the sizes for its
     }
     $sel = @($sel | Sort-Object name -Unique)
   }catch{ $osmErr = $_.Exception.Message }
+  # Maps were asked for but none matched: stop now, not after hours of other downloads (#192).
+  if(-not $SkipMaps -and -not $sel.Count){
+    if($osmErr -or -not $allmaps){ Log "ERROR: could not read the OsmAnd map index (download.osmand.net). Check the connection and re-run, or use -SkipMaps." }
+    else { Log "ERROR: no maps matched region '$Region'. Run with -ListRegions to see valid names, or use -SkipMaps." }
+    Log '  Nothing was downloaded.'; exit 1
+  }
 }
 
 # Space estimate for the chosen flags (#68). Sizes in GB (1024^3 bytes), measured on a full
@@ -329,7 +353,13 @@ try {
   if($needGB -gt $freeGB){
     Log "WARNING: NOT ENOUGH SPACE for the full selection. Budget about $(Gb $needGB) GB, but only $(Gb $freeGB) GB is free."
     Log '  Use a bigger drive, free up space, or choose less: -Lite, -SkipWikipedia (49 GB), -SkipModels (9 GB),'
-    Log '  a smaller -Region, -SkipMaps, or leave off an opt-in. Press Ctrl+C now to stop and re-run.'
+    Log '  a smaller -Region, -SkipMaps, or leave off an opt-in.'
+    # Wait for an answer when someone is at the console; with none (redirected, CI), carry on as before (#192).
+    if(-not [Console]::IsInputRedirected -and [Environment]::UserInteractive){
+      $ans = Read-Host 'Continue anyway? (y/N)'
+      if($ans -notmatch '^\s*(y|yes)\s*$'){ Log 'Stopped: not enough space. Nothing was downloaded.'; exit 1 }
+      Log "  Continuing at the user's request."
+    }
   }
 } catch {}
 
@@ -558,9 +588,7 @@ if($MedlinePlus){
     $sd = if($PSScriptRoot){$PSScriptRoot}else{(Get-Location).Path}
     $lp = Join-Path $sd 'medlineplus\MedlinePlus.html'; $tpl = Join-Path $md '_MedlinePlus.html'
     if(Test-Path $lp){ Copy-Item $lp $tpl -Force }
-    else { $global:LASTEXITCODE = $null
-      curl.exe -fLsS "$RepoRaw/medlineplus/MedlinePlus.html" -A (UA) -o $tpl
-      if($LASTEXITCODE -ne 0){ Log 'ERROR: download failed: medlineplus/MedlinePlus.html'; exit 1 } }
+    elseif(-not (Get-RepoFile 'medlineplus/MedlinePlus.html' $tpl)){ Log 'ERROR: download failed: medlineplus/MedlinePlus.html'; exit 1 }
     $page = [System.IO.File]::ReadAllText($tpl, [System.Text.Encoding]::UTF8)
     $mark = '<script type="text/xml" id="data"></script>'
     if(-not $page.Contains($mark)){ Log 'ERROR: medlineplus/MedlinePlus.html has no data marker. Re-run the installer.'; exit 1 }
@@ -886,7 +914,8 @@ if(((-not $SkipMaps) -or $BmOnly) -and $BrowserMaps){
     $sd = if($PSScriptRoot){$PSScriptRoot}else{(Get-Location).Path}
     foreach($f in 'index.html','OPEN-MAPS.sh','OPEN-MAPS.bat'){
       $lp = Join-Path $sd "maps-viewer\$f"; $tmp = Join-Path $mb "_$f"
-      if(Test-Path $lp){ Copy-Item $lp $tmp -Force } else { curl.exe -sL "$RepoRaw/maps-viewer/$f" -A (UA) -o $tmp }
+      if(Test-Path $lp){ Copy-Item $lp $tmp -Force }
+      elseif(-not (Get-RepoFile "maps-viewer/$f" $tmp)){ Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue; Log "ERROR: download failed: maps-viewer/$f. Re-run the installer."; exit 1 }
     }
     Move-Item (Join-Path $mb '_index.html') (Join-Path $mb 'viewer\index.html') -Force
     $utf8 = [System.Text.UTF8Encoding]::new($false)
@@ -1177,11 +1206,7 @@ function PlaceDoc($srcName,$destPath,$title){
     $dest = "$destPath$ext"
     $lp = Join-Path $localDocs ($base + $ext)
     if(Test-Path $lp){ Copy-Item $lp $dest -Force }
-    else {
-      $global:LASTEXITCODE = $null
-      curl.exe -fLsS "$RepoRaw/docs/$base$ext" -A (UA) -o $dest
-      if($LASTEXITCODE -ne 0){ Log "ERROR: documentation download failed: $base$ext"; exit 1 }
-    }
+    elseif(-not (Get-RepoFile "docs/$base$ext" $dest)){ Log "ERROR: documentation download failed: $base$ext"; exit 1 }
   }
 }
 if($Only){
@@ -1217,13 +1242,12 @@ if(-not $Only){
     $setup = Join-Path $Root 'AI-Offline\install-doc-qa.ps1'
     if(Test-Path -LiteralPath $setup){ Remove-Item -LiteralPath $setup -Force }
     # Not Fetch: a failed helper download must not fail a library that otherwise installed.
-    $global:LASTEXITCODE = $null
-    curl.exe -fLsS --retry 3 -A (UA) "$RepoRaw/doc-qa/install.ps1" -o $setup 2>$null
+    [void](Get-RepoFile 'doc-qa/install.ps1' $setup 2>$null)
   }
   if(Test-Path -LiteralPath $setup){
     try {
       . $setup
-      $DocQaFailures = Install-ManualQA $Root $scriptDir
+      $DocQaFailures = Install-ManualQA $Root $scriptDir $RepoRaw
     } catch { $DocQaFailures = 1; Log "doc-QA ERROR: $($_.Exception.Message)" }
   } else { $DocQaFailures = 1; Log 'doc-QA ERROR: reader setup helper unavailable; re-run when online' }
 }
@@ -1234,11 +1258,7 @@ foreach($f in 'CHECK-DRIVE.sh','check-drive.ps1','CHECK-DRIVE.bat'){
   $dest = Join-Path $Root $f
   $lp = Join-Path (Join-Path $scriptDir 'drive') $f
   if(Test-Path $lp){ Copy-Item $lp $dest -Force }
-  else {
-    $global:LASTEXITCODE = $null
-    curl.exe -fLsS "$RepoRaw/drive/$f" -A (UA) -o $dest
-    if($LASTEXITCODE -ne 0){ Log "ERROR: download failed: drive/$f"; exit 1 }
-  }
+  elseif(-not (Get-RepoFile "drive/$f" $dest)){ Log "ERROR: download failed: drive/$f"; exit 1 }
 }
 # A raw download is the LF git copy; cmd.exe wants CRLF. The .sh must stay LF.
 $bat = Join-Path $Root 'CHECK-DRIVE.bat'
@@ -1274,7 +1294,7 @@ try{
   if($zims){ [void]$sb.Append("<h2>&#127760; Offline Archives (ZIM &mdash; open with Kiwix)</h2><table><tr><th>Archive</th><th>Folder</th><th>Size</th><th>File</th></tr>"); foreach($z in $zims){ $rel=Rel2 $z.FullName; [void]$sb.Append("<tr><td>$(Esc2 (Nice2 $z.Name))</td><td class='muted'>$(Split-Path $rel -Parent)</td><td>$(Human2 $z.Length)</td><td><a href='$rel'>open</a></td></tr>") }; [void]$sb.Append("</table>") }
   if($progs){ [void]$sb.Append("<h2>&#9881; Programs &amp; Launchers</h2><table><tr><th>Item</th><th>Folder</th></tr>"); foreach($x in $progs){ $rel=Rel2 $x.FullName; $dir=Split-Path $rel -Parent; if(-not $dir){$dir='(root)'}; [void]$sb.Append("<tr><td><a href='$rel'>$(Esc2 $x.Name)</a></td><td class='muted'>$dir</td></tr>") }; [void]$sb.Append("</table>") }
   if($apks){ [void]$sb.Append("<h2>&#128241; Phone Apps (Android APK)</h2><table><tr><th>App</th><th>Folder</th><th>Size</th></tr>"); foreach($a in $apks){ $rel=Rel2 $a.FullName; [void]$sb.Append("<tr><td><a href='$rel'>$(Esc2 $a.Name)</a></td><td class='muted'>$(Split-Path $rel -Parent)</td><td>$(Human2 $a.Length)</td></tr>") }; [void]$sb.Append("</table>") }
-  if($data){ [void]$sb.Append("<h2>&#128451; Data</h2><table><tr><th>Item</th><th>Folder</th><th>Size</th></tr>"); foreach($d in ($data|Where-Object{$_.Name -like '*.bz2'})){ $rel=Rel2 $d.FullName; [void]$sb.Append("<tr><td>$(Esc2 $d.Name) <span class='muted'>(Wikipedia)</span></td><td class='muted'>$(Split-Path $rel -Parent)</td><td>$(Human2 $d.Length)</td></tr>") }; $maps=$data|Where-Object{$_.Name -like '*.obf.zip'}; if($maps){ $sum=($maps|Measure-Object Length -Sum).Sum; [void]$sb.Append("<tr><td>Offline US maps - $($maps.Count) files</td><td class='muted'>OsmAnd</td><td>$(Human2 $sum)</td></tr>") }; [void]$sb.Append("</table>") }
+  if($data){ [void]$sb.Append("<h2>&#128451; Data</h2><table><tr><th>Item</th><th>Folder</th><th>Size</th></tr>"); foreach($d in ($data|Where-Object{$_.Name -like '*.bz2'})){ $rel=Rel2 $d.FullName; [void]$sb.Append("<tr><td>$(Esc2 $d.Name) <span class='muted'>(Wikipedia)</span></td><td class='muted'>$(Split-Path $rel -Parent)</td><td>$(Human2 $d.Length)</td></tr>") }; $maps=$data|Where-Object{$_.Name -like '*.obf.zip'}; if($maps){ $sum=($maps|Measure-Object Length -Sum).Sum; [void]$sb.Append("<tr><td>Offline maps (OsmAnd) - $($maps.Count) files</td><td class='muted'>OsmAnd</td><td>$(Human2 $sum)</td></tr>") }; [void]$sb.Append("</table>") }
   [void]$sb.Append("</div></body></html>")
   [System.IO.File]::WriteAllText((Join-Path $Root 'README.html'), $sb.ToString(), [System.Text.UTF8Encoding]::new($false))
   Log "README.html index written."
@@ -1284,7 +1304,26 @@ try{
 # One SHA-256 line per file, so CHECK-DRIVE can find damage later. Runs last, after README.html.
 # Format (same on every OS): "<lowercase sha256>  ./path/with/forward/slashes", byte-sorted, LF, UTF-8.
 Log '=== Drive check list: CHECKSUMS-SHA256.txt ==='
-Log 'Hashing every file (one pass over the whole drive - this can take a while)...'
+# -Only (#195): hash only what the pieces write ($rh, paths as "./..."), plus any file the old
+# list lacks; keep every other line; files that are gone drop out. Not by modification time:
+# unzip and tar restore an archive's old times. get-offline-library.sh builds the same RH.
+$oldSums = New-Object 'System.Collections.Generic.Dictionary[string,string]' ([System.StringComparer]::Ordinal)
+$rh = 'README\.html|CHECK-DRIVE\.(sh|command|bat)|check-drive\.ps1'
+$listPath = Join-Path $Root 'CHECKSUMS-SHA256.txt'
+if($Only -and (Test-Path -LiteralPath $listPath -PathType Leaf)){
+  foreach($l in [System.IO.File]::ReadAllLines($listPath)){ if($l.Length -gt 66){ $oldSums[$l.Substring(66)] = $l } }
+  foreach($p in $Only){ switch($p){
+    'translate'    { $rh += "|AI-Offline/[^/]+|AI-Offline/models/$TrModel" }
+    'medlineplus'  { $rh += '|Medical/MedlinePlus/.*' }
+    'extra-zims'   { $rh += '|Extra-Archives/.*' }
+    'browser-maps' { $rh += '|Maps-Browser/.*' }
+    'education'    { $rh += '|Education/KhanAcademy/.*' }
+    'kolibri'      { $rh += '|Education/Kolibri/.*|Phone-Apps/.*' }
+    'wikipedia'    { $rh += '|Wikipedia/.*' }
+  } }
+  Log "Hashing only the files -Only wrote ($($Only -join ' ')); the other lines are kept..."
+} else { Log 'Hashing every file (one pass over the whole drive - this can take a while)...' }
+$rh = '^\./(' + $rh + ')$'
 $skipNames = '^(CHECKSUMS-SHA256\.txt.*|_download\.log|_filelist\.txt|_index\.xml|.*\.part|.*\.aria2|\._.*|\.DS_Store)$'
 $skipDirs  = '^(\.Spotlight-V100|\.fseventsd|\.Trashes|System Volume Information)/'
 $rootFull = (Get-Item -LiteralPath $Root).FullName.TrimEnd('\','/')
@@ -1293,6 +1332,7 @@ $hashFail = New-Object System.Collections.Generic.List[string]
 foreach($fi in (Get-ChildItem -LiteralPath $rootFull -Recurse -File -Force -ErrorAction SilentlyContinue)){
   $rel = $fi.FullName.Substring($rootFull.Length).TrimStart('\','/') -replace '\\','/'
   if($fi.Name -match $skipNames -or $rel -match $skipDirs){ continue }
+  if($oldSums.ContainsKey("./$rel") -and "./$rel" -cnotmatch $rh){ $sumLines.Add($oldSums["./$rel"]); continue }
   try { $h = (Get-FileHash -LiteralPath $fi.FullName -Algorithm SHA256 -ErrorAction Stop).Hash.ToLower(); $sumLines.Add("$h  ./$rel") }
   catch { $hashFail.Add($rel) }
 }

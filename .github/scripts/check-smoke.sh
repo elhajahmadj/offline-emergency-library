@@ -133,4 +133,10 @@ chk "needs one full re-run" --only translate -d "$O"
 mkdir -p "$O/OfflineLibrary"; echo "x  ./a" > "$O/OfflineLibrary/CHECKSUMS-SHA256.txt"
 chk "needs the AI engine" --only translate -d "$O"
 [ "$(find "$O" -type f | wc -l | tr -d ' ')" = 1 ] || die "--only translate wrote files although the AI engine is missing"
+echo "== start-up mistakes stop with a plain message (#192)"
+chk "-d needs a folder" -d
+chk "--region needs a region name" -d "$O" --region
+chk "--edu-lang needs a language" -d "$O" --edu-lang
+chk "unknown option '--skip-wiki'" --skip-wiki -d "$O"
+[ "$(find "$O" -type f | wc -l | tr -d ' ')" = 1 ] || die "a refused start-up wrote files"
 echo "Smoke test: OK ($(uname -s) $(uname -m), llama.cpp $TAG)"
