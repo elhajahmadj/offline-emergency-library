@@ -36,6 +36,8 @@ jobs:
         run: bash .github/scripts/check-catalog.sh
       - name: Picker catalog.js matches catalog.json (#188)
         run: bash .github/scripts/build-catalog-js.sh --check
+      - name: About page is up to date with CONTRIBUTORS (#189)
+        run: bash .github/scripts/build-about.sh --check
       - name: MedlinePlus page CSP hash (inline script allowed by hash)
         run: bash .github/scripts/check-csp-hash.sh
       - name: PowerShell parse + analyze

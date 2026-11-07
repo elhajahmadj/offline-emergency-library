@@ -304,10 +304,13 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
     var sel = {pieces: pieceList(), regions: regs};
     var json = JSON.stringify(sel, null, 2);
     var exportTools = el("div","tools");
-    var dl = el("button","btn","⤓ Download selection.json");
-    dl.disabled = probs.length>0;
-    dl.title = probs.length ? "Fix the warnings above first" : "";
-    dl.onclick=function(){ downloadJSON(json); };
+    var isLocal = (location.protocol === "file:");
+    var dl = el("button","btn", isLocal ? "⤓ Download selection.json" : "Get the kit ↗");
+    dl.disabled = isLocal && probs.length>0;
+    dl.title = !isLocal ? "Online this page is browse-only; the installer reads the file on your computer. Download the kit and open this page from the folder." : (probs.length ? "Fix the warnings above first" : "");
+    dl.onclick = isLocal
+      ? function(){ downloadJSON(json); }
+      : function(){ window.open("https://github.com/elhajahmadj/offline-emergency-library","_blank"); };
     var copy = el("button","btn ghost","Copy");
     copy.onclick=function(){ ta.select(); try{document.execCommand("copy");}catch(e){} copy.textContent="Copied"; setTimeout(function(){copy.textContent="Copy";},1200); };
     exportTools.appendChild(dl); exportTools.appendChild(copy);
