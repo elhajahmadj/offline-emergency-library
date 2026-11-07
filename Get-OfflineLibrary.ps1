@@ -621,9 +621,9 @@ $pdfs = @(
  @{id='kingsamericandis02kinguoft';                          n='Kings American Dispensatory Vol 2.pdf';            d='Medical\Natural-Medicine'}
  @{id='53357467.6000.emory.edu';                             n='Culpepers Complete Herbal.pdf';                    d='Medical\Natural-Medicine'}
  # Food growing & raising animals (public-domain classics; #130). Core skills timeless; some pest/chemical advice is dated.
- @{id='productiveveget00lloy';                               n='Productive Vegetable Growing (Lloyd).pdf';         d='Manuals\Food-Growing'}
+ @{u='https://archive.org/download/productiveveget00lloy/productiveveget00lloy.pdf'; n='Productive Vegetable Growing (Lloyd 1918).pdf'; d='Manuals\Food-Growing'}
  @{id='productivepoult02lewigoog';                           n='Productive Poultry Husbandry (Lewis 1913).pdf';    d='Manuals\Food-Growing'}
- @{id='cu31924003227729';                                    n='Langstroth on the Hive and the Honey-Bee (1904).pdf'; d='Manuals\Food-Growing'}
+ @{u='https://archive.org/download/cu31924003227729/cu31924003227729.pdf'; n='Langstroth on the Hive and the Honey-Bee (1904).pdf'; d='Manuals\Food-Growing'}
 )
 foreach($p in $pdfs){
   if($Only){ Log 'pdf: manuals not touched (-Only)'; break }

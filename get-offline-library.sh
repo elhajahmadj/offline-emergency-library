@@ -711,9 +711,11 @@ get_pdf "53357467.6000.emory.edu" "Culpepers Complete Herbal.pdf" "$NAT"
 # Food growing & raising animals (public-domain classics; #130). Core skills are timeless; some
 # pest/disease/chemical advice is dated — read as background, not current pesticide guidance.
 FG="$ROOT/Manuals/Food-Growing"
-get_pdf "productiveveget00lloy"      "Productive Vegetable Growing (Lloyd).pdf" "$FG"
+# Pin the exact .pdf by direct link: these two items also carry a larger _bw.pdf, which the
+# PowerShell installer (largest file) would otherwise pick, differing from bash (#184 review).
+get_pdf_url "https://archive.org/download/productiveveget00lloy/productiveveget00lloy.pdf" "Productive Vegetable Growing (Lloyd 1918).pdf" "$FG"
 get_pdf "productivepoult02lewigoog"  "Productive Poultry Husbandry (Lewis 1913).pdf" "$FG"
-get_pdf "cu31924003227729"           "Langstroth on the Hive and the Honey-Bee (1904).pdf" "$FG"
+get_pdf_url "https://archive.org/download/cu31924003227729/cu31924003227729.pdf" "Langstroth on the Hive and the Honey-Bee (1904).pdf" "$FG"
 # Emergency Childbirth (US Office of Civil Defense + Public Health Service; US-government work, public domain).
 # Project Gutenberg #26923 e-text (HTML + figures), header kept. Emergency-delivery reference for when help is delayed.
 EC="$ROOT/Medical/Emergency-Childbirth"
