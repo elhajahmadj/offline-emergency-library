@@ -59,6 +59,14 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
   // index pieces by id
   var P = {}; CAT.pieces.forEach(function(p){ P[p.id] = p; });
 
+  // page-side grouping of catalog ids into sections (maps/browser-maps live in the Maps card).
+  // ids not listed here fall into "More" so a new catalog piece still shows up.
+  var GROUPS = [
+    {name:"AI & repair apps", ids:["gpt4all-repair","models","translate"]},
+    {name:"Knowledge & learning", ids:["wikipedia","extra-zims","education","kolibri","medlineplus"]}
+  ];
+  var IN_MAPS_CARD = {maps:1, "browser-maps":1};
+
   // ---- selection state ----
   var selectedPieces = {};                 // id -> true
   CAT.pieces.forEach(function(p){ if(p.required) selectedPieces[p.id] = true; });
@@ -161,6 +169,12 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
     selAll.onclick=function(){ REG.continents.forEach(function(c){ selectedRegions[c.token]=true; }); render(); };
     clr.onclick=function(){ selectedRegions={}; extraList=[]; render(); };
 
+    // --- remaining sections (#190) ---
+    GROUPS.forEach(function(g){ var c=groupCard(g); if(c) app.appendChild(c); });
+    var grouped={}; GROUPS.forEach(function(g){ g.ids.forEach(function(id){grouped[id]=1;}); });
+    var more = CAT.pieces.map(function(p){return p.id;}).filter(function(id){ return !grouped[id] && !IN_MAPS_CARD[id] && !P[id].required; });
+    if(more.length){ var mc=groupCard({name:"More", ids:more}); if(mc) app.appendChild(mc); }
+
     // --- Summary / needs / export ---
     app.appendChild(summaryCard());
   }
@@ -214,6 +228,45 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
     });
   }
 
+  function sectionKnownSize(ids){
+    var sum=0; ids.forEach(function(id){ if(selectedPieces[id]){ var g=gbOf(id); if(g!==null) sum+=g; } }); return sum;
+  }
+
+  function groupCard(g){
+    var ids = g.ids.filter(function(id){ return P[id]; });
+    if(!ids.length) return null;
+    var c = el("div","card");
+    var h = el("div","head");
+    h.appendChild(el("span","caret","\u25be"));
+    h.appendChild(el("h2",null, g.name));
+    var sel = ids.filter(function(id){return selectedPieces[id];}).length;
+    h.appendChild(el("span","sz", sel ? (sel+" of "+ids.length) : (ids.length+" available")));
+    h.onclick=function(e){ if(e.target.closest("input,button,a,label")) return; c.classList.toggle("collapsed"); };
+    c.appendChild(h);
+    var b = el("div","body");
+    var tools = el("div","tools");
+    var all = el("button","btn ghost","Select all");
+    var none = el("button","btn ghost","Clear");
+    all.onclick=function(){ ids.forEach(function(id){ selectedPieces[id]=true; }); render(); };
+    none.onclick=function(){ ids.forEach(function(id){ selectedPieces[id]=false; }); render(); };
+    tools.appendChild(all); tools.appendChild(none);
+    b.appendChild(tools);
+    ids.forEach(function(id){
+      var p = P[id];
+      var row = el("label","row");
+      var cb = el("input"); cb.type="checkbox"; cb.checked=!!selectedPieces[id];
+      cb.onchange=function(){ selectedPieces[id]=cb.checked; render(); };
+      row.appendChild(cb);
+      var g2 = gbOf(id); var size = g2===null ? "sized at install" : ("~"+g2+" GB");
+      var needs = (p.needs&&p.needs.length) ? " <span class='note'>\u00b7 needs "+p.needs.map(function(n){return P[n]?P[n].label:n;}).join(", ")+"</span>" : "";
+      var txt = "<strong>"+(p.label)+"</strong> <span class='pill'>"+size+"</span>" + (p.desc?"<br><span class='note'>"+p.desc+needs+"</span>":needs);
+      row.appendChild(el("span",null,txt));
+      b.appendChild(row);
+    });
+    c.appendChild(b);
+    return c;
+  }
+
   function summaryCard(){
     var c = el("div","card"); c.id="summaryCard";
     var h = el("div","head"); h.style.cursor="default";
@@ -244,7 +297,8 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
     b.appendChild(ul);
 
     var kt = knownTotal();
-    b.appendChild(el("p","total", "Known size so far: <b>~"+kt.sum.toFixed(1)+" GB</b>"+(kt.complete?"":" <span class='note'>+ maps (measured at install)</span>")));
+    b.appendChild(el("p","total", "Running total: <b>~"+kt.sum.toFixed(1)+" GB</b>"+(kt.complete?"":" <span class='note'>+ maps (measured at install)</span>")));
+    b.appendChild(el("p","note","Before downloading, the launcher/installer prints this estimate next to the drive's free space and warns if it will not fit."));
 
     // export
     var sel = {pieces: pieceList(), regions: regs};
