@@ -507,6 +507,14 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 | *The Boy Mechanic, Vol. 1* (1913) | Public domain in the US (published 1913) | Yes |
 | *King's American Dispensatory* (Felter & Lloyd, 1898/1905) | Public domain in the US (pre-1929) | Yes |
 | Culpeper, *The Complete Herbal* (1653; this ed. pre-1929) | Public domain | Yes |
+| Lloyd, *Productive Vegetable Growing* (1918) | Public domain in the US (published 1918) | Yes |
+| Lewis, *Productive Poultry Husbandry* (1913) | Public domain in the US (published 1913) | Yes |
+| *Langstroth on the Hive and the Honey-Bee* (1904) | Public domain in the US (published 1904) | Yes |
+| *Practical Blacksmithing* (1888) | Public domain in the US (published 1888) | Yes |
+| *Elements of Machine Work* (1910) | Public domain in the US (published 1910) | Yes |
+| Kephart, *The Book of Camping and Woodcraft* (1910) | Public domain in the US (published 1910) | Yes |
+| Harding, *Deadfalls and Snares* (1907) | Public domain in the US (published 1907) | Yes |
+| Rhead, *Bait Angling for Common Fishes* (1907) | Public domain in the US (published 1907) | Yes |
 | *Emergency Childbirth* (US Office of Civil Defense / PHS; Project Gutenberg #26923 e-text) | US government work (public domain) | Yes |
 | MedlinePlus health topics (opt-in) | Public domain (US NLM) — **summaries only** | Yes |
 | iFixit repair archive | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) | **No — non-commercial** |

@@ -329,8 +329,8 @@ log "Platform: $PLAT/$CPU   Destination: $ROOT"
 # ---- folder tree ----
 [ -n "$ONLY" ] && log "Adding to the finished library: $ONLY (nothing else is downloaded)"
 for d in AI-Offline AI-Offline/engine AI-Offline/models AI-Offline/DocReader-GPT4All \
-         Manuals Manuals/ArmyFieldManuals Manuals/Repair-iFixit Manuals/DIY-Appropedia Manuals/Household-DIY \
-         Manuals/Survival-Preparedness Manuals/Radio-Communications Manuals/Food-Preservation/USDA-Complete-Guide-to-Home-Canning-2015 \
+         Manuals Manuals/ArmyFieldManuals Manuals/Repair-iFixit Manuals/DIY-Appropedia Manuals/Household-DIY Manuals/Metalworking \
+         Manuals/Survival-Preparedness Manuals/Radio-Communications Manuals/Food-Preservation/USDA-Complete-Guide-to-Home-Canning-2015 Manuals/Food-Growing \
          Medical Medical/WikiMed Medical/Manuals-PDF Medical/Natural-Medicine Medical/Emergency-Childbirth \
          Wikipedia OsmAnd Kiwix-Reader Phone-Apps Education; do
   [ -z "$ONLY" ] && mkdir -p "$ROOT/$d"
@@ -672,6 +672,9 @@ get_pdf "tm-10-412-armed-forces-recipe-service-2003"         "TM 10-412 Armed Fo
 get_pdf "FM2110MCRP411.1DFieldHygieneAndSanitation"          "FM 21-10 Field Hygiene and Sanitation.pdf" "$AFM"
 get_pdf "armyfm5428concreteandmasonry"                       "FM 5-428 Concrete and Masonry.pdf" "$AFM"
 get_pdf "TM5-295"                                            "TM 5-295 Water Supply and Water Purification.pdf" "$AFM"
+# More public-domain US Army manuals (#130): navigation, engineering and cold-weather survival.
+get_pdf "FM3-25x26"                                          "FM 3-25.26 Map Reading and Land Navigation.pdf" "$AFM"
+get_pdf "fm-31-70-basic-cold-weather-manual-1968"           "FM 31-70 Basic Cold Weather Manual (1968).pdf" "$AFM"
 get_pdf "where-there-is-no-doctor"                           "Where There Is No Doctor.pdf" "$MPDF"
 get_pdf "where-there-is-no-dentist-web-full-book"            "Where There Is No Dentist.pdf" "$MPDF"
 # Advanced care when help is delayed: USUHS + Henry M. Jackson Foundation, 2025, CC BY-NC-SA 4.0 (not public domain).
@@ -702,10 +705,20 @@ get_pdf "knotssplicesrope00verr" "Knots, Splices and Rope Work (Verrill).pdf" "$
 get_pdf_url "https://www.epa.gov/sites/default/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf" "EPA Emergency Disinfection of Drinking Water.pdf" "$SP"
 # Hunting with the Bow and Arrow, Saxton Pope (1923; public domain): making and shooting bows, hunting game.
 get_pdf "hunting-with-the-bow-and-arrow" "Hunting with the Bow and Arrow (Pope 1923).pdf" "$SP"
+# Live off the land: fishing, trapping and outdoor living (public domain; #130).
+get_pdf "bookofcampingwoo01keph"                     "The Book of Camping and Woodcraft (Kephart 1910).pdf" "$SP"
+get_pdf "deadfalls-and-snares-by-a.-r.-harding-1907" "Deadfalls and Snares (Harding 1907).pdf" "$SP"
+get_pdf "baitanglingforco00rhearich"                 "Bait Angling for Common Fishes (Rhead 1907).pdf" "$SP"
 # Household do-it-yourself from common materials (public domain):
 DIY="$ROOT/Manuals/Household-DIY"
 # The Boy Mechanic, Volume 1: 700 Things for Boys to Do (1913; public domain). Dated; some projects are unsafe by modern standards -- see Manuals/READ-ME-FIRST.
 get_pdf "boymechanicthing01unse" "The Boy Mechanic Vol 1 - 700 Things to Do (1913).pdf" "$DIY"
+# Metalworking trades (public domain; #130): welding, forging and machine-shop work for repairing
+# and making metal parts and tools. Core skills are timeless; use modern safety gear and ventilation.
+MW="$ROOT/Manuals/Metalworking"
+get_pdf "TM9-237"                    "TM 9-237 Welding Theory and Application.pdf" "$MW"
+get_pdf "practicalblacksm00rich"     "Practical Blacksmithing (1888).pdf" "$MW"
+get_pdf "textbookofelemen00smitrich" "Elements of Machine Work (1910).pdf" "$MW"
 # Natural-medicine historical references (public domain; historical, NOT current medical advice -- see Medical/READ-ME-FIRST):
 NAT="$ROOT/Medical/Natural-Medicine"
 # King's American Dispensatory (Felter & Lloyd; public domain): the major eclectic materia medica of medicinal plants.
@@ -713,6 +726,14 @@ get_pdf "kingsamericandis01kinguoft" "Kings American Dispensatory Vol 1.pdf" "$N
 get_pdf "kingsamericandis02kinguoft" "Kings American Dispensatory Vol 2.pdf" "$NAT"
 # Culpeper's Complete Herbal (public domain): classic English herbal. Historical reference only; do not attempt the remedies.
 get_pdf "53357467.6000.emory.edu" "Culpepers Complete Herbal.pdf" "$NAT"
+# Food growing & raising animals (public-domain classics; #130). Core skills are timeless; some
+# pest/disease/chemical advice is dated — read as background, not current pesticide guidance.
+FG="$ROOT/Manuals/Food-Growing"
+# Pin the exact .pdf by direct link: these two items also carry a larger _bw.pdf, which the
+# PowerShell installer (largest file) would otherwise pick, differing from bash (#184 review).
+get_pdf_url "https://archive.org/download/productiveveget00lloy/productiveveget00lloy.pdf" "Productive Vegetable Growing (Lloyd 1918).pdf" "$FG"
+get_pdf "productivepoult02lewigoog"  "Productive Poultry Husbandry (Lewis 1913).pdf" "$FG"
+get_pdf_url "https://archive.org/download/cu31924003227729/cu31924003227729.pdf" "Langstroth on the Hive and the Honey-Bee (1904).pdf" "$FG"
 # Emergency Childbirth (US Office of Civil Defense + Public Health Service; US-government work, public domain).
 # Project Gutenberg #26923 e-text (HTML + figures), header kept. Emergency-delivery reference for when help is delayed.
 EC="$ROOT/Medical/Emergency-Childbirth"

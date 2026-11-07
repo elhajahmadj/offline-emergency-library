@@ -336,8 +336,8 @@ try {
 # ---------------------------------------------------------------- folder tree
 $dirs = @(
  'AI-Offline','AI-Offline\engine','AI-Offline\models','AI-Offline\DocReader-GPT4All',
- 'Manuals','Manuals\ArmyFieldManuals','Manuals\Repair-iFixit','Manuals\DIY-Appropedia','Manuals\Household-DIY',
- 'Manuals\Survival-Preparedness','Manuals\Radio-Communications','Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015',
+ 'Manuals','Manuals\ArmyFieldManuals','Manuals\Repair-iFixit','Manuals\DIY-Appropedia','Manuals\Household-DIY','Manuals\Metalworking',
+ 'Manuals\Survival-Preparedness','Manuals\Radio-Communications','Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015','Manuals\Food-Growing',
  'Medical','Medical\WikiMed','Medical\Manuals-PDF','Medical\Natural-Medicine','Medical\Emergency-Childbirth',
  'Wikipedia','OsmAnd','Kiwix-Reader','Kiwix-Reader\app','Phone-Apps','Education'
 )
@@ -590,6 +590,9 @@ $pdfs = @(
  @{id='FM2110MCRP411.1DFieldHygieneAndSanitation';           n='FM 21-10 Field Hygiene and Sanitation.pdf';       d='Manuals\ArmyFieldManuals'}
  @{id='armyfm5428concreteandmasonry';                        n='FM 5-428 Concrete and Masonry.pdf';               d='Manuals\ArmyFieldManuals'}
  @{id='TM5-295';                                             n='TM 5-295 Water Supply and Water Purification.pdf'; d='Manuals\ArmyFieldManuals'}
+ # More public-domain US Army manuals (#130): navigation, engineering and cold-weather survival.
+ @{id='FM3-25x26';                                           n='FM 3-25.26 Map Reading and Land Navigation.pdf';  d='Manuals\ArmyFieldManuals'}
+ @{id='fm-31-70-basic-cold-weather-manual-1968';             n='FM 31-70 Basic Cold Weather Manual (1968).pdf';   d='Manuals\ArmyFieldManuals'}
  @{id='where-there-is-no-doctor';                            n='Where There Is No Doctor.pdf';                    d='Medical\Manuals-PDF'}
  @{id='where-there-is-no-dentist-web-full-book';             n='Where There Is No Dentist.pdf';                   d='Medical\Manuals-PDF'}
  # Advanced care when help is delayed: USUHS + Henry M. Jackson Foundation, 2025, CC BY-NC-SA 4.0 (not public domain)
@@ -614,12 +617,24 @@ $pdfs = @(
  @{u='https://www.epa.gov/sites/default/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf'; n='EPA Emergency Disinfection of Drinking Water.pdf'; d='Manuals\Survival-Preparedness'}
  # Hunting with the Bow and Arrow, Saxton Pope (1923; public domain): making and shooting bows, hunting game
  @{id='hunting-with-the-bow-and-arrow';                       n='Hunting with the Bow and Arrow (Pope 1923).pdf';   d='Manuals\Survival-Preparedness'}
+ # Live off the land: fishing, trapping and outdoor living (public domain; #130).
+ @{id='bookofcampingwoo01keph';                              n='The Book of Camping and Woodcraft (Kephart 1910).pdf'; d='Manuals\Survival-Preparedness'}
+ @{id='deadfalls-and-snares-by-a.-r.-harding-1907';          n='Deadfalls and Snares (Harding 1907).pdf';          d='Manuals\Survival-Preparedness'}
+ @{id='baitanglingforco00rhearich';                          n='Bait Angling for Common Fishes (Rhead 1907).pdf';  d='Manuals\Survival-Preparedness'}
  # Household do-it-yourself from common materials (public domain). Dated; some projects unsafe by modern standards -- see Manuals\READ-ME-FIRST
  @{id='boymechanicthing01unse';                              n='The Boy Mechanic Vol 1 - 700 Things to Do (1913).pdf'; d='Manuals\Household-DIY'}
+ # Metalworking trades (public domain; #130): welding, forging and machine-shop work.
+ @{id='TM9-237';                                             n='TM 9-237 Welding Theory and Application.pdf';      d='Manuals\Metalworking'}
+ @{id='practicalblacksm00rich';                              n='Practical Blacksmithing (1888).pdf';               d='Manuals\Metalworking'}
+ @{id='textbookofelemen00smitrich';                          n='Elements of Machine Work (1910).pdf';              d='Manuals\Metalworking'}
  # Natural-medicine historical references (public domain; historical, NOT current medical advice -- see Medical\READ-ME-FIRST)
  @{id='kingsamericandis01kinguoft';                          n='Kings American Dispensatory Vol 1.pdf';            d='Medical\Natural-Medicine'}
  @{id='kingsamericandis02kinguoft';                          n='Kings American Dispensatory Vol 2.pdf';            d='Medical\Natural-Medicine'}
  @{id='53357467.6000.emory.edu';                             n='Culpepers Complete Herbal.pdf';                    d='Medical\Natural-Medicine'}
+ # Food growing & raising animals (public-domain classics; #130). Core skills timeless; some pest/chemical advice is dated.
+ @{u='https://archive.org/download/productiveveget00lloy/productiveveget00lloy.pdf'; n='Productive Vegetable Growing (Lloyd 1918).pdf'; d='Manuals\Food-Growing'}
+ @{id='productivepoult02lewigoog';                           n='Productive Poultry Husbandry (Lewis 1913).pdf';    d='Manuals\Food-Growing'}
+ @{u='https://archive.org/download/cu31924003227729/cu31924003227729.pdf'; n='Langstroth on the Hive and the Honey-Bee (1904).pdf'; d='Manuals\Food-Growing'}
 )
 foreach($p in $pdfs){
   if($Only){ Log 'pdf: manuals not touched (-Only)'; break }
