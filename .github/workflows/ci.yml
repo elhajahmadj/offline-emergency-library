@@ -34,6 +34,8 @@ jobs:
         run: bash .github/scripts/check-launchers.sh
       - name: Catalog ids and sizes match both installers (#139)
         run: bash .github/scripts/check-catalog.sh
+      - name: Picker catalog.js matches catalog.json (#188)
+        run: bash .github/scripts/build-catalog-js.sh --check
       - name: MedlinePlus page CSP hash (inline script allowed by hash)
         run: bash .github/scripts/check-csp-hash.sh
       - name: PowerShell parse + analyze
