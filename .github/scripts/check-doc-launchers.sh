@@ -23,20 +23,23 @@ cat > "$AO/engine/$platform/llama-b99999/llama-server" <<'STUB'
 #!/usr/bin/env bash
 set -eu
 printf '%s\n' "$@" > "$OEL_DOC_ARGS"
+printf '%s\n' "${LD_LIBRARY_PATH:-}" > "$OEL_DOC_LIBPATH"
 STUB
 chmod +x "$AO/engine/$platform/llama-b99999/llama-server"
 mkdir "$T/moved here"
 mv "$ROOT" "$T/moved here/Library copy"
 ROOT="$T/moved here/Library copy"
 HERE="$ROOT/AI-Offline/Manual-QA"
-export OEL_DOC_ARGS="$T/actual"
+export OEL_DOC_ARGS="$T/actual" OEL_DOC_LIBPATH="$T/libpath"
 printf '%s\n' -m "$HERE/../models/Llama-3.2-3B-Instruct-Q4_K_M.gguf" \
   -c 4096 -ngl 0 -t 4 --offline --host 127.0.0.1 --port 8081 --path "$HERE/../.." > "$T/expected"
 for launcher in start-docs.sh start-docs.command; do
   # Launch outside the library to catch accidental dependencies on the caller's cwd.
-  (cd "$T"; bash "$HERE/$launcher")
+  # Unset the library path first so an empty entry (the old "$LIBDIR:" bug) would show (#178).
+  (cd "$T"; env -u LD_LIBRARY_PATH bash "$HERE/$launcher")
   diff -u "$T/expected" "$OEL_DOC_ARGS"
+  grep -qE '(^|:):|:$' "$OEL_DOC_LIBPATH" && { echo "FAIL: $launcher left an empty entry in the library path: $(cat "$OEL_DOC_LIBPATH")"; exit 1; }
   echo "PASS: $launcher execs nested $platform engine after relocation; argv:"
   cat "$OEL_DOC_ARGS"
-  rm "$OEL_DOC_ARGS"
+  rm "$OEL_DOC_ARGS" "$OEL_DOC_LIBPATH"
 done

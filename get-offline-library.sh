@@ -115,6 +115,11 @@ if [ "$SELECT_SET" = 1 ]; then
     sel_fail "--select cannot be combined with --lite, --skip-*, --region or a piece flag. The selection file names the pieces and regions."
   [ -n "$SELECT" ] || sel_fail "--select needs a selection file."
   [ -f "$SELECT" ] && [ -r "$SELECT" ] || sel_fail "selection file not found: $SELECT"
+  # Read the file as UTF-8 like PowerShell does. Refuse UTF-16 (FF FE / FE FF BOM) with the
+  # same words, so a Mac user gets the hint instead of a raw 'tr: Illegal byte sequence' (#177).
+  case "$(LC_ALL=C head -c 2 "$SELECT" | od -An -tx1 | tr -d ' \n')" in
+    fffe|feff) sel_fail "$SELECT looks like UTF-16; save it as UTF-8 (both installers read the selection file as UTF-8)." ;;
+  esac
   # The whole file must be exactly this shape (spaces and line breaks are ignored), so
   # nothing in it is skipped unread: {"pieces":["id",...],"regions":["name",...]}
   sel="$(LC_ALL=C tr '\t\r\n' '   ' < "$SELECT")"
@@ -325,7 +330,7 @@ log "Platform: $PLAT/$CPU   Destination: $ROOT"
 [ -n "$ONLY" ] && log "Adding to the finished library: $ONLY (nothing else is downloaded)"
 for d in AI-Offline AI-Offline/engine AI-Offline/models AI-Offline/DocReader-GPT4All \
          Manuals Manuals/ArmyFieldManuals Manuals/Repair-iFixit Manuals/DIY-Appropedia Manuals/Household-DIY Manuals/Metalworking \
-         Manuals/Survival-Preparedness Manuals/Radio-Communications Manuals/Food-Preservation/USDA-Complete-Guide-to-Home-Canning-2015 \
+         Manuals/Survival-Preparedness Manuals/Radio-Communications Manuals/Food-Preservation/USDA-Complete-Guide-to-Home-Canning-2015 Manuals/Food-Growing \
          Medical Medical/WikiMed Medical/Manuals-PDF Medical/Natural-Medicine Medical/Emergency-Childbirth \
          Wikipedia OsmAnd Kiwix-Reader Phone-Apps Education; do
   [ -z "$ONLY" ] && mkdir -p "$ROOT/$d"
@@ -667,6 +672,9 @@ get_pdf "tm-10-412-armed-forces-recipe-service-2003"         "TM 10-412 Armed Fo
 get_pdf "FM2110MCRP411.1DFieldHygieneAndSanitation"          "FM 21-10 Field Hygiene and Sanitation.pdf" "$AFM"
 get_pdf "armyfm5428concreteandmasonry"                       "FM 5-428 Concrete and Masonry.pdf" "$AFM"
 get_pdf "TM5-295"                                            "TM 5-295 Water Supply and Water Purification.pdf" "$AFM"
+# More public-domain US Army manuals (#130): navigation, engineering and cold-weather survival.
+get_pdf "FM3-25x26"                                          "FM 3-25.26 Map Reading and Land Navigation.pdf" "$AFM"
+get_pdf "fm-31-70-basic-cold-weather-manual-1968"           "FM 31-70 Basic Cold Weather Manual (1968).pdf" "$AFM"
 get_pdf "where-there-is-no-doctor"                           "Where There Is No Doctor.pdf" "$MPDF"
 get_pdf "where-there-is-no-dentist-web-full-book"            "Where There Is No Dentist.pdf" "$MPDF"
 # Advanced care when help is delayed: USUHS + Henry M. Jackson Foundation, 2025, CC BY-NC-SA 4.0 (not public domain).
@@ -714,6 +722,14 @@ get_pdf "kingsamericandis01kinguoft" "Kings American Dispensatory Vol 1.pdf" "$N
 get_pdf "kingsamericandis02kinguoft" "Kings American Dispensatory Vol 2.pdf" "$NAT"
 # Culpeper's Complete Herbal (public domain): classic English herbal. Historical reference only; do not attempt the remedies.
 get_pdf "53357467.6000.emory.edu" "Culpepers Complete Herbal.pdf" "$NAT"
+# Food growing & raising animals (public-domain classics; #130). Core skills are timeless; some
+# pest/disease/chemical advice is dated — read as background, not current pesticide guidance.
+FG="$ROOT/Manuals/Food-Growing"
+# Pin the exact .pdf by direct link: these two items also carry a larger _bw.pdf, which the
+# PowerShell installer (largest file) would otherwise pick, differing from bash (#184 review).
+get_pdf_url "https://archive.org/download/productiveveget00lloy/productiveveget00lloy.pdf" "Productive Vegetable Growing (Lloyd 1918).pdf" "$FG"
+get_pdf "productivepoult02lewigoog"  "Productive Poultry Husbandry (Lewis 1913).pdf" "$FG"
+get_pdf_url "https://archive.org/download/cu31924003227729/cu31924003227729.pdf" "Langstroth on the Hive and the Honey-Bee (1904).pdf" "$FG"
 # Emergency Childbirth (US Office of Civil Defense + Public Health Service; US-government work, public domain).
 # Project Gutenberg #26923 e-text (HTML + figures), header kept. Emergency-delivery reference for when help is delayed.
 EC="$ROOT/Medical/Emergency-Childbirth"
@@ -1020,7 +1036,7 @@ if [ "$READY" != 1 ]; then
     echo "Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible)."
   else
     wait "$PID" 2>/dev/null; SRC=$?; PID=
-    echo "The translator server stopped right after it started (exit code $SRC). The log is above."
+    echo "The translator server stopped right after it started (exit code $SRC). The log is above. If it says it could not bind, another program is using port 8087."
   fi
   exit 1
 fi
@@ -1092,7 +1108,7 @@ try {
     Start-Sleep -Milliseconds 1000
   }
   if(-not $ready){
-    if($server.HasExited){ throw "The translator server stopped right after it started (exit code $($server.ExitCode)). The log is below. On Windows, security software or Smart App Control can block llama-server.exe or its DLLs." }
+    if($server.HasExited){ throw "The translator server stopped right after it started (exit code $($server.ExitCode)). The log is below. If it says it could not bind, another program is using port 8087. On Windows, security software or Smart App Control can block llama-server.exe or its DLLs." }
     throw 'Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible).'
   }
   Write-Host "Opening $url. First send the two languages, for example: English and Spanish."

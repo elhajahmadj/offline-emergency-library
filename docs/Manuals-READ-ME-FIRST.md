@@ -12,13 +12,14 @@ Practical manuals for survival, repair, and self-sufficiency. **Two kinds of fil
 
 | Folder | Read with | Contents |
 |---|---|---|
-| `ArmyFieldManuals\` | Browser (PDF) | US Army field/technical manuals (public domain): survival, first aid, **field hygiene & sanitation (FM 21-10)**, hand tools, carpentry, **concrete & masonry (FM 5-428)**, **water supply & purification (TM 5-295, 1942 — see note in "I need to…")**, **auto mechanics (TM 9-8000)**, rigging, desert ops, field cooking |
+| `ArmyFieldManuals\` | Browser (PDF) | US Army field/technical manuals (public domain): survival, first aid, **field hygiene & sanitation (FM 21-10)**, hand tools, carpentry, **concrete & masonry (FM 5-428)**, **water supply & purification (TM 5-295, 1942 — see note in "I need to…")**, **auto mechanics (TM 9-8000)**, rigging, desert ops, field cooking, **map reading & land navigation (FM 3-25.26)**, **cold-weather survival (FM 31-70)** |
 | `Repair-iFixit\` | Kiwix (.zim) | iFixit repair guides — **cars, appliances, electronics, phones, tools** |
 | `DIY-Appropedia\` | Kiwix (.zim) | Appropedia — **plumbing, electrical/wiring, construction, energy, water, food, farming** |
 | `Survival-Preparedness\` | Browser (PDF) | FEMA *Are You Ready?* (citizen preparedness), EPA *Emergency Disinfection of Drinking Water*, *Knots, Splices and Rope Work* (Verrill, 1912), and *Hunting with the Bow and Arrow* (Pope, 1923) — all public domain |
 | `Household-DIY\` | Browser (PDF) | *The Boy Mechanic, Vol. 1: 700 Things to Do* (1913, public domain) — make-it-yourself projects from common materials. **Dated:** some projects use gunpowder, acids or mains electricity and are **unsafe by modern standards** — read it as a source of ideas, not step-by-step instructions |
 | `Metalworking\` | Browser (PDF) | Working and repairing metal (public domain): *TM 9-237 Welding Theory and Application* (US Army), *Practical Blacksmithing* (1888, forge work) and *Elements of Machine Work* (1910, machine-shop/lathe). Timeless skills — but **use modern safety gear, eye protection and ventilation** |
 | `Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015\` | Browser (PDF) | *USDA Complete Guide to Home Canning* (Agriculture Information Bulletin 539, revised 2015; US-government work), in its 8 official parts: start with `0 Introduction` and `1 Principles of Home Canning`, then the part for your food |
+| `Food-Growing\` | Browser (PDF) | Growing and raising your own food (public-domain classics): *Productive Vegetable Growing* (Lloyd, 1918), *Productive Poultry Husbandry* (Lewis, 1913) and *Langstroth on the Hive and the Honey-Bee* (1904, beekeeping). **Dated:** the core skills are timeless, but old pest/disease/chemical advice is outdated — don't follow their pesticide or medication guidance |
 | `Radio-Communications\` | Browser (md/html) | How ham, CB & shortwave radio work + emergency comms |
 
 ---
