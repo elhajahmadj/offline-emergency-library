@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offline Emergency Library — Picker</title>
+<style>:root{--bg:#0f1420;--card:#171f2e;--ink:#e7ecf3;--muted:#9fb0c3;--accent:#4fd1c5;--accent2:#f6ad55;--line:#273246;--code:#0b0f17;--bad:#ff5a5f;--ok:#4fd1c5}
+@media(prefers-color-scheme:light){:root{--bg:#f4f6fb;--card:#fff;--ink:#15202b;--muted:#56657a;--accent:#0d9488;--accent2:#b45309;--line:#e2e8f0;--code:#f1f5f9;--bad:#d12b2f;--ok:#0d9488}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:28px 20px 90px}
+h1{font-size:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin:0 0 4px}
+.lead{color:var(--muted);margin:0 0 20px}
+a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:14px 0;overflow:hidden}
+.card>.head{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;user-select:none}
+.card>.head h2{font-size:18px;margin:0;flex:1}
+.card>.head .sz{color:var(--muted);font-size:14px}
+.card>.body{padding:0 16px 16px;border-top:1px solid var(--line)}
+.caret{transition:transform .15s;color:var(--muted)}.collapsed .caret{transform:rotate(-90deg)}.collapsed>.body{display:none}
+label.row{display:flex;align-items:center;gap:9px;padding:5px 0;cursor:pointer}
+label.row input{width:17px;height:17px;accent-color:var(--accent);flex:none}
+.tree{margin-top:8px}
+.node{border-left:1px solid var(--line);margin-left:7px;padding-left:12px}
+.node>.rowline{display:flex;align-items:center;gap:6px}
+.toggle{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;width:18px;padding:0}
+.kids{display:none}.open>.kids{display:block}
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 2px}
+.tools input[type=search]{flex:1;min-width:160px;background:var(--code);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 10px;font-size:14px}
+button.btn{background:var(--accent);color:#06281f;border:none;border-radius:9px;padding:9px 15px;font-size:14px;font-weight:600;cursor:pointer}
+button.btn:hover{filter:brightness(1.08)}button.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+button.btn.ghost:hover{border-color:var(--accent)}
+.warn{display:flex;gap:10px;align-items:flex-start;background:rgba(255,90,95,.12);border:1px solid var(--bad);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14px}
+.warn button{margin-left:auto}
+.summary li{margin:2px 0}.summary .muted{color:var(--muted)}
+.total{font-size:20px;margin:8px 0}.total b{color:var(--accent2)}
+textarea{width:100%;height:120px;background:var(--code);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:10px;font-family:Consolas,monospace;font-size:13px;margin-top:8px}
+.note{color:var(--muted);font-size:13px}.pill{display:inline-block;background:rgba(127,127,127,.15);border-radius:20px;padding:1px 9px;font-size:12px;color:var(--muted);margin-left:6px}
+footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:14px}
+.err{background:rgba(255,90,95,.12);border:1px solid var(--bad);border-radius:10px;padding:14px;margin:16px 0}
+</style>
+</head><body><div class="wrap">
+<h1>Offline Emergency Library — Picker</h1>
+<p class="lead">Tick what you want, then export a <code>selection.json</code> and let the installer build a drive from it. This page works with <strong>no internet</strong> — open it straight from the folder.</p>
+
+<div id="offline-note" class="warn" style="display:none;background:rgba(246,173,85,.12);border-color:var(--accent2)"></div>
+<div id="app"><p class="note">Loading the catalog…</p></div>
+
+<!-- The catalog and region list are shipped as scripts because a page opened from file://
+     cannot fetch() a local JSON file. Both are generated; see .github/scripts/. -->
+<script src="catalog.js"></script>
+<script src="regions.js"></script>
+<script>
+(function(){
+  "use strict";
+  var app = document.getElementById("app");
+  var CAT = window.CATALOG, REG = window.REGIONS;
+  if(!CAT || !CAT.pieces || !REG || !REG.continents){
+    app.innerHTML = '<div class="err"><strong>Could not load the catalog.</strong> Make sure <code>catalog.js</code> and <code>regions.js</code> are next to this page.</div>';
+    return;
+  }
+  // index pieces by id
+  var P = {}; CAT.pieces.forEach(function(p){ P[p.id] = p; });
+
+  // ---- selection state ----
+  var selectedPieces = {};                 // id -> true
+  CAT.pieces.forEach(function(p){ if(p.required) selectedPieces[p.id] = true; });
+  var selectedRegions = {};                // token -> true
+
+  function regionList(){ return Object.keys(selectedRegions).filter(function(t){return selectedRegions[t];}); }
+  function pieceList(){
+    // maps is implied by (and only by) picking regions; keep it in sync both ways
+    selectedPieces["maps"] = regionList().length > 0;
+    var ids = CAT.pieces.map(function(p){return p.id;}).filter(function(id){return selectedPieces[id];});
+    return ids;
+  }
+
+  // ---- needs checking (reads catalog "needs") ----
+  function problems(){
+    var out = [], pieces = pieceList(), have = {}; pieces.forEach(function(id){have[id]=true;});
+    pieces.forEach(function(id){
+      (P[id].needs||[]).forEach(function(n){
+        if(!have[n]){
+          var pr = {piece:id, need:n, msg:"“"+P[id].label+"” needs “"+(P[n]?P[n].label:n)+"”."};
+          // maps can't be ticked directly here (it follows the regions); add a default region
+          pr.fix = (n==="maps") ? function(){ selectedRegions["US"]=true; }
+                                 : function(){ selectedPieces[n]=true; };
+          pr.fixLabel = (n==="maps") ? "Add US maps" : "Add it";
+          out.push(pr);
+        }
+      });
+    });
+    return out;
+  }
+
+  // ---- size helpers ----
+  function gbOf(id){ var p=P[id]; return (p && typeof p.gb === "number") ? p.gb : null; }
+  function knownTotal(){
+    var sum=0, sized=true;
+    pieceList().forEach(function(id){ var g=gbOf(id); if(g===null){ if(id==="maps"||id==="browser-maps"||id==="kolibri") sized=false; } else sum+=g; });
+    return {sum:sum, complete:sized};
+  }
+
+  // ---- rendering ----
+  function el(tag, cls, html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+
+  function render(){
+    app.innerHTML="";
+
+    // --- Maps card ---
+    var maps = el("div","card");
+    var mh = el("div","head");
+    mh.appendChild(el("span","caret","▾"));
+    mh.appendChild(el("h2",null,"Maps <span class='pill'>region drill-down</span>"));
+    var regCount = regionList().length;
+    mh.appendChild(el("span","sz", regCount ? (regCount+" selected") : "none yet"));
+    mh.onclick=function(e){ if(e.target.closest("input,button,a,label")) return; maps.classList.toggle("collapsed"); };
+    maps.appendChild(mh);
+    var mb = el("div","body");
+
+    mb.appendChild(el("p","note","Offline OsmAnd maps for the regions you tick. Map file sizes are measured at install time from the OsmAnd index, so they are added to the total then. Pick a whole continent, a country, or drill into United States states."));
+
+    // tools: search + select/clear all
+    var tools = el("div","tools");
+    var search = el("input"); search.type="search"; search.placeholder="Filter regions (e.g. texas, germany)…";
+    var selAll = el("button","btn ghost","Select all continents");
+    var clr = el("button","btn ghost","Clear regions");
+    tools.appendChild(search); tools.appendChild(selAll); tools.appendChild(clr);
+    mb.appendChild(tools);
+
+    var tree = el("div","tree");
+    REG.continents.forEach(function(cont){ tree.appendChild(regionNode(cont, 0)); });
+    mb.appendChild(tree);
+
+    // free-text fallback for any OsmAnd token not listed
+    var ff = el("div"); ff.style.marginTop="10px";
+    ff.appendChild(el("p","note","Not listed? Add any OsmAnd region token (the installers pass unknown names through), comma-separated:"));
+    var ftin = el("input"); ftin.type="text"; ftin.placeholder="e.g. Germany_bayern, US_texas";
+    ftin.style.cssText="width:100%;background:var(--code);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 10px;font-size:14px";
+    ftin.value = extraTokens().join(", ");
+    ftin.onchange=function(){
+      extraList.forEach(function(t){ delete selectedRegions[t]; });
+      extraList = ftin.value.split(",").map(function(s){return s.trim();}).filter(Boolean);
+      extraList.forEach(function(t){ selectedRegions[t]=true; });
+      render();
+    };
+    ff.appendChild(ftin);
+    mb.appendChild(ff);
+
+    // browser-maps (US) option — a real catalog piece that needs maps, so it also
+    // demonstrates the needs check inside the Maps milestone.
+    if(P["browser-maps"]){
+      var bm = el("label","row");
+      var cb = el("input"); cb.type="checkbox"; cb.checked=!!selectedPieces["browser-maps"];
+      cb.onchange=function(){ selectedPieces["browser-maps"]=cb.checked; render(); };
+      bm.appendChild(cb); bm.appendChild(el("span",null,"Also add <strong>browser maps</strong> (US states, view in any web browser) <span class='note'>— needs offline maps</span>"));
+      mb.appendChild(bm);
+    }
+
+    maps.appendChild(mb);
+    app.appendChild(maps);
+
+    search.oninput=function(){ filterTree(tree, search.value.trim().toLowerCase()); };
+    selAll.onclick=function(){ REG.continents.forEach(function(c){ selectedRegions[c.token]=true; }); render(); };
+    clr.onclick=function(){ selectedRegions={}; extraList=[]; render(); };
+
+    // --- Summary / needs / export ---
+    app.appendChild(summaryCard());
+  }
+
+  var extraList = [];
+  function extraTokens(){ // selected tokens that aren't any node token
+    var known={};
+    REG.continents.forEach(function(c){ known[c.token]=1; (c.countries||[]).forEach(function(co){ known[co.token]=1; (co.subregions||[]).forEach(function(s){known[s.token]=1;}); }); });
+    return regionList().filter(function(t){ return !known[t]; });
+  }
+
+  function regionNode(node, depth){
+    var hasKids = (node.countries&&node.countries.length) || (node.subregions&&node.subregions.length);
+    var wrap = el("div","node"); wrap.dataset.label=(node.label||"").toLowerCase(); wrap.dataset.token=node.token;
+    var line = el("div","rowline");
+    if(hasKids){
+      var tg = el("button","toggle","▸");
+      tg.onclick=function(){ wrap.classList.toggle("open"); tg.textContent = wrap.classList.contains("open")?"▾":"▸"; };
+      line.appendChild(tg);
+    } else { var sp=el("span"); sp.style.width="18px"; line.appendChild(sp); }
+    var lbl = el("label","row"); lbl.style.padding="3px 0";
+    var cb = el("input"); cb.type="checkbox"; cb.checked=!!selectedRegions[node.token];
+    cb.onchange=function(){ selectedRegions[node.token]=cb.checked; if(!cb.checked) delete selectedRegions[node.token]; refreshHeadAndSummary(); };
+    lbl.appendChild(cb); lbl.appendChild(el("span",null, node.label + " <code>"+node.token+"</code>"));
+    line.appendChild(lbl);
+    wrap.appendChild(line);
+    if(hasKids){
+      var kids = el("div","kids");
+      (node.countries||[]).forEach(function(c){ kids.appendChild(regionNode(c, depth+1)); });
+      (node.subregions||[]).forEach(function(s){ kids.appendChild(regionNode(s, depth+1)); });
+      wrap.appendChild(kids);
+    }
+    return wrap;
+  }
+
+  // light-touch updates so checking a box doesn't collapse the open tree
+  function refreshHeadAndSummary(){
+    var sz = document.querySelector("#app .card .head .sz");
+    if(sz){ var n=regionList().length; sz.textContent = n ? (n+" selected") : "none yet"; }
+    var old = document.getElementById("summaryCard");
+    if(old){ var fresh = summaryCard(); old.parentNode.replaceChild(fresh, old); }
+  }
+
+  function filterTree(tree, q){
+    Array.prototype.forEach.call(tree.querySelectorAll(".node"), function(n){
+      var hit = !q || n.dataset.label.indexOf(q)>=0 || (n.dataset.token||"").toLowerCase().indexOf(q)>=0;
+      // show a node if it or any descendant matches
+      var kidHit = q && n.querySelector(".node") && Array.prototype.some.call(n.querySelectorAll(".node"), function(k){ return k.dataset.label.indexOf(q)>=0 || (k.dataset.token||"").toLowerCase().indexOf(q)>=0; });
+      n.style.display = (hit||kidHit) ? "" : "none";
+      if(q && (hit||kidHit)) n.classList.add("open");
+    });
+  }
+
+  function summaryCard(){
+    var c = el("div","card"); c.id="summaryCard";
+    var h = el("div","head"); h.style.cursor="default";
+    h.appendChild(el("h2",null,"Your selection"));
+    c.appendChild(h);
+    var b = el("div","body");
+
+    // needs warnings
+    var probs = problems();
+    probs.forEach(function(pr){
+      var w = el("div","warn");
+      w.appendChild(el("span",null,"⚠️ "+pr.msg));
+      var fixBtn = el("button","btn", pr.fixLabel || "Add it");
+      fixBtn.onclick=function(){ pr.fix(); render(); };
+      w.appendChild(fixBtn);
+      b.appendChild(w);
+    });
+
+    // what's included
+    var ul = el("ul","summary");
+    pieceList().forEach(function(id){
+      var g = gbOf(id); var size = g===null ? "<span class='muted'>sized at install</span>" : ("~"+g+" GB");
+      var req = P[id].required ? " <span class='pill'>always</span>" : "";
+      ul.appendChild(el("li",null, "<strong>"+P[id].label+"</strong> — "+size+req));
+    });
+    var regs = regionList();
+    if(regs.length) ul.appendChild(el("li",null, "<strong>Regions:</strong> "+regs.map(function(t){return "<code>"+t+"</code>";}).join(" ")));
+    b.appendChild(ul);
+
+    var kt = knownTotal();
+    b.appendChild(el("p","total", "Known size so far: <b>~"+kt.sum.toFixed(1)+" GB</b>"+(kt.complete?"":" <span class='note'>+ maps (measured at install)</span>")));
+
+    // export
+    var sel = {pieces: pieceList(), regions: regs};
+    var json = JSON.stringify(sel, null, 2);
+    var exportTools = el("div","tools");
+    var dl = el("button","btn","⤓ Download selection.json");
+    dl.disabled = probs.length>0;
+    dl.title = probs.length ? "Fix the warnings above first" : "";
+    dl.onclick=function(){ downloadJSON(json); };
+    var copy = el("button","btn ghost","Copy");
+    copy.onclick=function(){ ta.select(); try{document.execCommand("copy");}catch(e){} copy.textContent="Copied"; setTimeout(function(){copy.textContent="Copy";},1200); };
+    exportTools.appendChild(dl); exportTools.appendChild(copy);
+    b.appendChild(exportTools);
+    b.appendChild(el("p","note","Save it to your <strong>Downloads</strong> folder, then run the installer launcher (<code>install.bat</code> / <code>install.command</code> / <code>install.sh</code>) and choose the picker option. Or run it by hand: <code>--select selection.json</code> / <code>-Selection selection.json</code>."));
+    var ta = el("textarea"); ta.readOnly=true; ta.value=json;
+    b.appendChild(ta);
+
+    c.appendChild(b);
+    return c;
+  }
+
+  function downloadJSON(text){
+    var blob = new Blob([text], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "selection.json";
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+
+  // online note (handoff only works locally; full browse-only site is #191)
+  if(location.protocol !== "file:"){
+    var n=document.getElementById("offline-note"); n.style.display="";
+    n.innerHTML = "<span>ℹ️ You are viewing this online. Picking and sizes work, but downloading to a drive only works when this page is opened from a local copy (the installer reads the <code>selection.json</code> you save). <a href='https://github.com/elhajahmadj/offline-emergency-library'>Get the kit</a>.</span>";
+  }
+
+  render();
+})();
+</script>
+<footer>Part of the <a href="https://github.com/elhajahmadj/offline-emergency-library">Offline Emergency Library</a>. See the <a href="about.html">contributors</a>.</footer>
+</div></body></html>
