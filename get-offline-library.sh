@@ -115,6 +115,11 @@ if [ "$SELECT_SET" = 1 ]; then
     sel_fail "--select cannot be combined with --lite, --skip-*, --region or a piece flag. The selection file names the pieces and regions."
   [ -n "$SELECT" ] || sel_fail "--select needs a selection file."
   [ -f "$SELECT" ] && [ -r "$SELECT" ] || sel_fail "selection file not found: $SELECT"
+  # Read the file as UTF-8 like PowerShell does. Refuse UTF-16 (FF FE / FE FF BOM) with the
+  # same words, so a Mac user gets the hint instead of a raw 'tr: Illegal byte sequence' (#177).
+  case "$(LC_ALL=C head -c 2 "$SELECT" | od -An -tx1 | tr -d ' \n')" in
+    fffe|feff) sel_fail "$SELECT looks like UTF-16; save it as UTF-8 (both installers read the selection file as UTF-8)." ;;
+  esac
   # The whole file must be exactly this shape (spaces and line breaks are ignored), so
   # nothing in it is skipped unread: {"pieces":["id",...],"regions":["name",...]}
   sel="$(LC_ALL=C tr '\t\r\n' '   ' < "$SELECT")"
@@ -667,6 +672,9 @@ get_pdf "tm-10-412-armed-forces-recipe-service-2003"         "TM 10-412 Armed Fo
 get_pdf "FM2110MCRP411.1DFieldHygieneAndSanitation"          "FM 21-10 Field Hygiene and Sanitation.pdf" "$AFM"
 get_pdf "armyfm5428concreteandmasonry"                       "FM 5-428 Concrete and Masonry.pdf" "$AFM"
 get_pdf "TM5-295"                                            "TM 5-295 Water Supply and Water Purification.pdf" "$AFM"
+# More public-domain US Army manuals (#130): navigation, engineering and cold-weather survival.
+get_pdf "FM3-25x26"                                          "FM 3-25.26 Map Reading and Land Navigation.pdf" "$AFM"
+get_pdf "fm-31-70-basic-cold-weather-manual-1968"           "FM 31-70 Basic Cold Weather Manual (1968).pdf" "$AFM"
 get_pdf "where-there-is-no-doctor"                           "Where There Is No Doctor.pdf" "$MPDF"
 get_pdf "where-there-is-no-dentist-web-full-book"            "Where There Is No Dentist.pdf" "$MPDF"
 # Advanced care when help is delayed: USUHS + Henry M. Jackson Foundation, 2025, CC BY-NC-SA 4.0 (not public domain).
@@ -1022,7 +1030,7 @@ if [ "$READY" != 1 ]; then
     echo "Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible)."
   else
     wait "$PID" 2>/dev/null; SRC=$?; PID=
-    echo "The translator server stopped right after it started (exit code $SRC). The log is above."
+    echo "The translator server stopped right after it started (exit code $SRC). The log is above. If it says it could not bind, another program is using port 8087."
   fi
   exit 1
 fi
@@ -1094,7 +1102,7 @@ try {
     Start-Sleep -Milliseconds 1000
   }
   if(-not $ready){
-    if($server.HasExited){ throw "The translator server stopped right after it started (exit code $($server.ExitCode)). The log is below. On Windows, security software or Smart App Control can block llama-server.exe or its DLLs." }
+    if($server.HasExited){ throw "The translator server stopped right after it started (exit code $($server.ExitCode)). The log is below. If it says it could not bind, another program is using port 8087. On Windows, security software or Smart App Control can block llama-server.exe or its DLLs." }
     throw 'Translator did not start within 120 seconds. Check port 8087, available RAM and the engine version (b12110 or compatible).'
   }
   Write-Host "Opening $url. First send the two languages, for example: English and Spanish."
