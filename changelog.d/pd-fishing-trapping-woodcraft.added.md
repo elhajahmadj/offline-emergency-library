@@ -4,4 +4,4 @@
   homemade traps and snares, and practical fishing, extending the hunting guide into the rest of
   living off the land. All public domain (verified each rights page), bundled from Internet Archive
   with their source text tracked in `doc-qa/sources.tsv`, and linked from I-NEED-TO. Part of #130.
-  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #PENDING._
+  _[@elhajahmadj](https://github.com/elhajahmadj) - PR #186._
