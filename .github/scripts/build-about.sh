@@ -7,6 +7,7 @@
 #                             (CI lint job; same idea as the docs .md/.html mirror checks)
 #
 # Plain static HTML, works from file://, no server, no internet. Needs bash and perl.
+# The --check ignores CR/LF so a Windows checkout (autocrlf) does not false-fail.
 set -u
 cd "$(git rev-parse --show-toplevel)" 2>/dev/null || cd "$(dirname "$0")/../.." || exit 1
 

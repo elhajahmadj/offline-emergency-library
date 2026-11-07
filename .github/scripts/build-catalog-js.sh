@@ -8,7 +8,8 @@
 #                                  (CI lint job; #151 left this check for this milestone)
 #
 # No network. Needs bash. The JS is catalog.json verbatim, wrapped in an assignment, so the
-# page and the installers always read the exact same numbers.
+# page and the installers always read the exact same numbers. The --check ignores CR/LF so a
+# Windows checkout (autocrlf) does not false-fail.
 set -u
 cd "$(git rev-parse --show-toplevel)" 2>/dev/null || cd "$(dirname "$0")/../.." || exit 1
 
