@@ -11,7 +11,8 @@ fail=0
 
 # Folders used by sources.tsv PDF rows (column 1 is a repo-relative path; skip comments, blanks,
 # and the non-PDF text/* rows that point at bundled page sources rather than a Manuals/ PDF).
-src_folders="$(awk -F'\t' '$1 !~ /^#/ && $1 ~ /\.pdf$/ {sub(/\/[^/]*$/,"",$1); print $1}' doc-qa/sources.tsv | sort -u)"
+src_folders="$(awk -F'\t' '$1 !~ /^#/ && $1 ~ /\.pdf$/ {sub(/\/[^\/]*$/,"",$1); print $1}' doc-qa/sources.tsv | sort -u)"
+[ -n "$src_folders" ] || { echo "FAIL: could not read any PDF folder from doc-qa/sources.tsv"; exit 1; }
 
 # Folders allowed by the bash helper: the case pattern "A/*.pdf|B/*.pdf) ".
 sh_allow="$(grep -oE '[A-Za-z0-9_./-]+/\*\.pdf' doc-qa/install.sh | sed 's#/\*\.pdf$##' | sort -u)"
