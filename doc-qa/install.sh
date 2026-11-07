@@ -11,7 +11,8 @@ doc_qa_download(){ # url target - non-fatal, unlike the installer's fetch
 install_manual_qa(){
   local root="$1" src="$2" out base name target line pdf algorithm pdfhash url texthash mode unused path text actual
   out="$root/AI-Offline/Manual-QA"
-  base="https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/doc-qa"
+  # The installer passes its repo base (pinned to one commit, #193); main if it does not.
+  base="${3:-https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main}/doc-qa"
   mkdir -p "$out/text"
   for name in index.html reader.css reader.mjs retrieval.mjs START-DOCS.bat start-docs.sh sources.tsv; do
     target="$out/$name"

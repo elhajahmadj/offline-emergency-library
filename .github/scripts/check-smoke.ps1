@@ -170,6 +170,9 @@ exit $LASTEXITCODE
   Set-Content -Path (Join-Path $od 'OfflineLibrary\CHECKSUMS-SHA256.txt') -Value 'x  ./a' -Encoding ascii
   Chk 'needs the AI engine' @('-Only','translate','-Destination',$od)
   if(@(Get-ChildItem -LiteralPath $od -Recurse -File).Count -ne 1){ Fail '-Only translate wrote files although the AI engine is missing' }
+  Write-Host '== an early stop exits 1, so install.bat does not say Done (#192)'
+  $notDir = Join-Path $tmp 'not-a-folder.txt'; Set-Content -Path $notDir -Value x -Encoding ascii
+  Chk 'Cannot create' @('-Destination',$notDir)
   Write-Host "Smoke test: OK (Windows $($env:PROCESSOR_ARCHITECTURE), llama.cpp $tag)"
 }
 finally { Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue }
