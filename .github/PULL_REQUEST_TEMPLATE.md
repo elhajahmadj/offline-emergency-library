@@ -9,7 +9,7 @@ Closes #
 
 ## Checklist
 - [ ] I updated **both** installers if the change affects downloading/setup (PowerShell + Bash), or noted why only one
-- [ ] If I changed a guide, I edited `docs/*.md` **and** regenerated the matching `.html`
+- [ ] If I changed a guide, I edited `docs/*.md` **and** made the same edit in the matching `.html`
 - [ ] Content added is free / openly-licensed / public domain (no piracy)
 - [ ] I ran the offline checks in CONTRIBUTING "Before you open a PR" (syntax, consistency, launchers, catalog, changelog); a reproducible bug fix adds a check that fails without it
 - [ ] Sizes, flags, region and file names stated in docs or installer messages match the code
