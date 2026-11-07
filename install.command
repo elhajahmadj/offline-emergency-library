@@ -27,7 +27,7 @@ else
 fi
 echo ""
 if [ "$rc" = 0 ]; then
-  echo "Done. Open START-HERE.html in the folder you chose."
+  echo "Done. Open START-HERE.html in the OfflineLibrary folder inside the folder you chose."
 else
   echo "Installation failed. Review the error above and _download.log, then re-run to resume."
 fi

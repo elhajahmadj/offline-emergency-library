@@ -23,7 +23,7 @@ param(
   [switch]$Lite,            # quick start: 3B AI, medical/survival references and regional maps
   [switch]$SkipWikipedia,   # Wikipedia is the biggest (~49 GB ZIM); allow skipping
   [switch]$SkipMaps,        # OsmAnd maps (~17 GB for US); allow skipping
-  [switch]$SkipModels,      # the large AI chat models (~11 GB)
+  [switch]$SkipModels,      # the large AI chat models (~9 GB)
   [switch]$Education,        # OPT-IN: add Khan Academy (Kiwix ZIM, ~168 GB with videos)
   [string]$EduLang = 'en',   # Khan Academy language: en, es, or fr
   [switch]$Kolibri,          # OPT-IN: add the Kolibri learning app (pick subjects/low-res in-app)
