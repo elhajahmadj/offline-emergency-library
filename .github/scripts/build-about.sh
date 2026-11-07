@@ -7,6 +7,7 @@
 #                             (CI lint job; same idea as the docs .md/.html mirror checks)
 #
 # Plain static HTML, works from file://, no server, no internet. Needs bash and perl.
+# The --check ignores CR/LF so a Windows checkout (autocrlf) does not false-fail.
 set -u
 cd "$(git rev-parse --show-toplevel)" 2>/dev/null || cd "$(dirname "$0")/../.." || exit 1
 
@@ -103,10 +104,10 @@ mkdir -p web
 if [ "${1:-}" = "--check" ]; then
   tmp="$(mktemp)"; trap 'rm -f "$tmp"' EXIT
   build > "$tmp" || { echo "FAIL: could not generate about page from $SRC"; exit 1; }
-  if ! diff -q "$tmp" "$OUT" >/dev/null 2>&1; then
+  if ! diff -q <(tr -d '\015' < "$tmp") <(tr -d '\015' < "$OUT") >/dev/null 2>&1; then
     echo "FAIL: $OUT is out of date with $SRC."
     echo "Run: bash .github/scripts/build-about.sh  (then commit $OUT)"
-    diff -u "$OUT" "$tmp" 2>/dev/null | head -40
+    diff -u <(tr -d '\015' < "$OUT") <(tr -d '\015' < "$tmp") 2>/dev/null | head -40
     exit 1
   fi
   echo "OK: $OUT matches $SRC ($(grep -c '<article class="person">' "$OUT") contributors)."

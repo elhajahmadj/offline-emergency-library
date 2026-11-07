@@ -8,7 +8,8 @@
 #                                  (CI lint job; #151 left this check for this milestone)
 #
 # No network. Needs bash. The JS is catalog.json verbatim, wrapped in an assignment, so the
-# page and the installers always read the exact same numbers.
+# page and the installers always read the exact same numbers. The --check ignores CR/LF so a
+# Windows checkout (autocrlf) does not false-fail.
 set -u
 cd "$(git rev-parse --show-toplevel)" 2>/dev/null || cd "$(dirname "$0")/../.." || exit 1
 
@@ -28,10 +29,10 @@ mkdir -p web
 if [ "${1:-}" = "--check" ]; then
   tmp="$(mktemp)"; trap 'rm -f "$tmp"' EXIT
   build > "$tmp"
-  if ! diff -q "$tmp" "$OUT" >/dev/null 2>&1; then
+  if ! diff -q <(tr -d '\015' < "$tmp") <(tr -d '\015' < "$OUT") >/dev/null 2>&1; then
     echo "FAIL: $OUT is out of date with $SRC."
     echo "Run: bash .github/scripts/build-catalog-js.sh  (then commit $OUT)"
-    diff -u "$OUT" "$tmp" 2>/dev/null | head -40
+    diff -u <(tr -d '\015' < "$OUT") <(tr -d '\015' < "$tmp") 2>/dev/null | head -40
     exit 1
   fi
   echo "OK: $OUT matches $SRC."
