@@ -1,0 +1,19 @@
+name: Docs problem
+description: A guide, the README or an installer message is wrong, unclear or out of date
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Which file or message?
+      placeholder: e.g. docs/USE-ON-PHONE.md, README "Advanced" table, the installer's space warning
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What does it say, and what is true?
+      description: If you checked it against the installer code or a real run, say how.
+    validations:
+      required: true

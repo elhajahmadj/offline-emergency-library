@@ -22,7 +22,9 @@ _Last verified: 2026-11-06_
   an offline CLI regression covers existing and absent OsmAnd folders, selected browser maps and region size estimates;
   Windows browser translation and shutdown passed runtime QA; generated checks cover parity and ownership;
   the manual reader's source pairing (PDF hash to text hash), installer parity and relocation have an
-  offline regression check, and text freshness is checked in CI.
+  offline regression check, and text freshness is checked in CI;
+  `check-consistency.sh` keeps manual downloads, link checks and guide placement the same
+  in both installers; issue templates add the type label and blank issues are off.
 - In progress: maintainer review of the context-limit documentation, the estimator correction, the browser-only metadata fix, issue 75 (per-OS CI) and the manual reader.
 - Known gaps: native macOS double-click testing and independent Swahili and Somali language review.
 - Deep docs: `evaluations/issue-73/README.md` describes the interpreter protocol;
@@ -54,5 +56,8 @@ translator selections. It runs in the existing lint job on PRs and the weekly sc
 For the milestone 2 picker (#139), also exercise a fresh non-Lite selection containing
 `core`, `gpt4all-repair` and `wikipedia` without `models` on both installers; verify
 the large models and their launchers are absent while the core chat remains available.
+`.github/scripts/check-consistency.sh` (lint job, offline) fails when a manual download
+differs between the installers or is missing from `check-links.sh`, a guide lacks its
+`.md` or `.html` half, or the installers place different guides.
 `node --test doc-qa/retrieval.test.mjs` checks ranking without inference; the CI
 lint job runs it on PRs and the existing weekly schedule.
