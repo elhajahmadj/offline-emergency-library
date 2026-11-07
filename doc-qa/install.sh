@@ -24,7 +24,7 @@ install_manual_qa(){
   : > "$out/ready.tsv"; : > "$out/missing.txt"
   while IFS=$'\t' read -r pdf algorithm pdfhash url texthash mode unused; do
     case "$pdf" in ''|\#*) continue ;; esac
-    case "$pdf" in Medical/Manuals-PDF/*.pdf|Manuals/ArmyFieldManuals/*.pdf|Manuals/Survival-Preparedness/*.pdf) ;; *) log "doc-QA ERROR: invalid PDF path"; return 1 ;; esac
+    case "$pdf" in Medical/Manuals-PDF/*.pdf|Manuals/ArmyFieldManuals/*.pdf|Manuals/Food-Growing/*.pdf|Manuals/Metalworking/*.pdf|Manuals/Survival-Preparedness/*.pdf) ;; *) log "doc-QA ERROR: invalid PDF path"; return 1 ;; esac
     case "$pdf" in *..*|*\\*) log "doc-QA ERROR: unsafe PDF path"; return 1 ;; esac
     [[ "$texthash" =~ ^[a-f0-9]{64}$ ]] || { log "doc-QA ERROR: invalid text hash"; return 1; }
     case "$mode" in pages|excerpts) ;; *) log "doc-QA ERROR: invalid text mode"; return 1 ;; esac

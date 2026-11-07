@@ -31,7 +31,7 @@ function Install-ManualQA($Root, $SourceDir) {
     $f = $line.Split("`t")
     if($f.Count -ne 7){ throw 'Invalid document source manifest' }
     $pdf,$algorithm,$pdfHash,$url,$textHash,$mode,$unused = $f
-    if($pdf -notmatch '^(Medical/Manuals-PDF|Manuals/ArmyFieldManuals|Manuals/Survival-Preparedness)/[^/\\]+\.pdf$' -or $pdf.Contains('..') -or
+    if($pdf -notmatch '^(Medical/Manuals-PDF|Manuals/ArmyFieldManuals|Manuals/Food-Growing|Manuals/Metalworking|Manuals/Survival-Preparedness)/[^/\\]+\.pdf$' -or $pdf.Contains('..') -or
        $algorithm -notin @('MD5','SHA256') -or $textHash -notmatch '^[a-f0-9]{64}$' -or $mode -notin @('pages','excerpts')){
       throw 'Unsafe document source manifest'
     }

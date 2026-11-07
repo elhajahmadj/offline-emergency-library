@@ -11,6 +11,14 @@ cd "$(dirname "$0")/../.." || exit 1
 T="$(mktemp -d)"; trap 'rm -rf "$T"' EXIT
 fail=0
 
+# No launcher template or the engine self-check may build a library path with an empty
+# (current-directory) entry: the bad form is "$LIBDIR:${VAR:-}", the fix is
+# "$LIBDIR${VAR:+:$VAR}" (#161, #178). One static sweep covers the chat and translator
+# templates, the self-check (both installers) and doc-qa/start-docs.sh.
+if grep -nE '(LD|DYLD)_LIBRARY_PATH="\$LIBDIR:' get-offline-library.sh Get-OfflineLibrary.ps1 doc-qa/start-docs.sh; then
+  echo 'FAIL: empty-entry library path form above; use "$LIBDIR${VAR:+:$VAR}"'; fail=1
+fi
+
 # The section starts where the launchers are written and ends at the documentation step.
 sed -n '/^AO="\$ROOT\/AI-Offline"/,/^# =* documentation/p' get-offline-library.sh > "$T/sec.sh"
 # CRLF like a Windows checkout (.gitattributes: *.ps1 eol=crlf), whatever this checkout has.
