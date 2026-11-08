@@ -38,6 +38,8 @@ jobs:
         run: bash .github/scripts/check-catalog.sh
       - name: About page is up to date with CONTRIBUTORS (#189)
         run: bash .github/scripts/build-about.sh --check
+      - name: doc-qa reader allowlist covers every sources.tsv folder
+        run: bash .github/scripts/check-doc-allowlist.sh
       - name: Checksum list parity, full run and --only (#195)
         run: bash .github/scripts/check-checksums.sh
       - name: MedlinePlus page CSP hash (inline script allowed by hash)
