@@ -29,6 +29,14 @@ if /i "%choice%"=="P" goto :picker
 goto :full
 
 :full
+rem Open the picker page in the browser too (not just on [P]). The user may pick [A]
+rem expecting the visual UI to appear; this makes sure the browser always opens. The
+rem page is also a handy overview of everything a full install includes.
+if exist "%~dp0web\index.html" (
+  echo Opening the picker page in your browser...
+  call :openpage "%~dp0web\index.html"
+  echo.
+)
 powershell -NoProfile -ExecutionPolicy Bypass -File "%PS1%"
 rem errorlevel 9009 = PowerShell could not be started (blocked / not found), not an install error.
 if errorlevel 9009 goto :notstarted
