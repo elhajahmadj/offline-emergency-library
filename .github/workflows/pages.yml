@@ -1,0 +1,61 @@
+name: Publish picker site
+
+# Milestone 5 (#191): publish web/ (the picker landing + catalog + About) as a static site
+# on GitHub Pages. The site is the same files as the local file:// copy — two lives, one page.
+# Online it is browse-only: picking and the size total work, but the download-to-a-drive
+# handoff only makes sense locally (the page detects this and says so).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - "catalog.json"
+      - ".github/scripts/build-catalog-js.sh"
+      - ".github/scripts/build-about.sh"
+      - "CONTRIBUTORS.md"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# one deploy at a time; let a running one finish
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Regenerate the generated files so the published site always matches main,
+      # never a hand-copied stale version.
+      - name: Regenerate catalog.js from catalog.json
+        run: bash .github/scripts/build-catalog-js.sh
+      - name: Regenerate about.html from CONTRIBUTORS.md
+        run: bash .github/scripts/build-about.sh
+      - name: Verify the site has its core files
+        run: |
+          for f in web/index.html web/catalog.js web/regions.js web/about.html; do
+            test -f "$f" || { echo "missing $f"; exit 1; }
+          done
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
