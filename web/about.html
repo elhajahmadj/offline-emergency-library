@@ -12,6 +12,9 @@
 h1{font-size:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin:0 0 6px}
 h2.sec{font-size:20px;margin:30px 0 8px}
 .lead{color:var(--muted);margin:0 0 20px}
+.topbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.topnav a{color:var(--muted);text-decoration:none;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap;margin-left:6px}
+.topnav a:hover{color:var(--ink);border-color:var(--accent)}
 .note{color:var(--muted);font-size:14px;margin:0 0 10px}
 a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:14px}
 .person{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
@@ -20,7 +23,7 @@ a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:
 .person p{margin:0;color:var(--ink)}
 footer{margin-top:30px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}</style>
 </head><body><div class="wrap">
-<h1>About Sine Nexu</h1>
+<div class="topbar"><h1>About Sine Nexu</h1><nav class="topnav"><a href="landing.html">Home</a><a href="index.html">Picker</a></nav></div>
 <p class="lead">Sine Nexu is a free, offline emergency library — survival, medical, repair, food and reference knowledge, plus an offline AI, on a drive that works with <strong>no internet and no power grid</strong> behind it.</p>
 
 <h2 class="sec">Our mission</h2>
