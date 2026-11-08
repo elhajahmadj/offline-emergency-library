@@ -94,24 +94,41 @@ build() {
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Contributors — Offline Emergency Library</title>
+<title>About — Sine Nexu</title>
 <!-- Generated from CONTRIBUTORS.md by .github/scripts/build-about.sh. Do not edit by hand;
-     add yourself to CONTRIBUTORS.md and CI regenerates this. -->
+     add yourself to CONTRIBUTORS.md and CI regenerates this. The mission and code of conduct
+     sections are part of this template (folded in from #204). -->
 <style>:root{--bg:#0f1420;--card:#171f2e;--ink:#e7ecf3;--muted:#9fb0c3;--accent:#4fd1c5;--accent2:#f6ad55;--line:#273246;--code:#0b0f17}
 @media(prefers-color-scheme:light){:root{--bg:#f4f6fb;--card:#fff;--ink:#15202b;--muted:#56657a;--accent:#0d9488;--accent2:#b45309;--line:#e2e8f0;--code:#f1f5f9}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Arial,sans-serif}
 .wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px}
 h1{font-size:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin:0 0 6px}
-.lead{color:var(--muted);margin:0 0 24px}
+h2.sec{font-size:20px;margin:30px 0 8px}
+.lead{color:var(--muted);margin:0 0 20px}
+.note{color:var(--muted);font-size:14px;margin:0 0 10px}
 a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:14px}
 .person{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}.box p{margin:0;color:var(--ink)}
 .person h2{font-size:18px;margin:0 0 6px}.person .name{color:var(--muted);font-weight:400;font-size:15px}
 .person p{margin:0;color:var(--ink)}
 footer{margin-top:30px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}</style>
 </head><body><div class="wrap">
-<h1>Contributors</h1>
-<p class="lead">Everyone who has improved the Offline Emergency Library. Testing and bug reports count the same as code. Per-fix detail is in the <a href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/CHANGELOG.md">CHANGELOG</a>.</p>
-$body<footer>Add yourself by editing <code>CONTRIBUTORS.md</code> — this page is generated from it. ❤️</footer>
+<h1>About Sine Nexu</h1>
+<p class="lead">Sine Nexu is a free, offline emergency library — survival, medical, repair, food and reference knowledge, plus an offline AI, on a drive that works with <strong>no internet and no power grid</strong> behind it.</p>
+
+<h2 class="sec">Our mission</h2>
+<div class="box">
+  <p>To help people when it matters most: when disaster strikes and the power or the internet is gone, and for people in remote parts of the world who have little or no access to the internet. Everyone should be able to hold the essentials — how to stay safe, treat an injury, grow food, repair things, and find their way — on a drive that keeps working offline, anywhere.</p>
+</div>
+
+<h2 class="sec">Code of conduct</h2>
+<div class="box">
+  <p>Be kind and assume good faith. Everyone is welcome here, and testing and bug reports count just as much as code. We don't tolerate harassment, discrimination, or hostility of any kind. Keep discussion focused on the work, and help newcomers get started — we were all new once.</p>
+</div>
+
+<h2 class="sec">Contributors</h2>
+<p class="note">Everyone who has improved Sine Nexu. Per-fix detail is in the <a href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/CHANGELOG.md">CHANGELOG</a>.</p>
+$body<footer>Add yourself by editing <code>CONTRIBUTORS.md</code> — the contributor list on this page is generated from it. ❤️</footer>
 </div></body></html>
 EOF
 }
