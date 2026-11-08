@@ -41,7 +41,7 @@ echo The picker page ^(web\index.html^) is not in this folder.
 goto :askfull
 :haspage
 echo Opening the picker page in your browser...
-start "" "%~dp0web\index.html"
+call :openpage "%~dp0web\index.html"
 echo.
 echo In the page: tick what you want, then click "Download selection.json"
 echo (it saves to your Downloads folder). When you have done that, come back here.
@@ -116,3 +116,24 @@ echo.
 echo Installation failed or was stopped. Review the error above and _download.log, then re-run to resume.
 pause
 exit /b 1
+
+:openpage
+rem Open an HTML file in a browser even when .html has no default app (or it is set to
+rem an editor). 'start "" file' silently does nothing in that case, which looked like a
+rem hang. Try real browsers first (Edge ships with Windows 10/11, so one almost always
+rem exists), then the default handler, then the URL protocol handler.
+for %%B in (
+  "%ProgramFiles%\Google\Chrome\Application\chrome.exe"
+  "%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe"
+  "%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe"
+  "%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"
+  "%ProgramFiles%\Mozilla Firefox\firefox.exe"
+  "%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe"
+) do if exist "%%~B" ( start "" "%%~B" "%~1" & exit /b 0 )
+rem No known browser in the usual place: fall back to the default handler, then the
+rem URL protocol handler (tied to the browser even when .html is not).
+start "" "%~1" 2>nul && exit /b 0
+rundll32 url.dll,FileProtocolHandler "%~1" 2>nul && exit /b 0
+echo Could not open a browser automatically. Open this file by hand:
+echo   %~1
+exit /b 0
