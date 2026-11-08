@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Data Sources — Sine Nexu</title>
+<meta name="description" content="Every upstream source the Sine Nexu offline emergency library downloads from, grouped by category with licenses. The project hosts nothing itself.">
+<!-- Sources page (#223). Static, self-contained, works from file:// — no external fonts or
+     scripts. Same design tokens as the landing/about/picker pages. Keep in sync with the
+     repo's DATA-SOURCES.md and .github/scripts/check-links.sh when a source changes. -->
+<style>:root{--bg:#0f1420;--card:#171f2e;--ink:#e7ecf3;--muted:#9fb0c3;--accent:#4fd1c5;--accent2:#f6ad55;--line:#273246;--code:#0b0f17}
+@media(prefers-color-scheme:light){:root{--bg:#f4f6fb;--card:#fff;--ink:#15202b;--muted:#56657a;--accent:#0d9488;--accent2:#b45309;--line:#e2e8f0;--code:#f1f5f9}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px}
+h1{font-size:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin:0 0 6px}
+h2.sec{font-size:20px;margin:34px 0 8px}
+.lead{color:var(--muted);margin:0 0 18px;max-width:70ch}
+.topbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.topnav a{color:var(--muted);text-decoration:none;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap;margin-left:6px}
+.topnav a:hover{color:var(--ink);border-color:var(--accent)}
+.topnav a.here{color:var(--ink);border-color:var(--accent)}
+.note{color:var(--muted);font-size:14px;margin:0 0 10px}
+.opt{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--accent2);border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:13px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 18px;margin:12px 0}
+table{border-collapse:collapse;width:100%;margin:4px 0;font-size:14.5px}
+th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:13px}
+tr:last-child td{border-bottom:none}
+td .src{color:var(--muted);font-size:13px;word-break:break-word}
+td .lic{color:var(--muted);font-size:13px;white-space:nowrap}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:12px 0}
+details summary{cursor:pointer;font-weight:600}
+details ul{margin:10px 0 2px;padding-left:20px;columns:1}
+details li{color:var(--muted);font-size:14px;margin:3px 0}
+details li b{color:var(--ink);font-weight:600}
+footer{margin-top:36px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}</style>
+</head><body><div class="wrap">
+
+<div class="topbar"><h1>Data Sources</h1><nav class="topnav"><a href="landing.html">Home</a><a href="index.html">Picker</a><a href="about.html">About</a><a class="here" href="sources.html">Sources</a><a href="https://github.com/elhajahmadj/offline-emergency-library">GitHub ↗</a></nav></div>
+
+<p class="lead">Sine Nexu <strong>hosts nothing itself.</strong> Every file the installer downloads comes from an official upstream source, grouped below by what it is, with its license. After the one-time download the whole library runs with <strong>no internet</strong>. Pieces tagged <span class="opt">opt-in</span> are only fetched when you choose them.</p>
+<p class="note">This is the plain-language version of the repository's <a href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/DATA-SOURCES.md"><code>DATA-SOURCES.md</code></a>, which lists the exact URLs. CI re-checks every source weekly via <code>check-links.sh</code>.</p>
+
+<h2 class="sec">Offline AI</h2>
+<div class="box"><table>
+<tr><th>What</th><th>From</th><th>License</th></tr>
+<tr><td>AI engine (llama.cpp)</td><td class="src">github.com/ggml-org/llama.cpp</td><td class="lic">MIT</td></tr>
+<tr><td>Chat model — Llama 3.2 3B</td><td class="src">huggingface.co/bartowski</td><td class="lic">Llama 3.2 Community</td></tr>
+<tr><td>Chat models — Llama 3.1 8B, Qwen2.5 7B <span class="opt">opt-in</span></td><td class="src">huggingface.co/bartowski</td><td class="lic">Llama 3.1 Community · Apache-2.0</td></tr>
+<tr><td>Translator — Qwen3 4B <span class="opt">opt-in</span></td><td class="src">huggingface.co/bartowski</td><td class="lic">Apache-2.0</td></tr>
+<tr><td>Document Q&amp;A app — GPT4All <span class="opt">opt-in</span></td><td class="src">github.com/nomic-ai/gpt4all</td><td class="lic">MIT</td></tr>
+</table></div>
+
+<h2 class="sec">Encyclopedia &amp; reference archives (Kiwix ZIM)</h2>
+<div class="box"><table>
+<tr><th>What</th><th>From</th><th>License</th></tr>
+<tr><td>Kiwix desktop reader</td><td class="src">download.kiwix.org</td><td class="lic">GPL-3.0</td></tr>
+<tr><td>Wikipedia (full, no images)</td><td class="src">download.kiwix.org</td><td class="lic">CC BY-SA</td></tr>
+<tr><td>iFixit repair archive</td><td class="src">download.kiwix.org</td><td class="lic">CC BY-NC-SA</td></tr>
+<tr><td>WikiMed medical Wikipedia</td><td class="src">download.kiwix.org</td><td class="lic">CC BY-SA</td></tr>
+<tr><td>Appropedia DIY / sustainability</td><td class="src">download.kiwix.org</td><td class="lic">CC BY-SA</td></tr>
+<tr><td>Khan Academy <span class="opt">opt-in</span></td><td class="src">download.kiwix.org</td><td class="lic">CC BY-NC-SA</td></tr>
+<tr><td>Wikivoyage + Wikibooks <span class="opt">opt-in</span></td><td class="src">download.kiwix.org</td><td class="lic">CC BY-SA</td></tr>
+</table></div>
+
+<h2 class="sec">Maps</h2>
+<div class="box"><table>
+<tr><th>What</th><th>From</th><th>License</th></tr>
+<tr><td>OsmAnd map files (your region; default US)</td><td class="src">download.osmand.net</td><td class="lic">ODbL-1.0 (OpenStreetMap)</td></tr>
+<tr><td>OsmAndMapCreator desktop viewer</td><td class="src">download.osmand.net</td><td class="lic">GPL-3.0 · artwork CC BY-NC-ND</td></tr>
+<tr><td>Portable Java runtime (Eclipse Temurin)</td><td class="src">api.adoptium.net</td><td class="lic">GPL-2.0 + Classpath</td></tr>
+<tr><td>Browser maps — US tiles + style <span class="opt">opt-in</span></td><td class="src">github.com/Crosstalk-Solutions/project-nomad-maps · Protomaps</td><td class="lic">MIT · ODbL-1.0</td></tr>
+<tr><td>Browser maps — viewer &amp; server <span class="opt">opt-in</span></td><td class="src">unpkg.com (MapLibre GL JS, pmtiles.js) · github.com/caddyserver/caddy</td><td class="lic">BSD-3 · Apache-2.0</td></tr>
+</table></div>
+
+<h2 class="sec">Field manuals &amp; public-domain books (PDF)</h2>
+<p class="note">All from the Internet Archive (<code>archive.org</code>). Unless noted, these are US-Government works (public domain) or out-of-copyright books.</p>
+<details><summary>Show all 35 titles</summary>
+<ul>
+<li><b>FM 21-76</b> US Army Survival Manual</li>
+<li><b>FM 3-05.70</b> Survival (2002)</li>
+<li><b>105-Page</b> Survival Field Manual</li>
+<li><b>Survival and First Aid for Soldiers</b></li>
+<li><b>FM 4-25.11</b> First Aid</li>
+<li><b>FM 3-25.26</b> Map Reading and Land Navigation</li>
+<li><b>FM 31-70</b> Basic Cold Weather Manual (1968)</li>
+<li><b>FM 90-3</b> Desert Operations (1993)</li>
+<li><b>FM 21-10 / MCRP 4-11.1D</b> Field Hygiene and Sanitation</li>
+<li><b>FM 5-426</b> Carpentry (1995)</li>
+<li><b>FM 5-428</b> Concrete and Masonry</li>
+<li><b>FM 5-125</b> Army Guide to Rigging</li>
+<li><b>TM 5-295</b> (US Army technical manual)</li>
+<li><b>TM 9-237</b> Welding Theory and Application</li>
+<li><b>TM 9-243</b> Use and Care of Hand Tools (1983)</li>
+<li><b>TM 9-8000</b> Principles of Automotive Vehicles (1985)</li>
+<li><b>TM 10-412</b> Armed Forces Recipe Service (2003)</li>
+<li><b>FEMA</b> "Are You Ready?" emergency handbook</li>
+<li><b>Knots, Splices and Rope Work</b> (Verrill)</li>
+<li><b>Home canning / freezing of foods</b> (USDA)</li>
+<li><b>Hunting with the Bow and Arrow</b> (Pope)</li>
+<li><b>The Book of Camping and Woodcraft</b> (Kephart 1910)</li>
+<li><b>Deadfalls and Snares</b> (Harding 1907)</li>
+<li><b>Bait Angling for Common Fishes</b> (Rhead 1907)</li>
+<li><b>The Boy Mechanic</b></li>
+<li><b>Practical Blacksmithing</b> (1888)</li>
+<li><b>Elements of Machine Work</b> (1910)</li>
+<li><b>Productive Vegetable Growing</b> (Lloyd 1918)</li>
+<li><b>Productive Poultry Husbandry</b> (Lewis 1913)</li>
+<li><b>Langstroth on the Hive and the Honey-Bee</b> (1904)</li>
+<li><b>King's American Dispensatory</b>, vol. 1 &amp; 2</li>
+<li>Public-domain medical reference (via Emory / NLM)</li>
+</ul>
+<p class="note" style="margin-top:8px">Exact item URLs and per-file text attributions are in <a href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/DATA-SOURCES.md"><code>DATA-SOURCES.md</code></a> and <a href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/doc-qa/sources.tsv"><code>doc-qa/sources.tsv</code></a>.</p>
+</details>
+
+<h2 class="sec">Food preservation</h2>
+<div class="box"><table>
+<tr><th>What</th><th>From</th><th>License</th></tr>
+<tr><td>USDA Complete Guide to Home Canning (2015, 8 parts)</td><td class="src">nchfp.uga.edu (National Center for Home Food Preservation)</td><td class="lic">US-gov (public domain)</td></tr>
+</table></div>
+
+<h2 class="sec">Medical &amp; health references</h2>
+<div class="box"><table>
+<tr><th>What</th><th>From</th><th>License / terms</th></tr>
+<tr><td>WHO — Complications in Pregnancy &amp; Childbirth (2017); Maternal Health (2025)</td><td class="src">iris.who.int</td><td class="lic">CC BY-NC-SA 3.0 IGO</td></tr>
+<tr><td>A Practical Guide to Prolonged Casualty Care (2025)</td><td class="src">usuhs.edu</td><td class="lic">CC BY-NC-SA 4.0</td></tr>
+<tr><td>EPA — Emergency Disinfection of Drinking Water (2017)</td><td class="src">epa.gov</td><td class="lic">US-gov (public domain)</td></tr>
+<tr><td>Where There Is No Doctor / No Dentist</td><td class="src">archive.org (Hesperian)</td><td class="lic">Hesperian permissions</td></tr>
+<tr><td>Reference text</td><td class="src">gutenberg.org</td><td class="lic">Public domain</td></tr>
+<tr><td>MedlinePlus health topics <span class="opt">opt-in</span></td><td class="src">medlineplus.gov</td><td class="lic">Public domain (US NLM)</td></tr>
+</table></div>
+
+<h2 class="sec">Phone apps (APK)</h2>
+<div class="box"><table>
+<tr><th>What</th><th>From</th><th>License</th></tr>
+<tr><td>OsmAnd~ (Android offline maps)</td><td class="src">f-droid.org</td><td class="lic">GPL-3.0</td></tr>
+<tr><td>Kiwix Android (ZIM reader)</td><td class="src">github.com/kiwix/kiwix-android</td><td class="lic">GPL-3.0</td></tr>
+</table></div>
+
+<h2 class="sec">Education <span class="opt">opt-in</span></h2>
+<div class="box"><table>
+<tr><th>What</th><th>From</th><th>License</th></tr>
+<tr><td>Khan Academy archive</td><td class="src">download.kiwix.org</td><td class="lic">CC BY-NC-SA</td></tr>
+<tr><td>Kolibri learning app</td><td class="src">github.com/learningequality/kolibri</td><td class="lic">MIT</td></tr>
+</table></div>
+
+<h2 class="sec">The project's own files</h2>
+<p class="note">The installer also pulls guides, the browser-map viewer and helper files from <strong>this repository</strong>, pinned to one commit so a moving <code>main</code> can't change your download: <code>raw.githubusercontent.com/elhajahmadj/offline-emergency-library</code>. These are the project's own MIT-licensed files, not a third-party data source.</p>
+
+<footer>
+  Sine Nexu — the Offline Emergency Library. Only verified public-domain or openly-licensed content. Full URL list: <a href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/DATA-SOURCES.md">DATA-SOURCES.md</a> · <a href="about.html">About &amp; mission</a> · <a href="https://github.com/elhajahmadj/offline-emergency-library">GitHub</a>.
+</footer>
+
+</div></body></html>

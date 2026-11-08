@@ -265,6 +265,10 @@ runs 100% offline afterward:
 | Extra archives (optional) | download.kiwix.org (Wikivoyage, Wikibooks ZIM) |
 | Health topics (optional) | medlineplus.gov/xml.html (MedlinePlus health topic XML, US National Library of Medicine; public domain) |
 
+**Every download URL, grouped by category with licenses, is in [`DATA-SOURCES.md`](DATA-SOURCES.md)**
+(and on the website's [Sources page](web/sources.html)). CI re-checks them weekly via
+`.github/scripts/check-links.sh`.
+
 **Verify the installer before running it.** Each script's SHA-256 is published in
 [`SHA256SUMS.txt`](SHA256SUMS.txt), which a workflow regenerates after every merge to `main`.
 
