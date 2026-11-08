@@ -87,6 +87,18 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
         }
       });
     });
+    // Region tokens must match what the installers accept ([A-Za-z0-9_.-]); a token with a
+    // space or other character exports fine but then the installer rejects the whole file.
+    // Flag it here with the same rule so it is caught before export, not after.
+    regionList().forEach(function(t){
+      if(!/^[A-Za-z0-9_.-]+$/.test(t)){
+        out.push({
+          msg:"Region token “"+esc(t)+"” has characters the installer won’t accept (only letters, numbers, dot, underscore, hyphen).",
+          fix:function(){ delete selectedRegions[t]; extraList = extraList.filter(function(x){return x!==t;}); },
+          fixLabel:"Remove it"
+        });
+      }
+    });
     return out;
   }
 
@@ -100,6 +112,8 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
 
   // ---- rendering ----
   function el(tag, cls, html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+  // escape user-supplied text (free-text region tokens) before it goes into innerHTML
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 
   function render(){
     app.innerHTML="";
@@ -240,7 +254,7 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
       ul.appendChild(el("li",null, "<strong>"+P[id].label+"</strong> — "+size+req));
     });
     var regs = regionList();
-    if(regs.length) ul.appendChild(el("li",null, "<strong>Regions:</strong> "+regs.map(function(t){return "<code>"+t+"</code>";}).join(" ")));
+    if(regs.length) ul.appendChild(el("li",null, "<strong>Regions:</strong> "+regs.map(function(t){return "<code>"+esc(t)+"</code>";}).join(" ")));
     b.appendChild(ul);
 
     var kt = knownTotal();

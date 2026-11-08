@@ -80,15 +80,18 @@ alias_region(){
     *) echo "$1";;
   esac
 }
+# A flag that takes a value must have one: 'shift 2' on a last argument fails without
+# shifting, and the loop would see the same flag forever (#192).
+need_val(){ [ "$1" -ge 2 ] && [ -n "$3" ] && [ "${3#-}" = "$3" ] || { echo "ERROR: $2 needs $4."; exit 1; }; }
 while [ $# -gt 0 ]; do
   case "$1" in
-    -d|--destination) DEST="$2"; shift 2;;
-    --region)         REGION="$2"; REGION_SET=1; shift 2;;
+    -d|--destination) need_val $# "$1" "${2:-}" "a folder"; DEST="$2"; shift 2;;
+    --region)         need_val $# "$1" "${2:-}" "a region name (see --list-regions)"; REGION="$2"; REGION_SET=1; shift 2;;
     --select)         SELECT_SET=1; if [ $# -ge 2 ] && [ "${2#-}" = "$2" ]; then SELECT="$2"; shift 2; else SELECT=""; shift; fi;;
     --check-selection) CHECK_SEL=1; shift;;
     --list-regions)   LISTREGIONS=1; if [ -n "$2" ] && [ "${2#-}" = "$2" ]; then FILTER="$2"; shift 2; else shift; fi;;
     --education)      EDU=1; shift;;
-    --edu-lang)       EDULANG="$2"; shift 2;;
+    --edu-lang)       need_val $# "$1" "${2:-}" "a language (en, es or fr)"; EDULANG="$2"; shift 2;;
     --kolibri)        KOLIBRI=1; shift;;
     --extra-zims)     EXTRA_ZIMS=1; shift;;
     --translate)      TRANSLATE=1; shift;;
@@ -100,7 +103,8 @@ while [ $# -gt 0 ]; do
     --skip-models)    SKIP_MODELS=1; shift;;
     --no-aria)        NO_ARIA=1; shift;;
     --only)           ONLY_SET=1; shift; while [ $# -gt 0 ] && [ "${1#-}" = "$1" ]; do ONLY="$ONLY $1"; shift; done;;
-    *) shift;;
+    # A typo such as --skip-wikipeda must not be dropped and download what the user meant to skip.
+    *) echo "ERROR: unknown option '$1'. See the usage at the top of this script."; exit 1;;
   esac
 done
 # ---- --select: a fresh install from a selection file (#139) ----
@@ -201,7 +205,7 @@ HAVE_TAR=1;   command -v tar   >/dev/null 2>&1 || HAVE_TAR=0
 # ---- --list-regions (discovery, no download) ----
 if [ "$LISTREGIONS" = 1 ]; then
   idx="$(mktemp 2>/dev/null || echo /tmp/osmidx.xml)"
-  curl -sL "https://download.osmand.net/get_indexes" -o "$idx"
+  curl -fsSL --retry 3 "https://download.osmand.net/get_indexes" -o "$idx" || { echo "Could not fetch the OsmAnd region index."; rm -f "$idx"; exit 1; }
   names="$(grep -oE 'name="[^"]+\.obf\.zip"' "$idx" | sed -E 's/name="([^"]+)"/\1/' | grep -viE 'wiki|srtm|depth|road|hillshade|heightmap')"
   if [ -n "$FILTER" ]; then
     echo "Regions / sub-regions matching '$FILTER' (pass any of these to --region):"
@@ -318,6 +322,13 @@ if [ "$USE_ARIA" = 1 ]; then log "Downloader: aria2 (fast, multi-connection)"; e
 [ "$SELECT_SET" = 1 ] && log "Selection from $SELECT:$SEL_LIST (same as:$SAME)"
 if [ "$LITE" = 1 ] && [ "$SELECT_SET" = 0 ]; then log "Lite preset: 3B AI, medical/survival references and maps for '$REGION' (unless skipped). Size depends on region; use --region for a small area or --skip-maps. Re-run without --lite to add the full library."; fi
 UA="Mozilla/5.0"
+# Repo files fetched later (guides, map viewer, helpers) come from the commit main is on now,
+# not from a main that moved during a run of several hours (#193). Falls back to main.
+REPO_SHA="$(curl -fsS --retry 3 -H 'Accept: application/vnd.github.sha' -H 'User-Agent: oel' "https://api.github.com/repos/elhajahmadj/offline-emergency-library/commits/main" 2>/dev/null)"
+if printf '%s' "$REPO_SHA" | grep -qE '^[0-9a-f]{40}$'; then REPO_RAW="${REPO_RAW%/main}/$REPO_SHA"; log "Repo files: commit $REPO_SHA"
+else log "Repo files: main (could not look up its commit)"; fi
+# get_repo path out: one file of this repo; retries a network blip, fails on a 404 or 5xx (#193).
+get_repo(){ curl -fLsS --retry 3 --retry-all-errors -A "$UA" "$REPO_RAW/$1" -o "$2"; }
 
 # ---- platform detection ----
 OSN="$(uname -s)"; ARCHN="$(uname -m)"
@@ -347,7 +358,7 @@ if [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; then   # --only browser-maps need
   else
     mkdir -p "$MAP_LOOKUP"
   fi
-  curl -sL "https://download.osmand.net/get_indexes" -o "$MAP_LOOKUP/_index.xml"
+  curl -fsSL --retry 3 "https://download.osmand.net/get_indexes" -o "$MAP_LOOKUP/_index.xml" || : > "$MAP_LOOKUP/_index.xml"
   allnames="$(grep -oE 'name="[^"]+\.obf\.zip"' "$MAP_LOOKUP/_index.xml" | sed -E 's/name="([^"]+)"/\1/' | grep -viE 'wiki|srtm|depth|road|hillshade|heightmap')"
   : > "$MAP_LOOKUP/_filelist.txt"
   # '%s\n': without a final newline, read skips the last name (default "US" got 0 maps)
@@ -364,6 +375,12 @@ if [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; then   # --only browser-maps need
   # sum containerSize (bytes) of the picked files; one <region .../> per line in the index
   MAP_MB="$(sed -nE 's/.*containerSize="([0-9]+)".* name="([^"]+\.obf\.zip)".*/\2 \1/p' "$MAP_LOOKUP/_index.xml" |
     awk 'NR==FNR{w[$1]=1; next} ($1 in w){s+=$2} END{printf "%d", s/1048576}' "$MAP_LOOKUP/_filelist.txt" -)"
+  # Maps were asked for but none matched: stop now, not after hours of other downloads (#192).
+  if [ "$SKIP_MAPS" = 0 ] && ! grep -q . "$MAP_LOOKUP/_filelist.txt"; then
+    if [ -z "$allnames" ]; then log "ERROR: could not read the OsmAnd map index (download.osmand.net). Check the connection and re-run, or use --skip-maps."
+    else log "ERROR: no maps matched region '$REGION'. Run with --list-regions to see valid names, or use --skip-maps."; fi
+    log "  Nothing was downloaded."; exit 1
+  fi
   if [ "$BM_ONLY" = 1 ]; then
     rm -rf "$MAP_LOOKUP"
     trap - EXIT
@@ -408,7 +425,12 @@ if [ -n "$FREE_GB" ]; then
   if awk -v n="$NEED_GB" -v f="$FREE_GB" 'BEGIN{exit !(n>f)}'; then
     log "WARNING: NOT ENOUGH SPACE for the full selection. Budget about $NEED_GB GB, but only $FREE_GB GB is free."
     log "  Use a bigger drive, free up space, or choose less: --lite, --skip-wikipedia (49 GB), --skip-models (9 GB),"
-    log "  a smaller --region, --skip-maps, or leave off an opt-in. Press Ctrl+C now to stop and re-run."
+    log "  a smaller --region, --skip-maps, or leave off an opt-in."
+    # Wait for an answer when someone is at a terminal; with none (cron, CI), carry on as before (#192).
+    if ( : < /dev/tty ) 2>/dev/null; then
+      printf "Continue anyway? (y/N) "; ans=""; read -r ans < /dev/tty
+      case "$ans" in y|Y|yes|YES|Yes) log "  Continuing at the user's request." ;; *) log "Stopped: not enough space. Nothing was downloaded."; exit 1 ;; esac
+    fi
   fi
 fi
 
@@ -608,7 +630,7 @@ if [ "$MEDLINEPLUS" = 1 ]; then
     fi
     SD="$(cd "$(dirname "$0")" && pwd)"; tpl="$md/_MedlinePlus.html"
     if [ -f "$SD/medlineplus/MedlinePlus.html" ]; then cp "$SD/medlineplus/MedlinePlus.html" "$tpl"
-    else curl -fLsS -A "$UA" "$REPO_RAW/medlineplus/MedlinePlus.html" -o "$tpl" || { log "ERROR: download failed: medlineplus/MedlinePlus.html"; exit 1; }; fi
+    else get_repo medlineplus/MedlinePlus.html "$tpl" || { log "ERROR: download failed: medlineplus/MedlinePlus.html"; exit 1; }; fi
     mark='<script type="text/xml" id="data"></script>'
     grep -qF "$mark" "$tpl" || { log "ERROR: medlineplus/MedlinePlus.html has no data marker. Re-run the installer."; exit 1; }
     awk -v mark="$mark" -v xf="$md/$mx" '{ i = index($0, mark)
@@ -751,8 +773,9 @@ else log "=== [7/8] Wikipedia SKIPPED ==="; fi
 
 if [ "$SKIP_MAPS" = 0 ]; then
   log "=== [8/8] Offline maps (OsmAnd) - region: $REGION ==="
-  n=$(grep -c . "$ROOT/OsmAnd/_filelist.txt" 2>/dev/null || echo 0)
-  if [ "$n" = "0" ]; then
+  # grep -c prints 0 AND exits 1 on no match: '|| echo 0' made it "0 0" (#192)
+  n=$(grep -c . "$ROOT/OsmAnd/_filelist.txt" 2>/dev/null || true)
+  if [ "${n:-0}" = "0" ]; then
     log "osmand: no maps matched region '$REGION'. Run with --list-regions to see valid names. Skipping maps."
   else
   log "osmand: $n map files for '$REGION'"
@@ -902,7 +925,8 @@ if { [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; } && [ "$BROWSER_MAPS" = 1 ]; t
   # Windows line ends and the .sh Unix line ends, whatever the source had.
   SD="$(cd "$(dirname "$0")" && pwd)"
   for f in index.html OPEN-MAPS.sh OPEN-MAPS.bat; do
-    if [ -f "$SD/maps-viewer/$f" ]; then cp "$SD/maps-viewer/$f" "$MB/_$f"; else curl -sL -A "$UA" "$REPO_RAW/maps-viewer/$f" -o "$MB/_$f"; fi
+    if [ -f "$SD/maps-viewer/$f" ]; then cp "$SD/maps-viewer/$f" "$MB/_$f"
+    else get_repo "maps-viewer/$f" "$MB/_$f" || { rm -f "$MB/_$f"; log "ERROR: download failed: maps-viewer/$f. Re-run the installer."; exit 1; }; fi
   done
   mv -f "$MB/_index.html" "$MB/viewer/index.html"
   tr -d '\r' < "$MB/_OPEN-MAPS.sh" > "$MB/OPEN-MAPS.sh"; chmod +x "$MB/OPEN-MAPS.sh" 2>/dev/null
@@ -1137,7 +1161,7 @@ place_doc(){ # base  destpath
   for ext in md html; do
     if [ -f "$SCRIPTDIR/docs/$1.$ext" ]; then cp "$SCRIPTDIR/docs/$1.$ext" "$2.$ext"
     else
-      curl -fLsS -A "$UA" "$REPO_RAW/docs/$1.$ext" -o "$2.$ext" || {
+      get_repo "docs/$1.$ext" "$2.$ext" || {
         log "ERROR: documentation download failed: $1.$ext"; exit 1;
       }
     fi
@@ -1176,18 +1200,18 @@ if [ -z "$ONLY" ]; then
     setup="$ROOT/AI-Offline/install-doc-qa.sh"
     rm -f "$setup"
     # Not fetch: a failed helper download must not fail a library that otherwise installed.
-    curl -fLsS --retry 3 -A "$UA" "$REPO_RAW/doc-qa/install.sh" -o "$setup" 2>/dev/null || true
+    get_repo doc-qa/install.sh "$setup" 2>/dev/null || true
   fi
   if [ -s "$setup" ]; then
     . "$setup"
-    install_manual_qa "$ROOT" "$SCRIPTDIR" || DOC_QA_FAILED=1
+    install_manual_qa "$ROOT" "$SCRIPTDIR" "$REPO_RAW" || DOC_QA_FAILED=1
   else log "doc-QA ERROR: setup helper missing"; DOC_QA_FAILED=1; fi
 fi
 
 # CHECK-DRIVE scripts (#28), placed before the index so README.html lists them.
 for f in CHECK-DRIVE.sh check-drive.ps1 CHECK-DRIVE.bat; do
   if [ -f "$SCRIPTDIR/drive/$f" ]; then cp "$SCRIPTDIR/drive/$f" "$ROOT/$f"
-  else curl -fLsS -A "$UA" "$REPO_RAW/drive/$f" -o "$ROOT/$f" || { log "ERROR: download failed: drive/$f"; exit 1; }; fi
+  else get_repo "drive/$f" "$ROOT/$f" || { log "ERROR: download failed: drive/$f"; exit 1; }; fi
 done
 # A raw download is the LF git copy; cmd.exe wants CRLF (same as the launcher .bat files).
 tr -d '\r' < "$ROOT/CHECK-DRIVE.bat" | sed 's/$/\r/' > "$ROOT/CHECK-DRIVE.bat.tmp" && mv -f "$ROOT/CHECK-DRIVE.bat.tmp" "$ROOT/CHECK-DRIVE.bat"
@@ -1241,7 +1265,7 @@ hsz(){ du -h "$1" 2>/dev/null | cut -f1; }
     printf '%s' "<h2>&#128451; Data</h2><table><tr><th>Item</th><th>Folder</th><th>Size</th></tr>"
     find "$ROOT" -type f ! -name '._*' -name '*.bz2' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(basename "$f") <span class='muted'>(Wikipedia)</span></td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td></tr>"; done
     mc=$(find "$ROOT" -type f ! -name '._*' -name '*.obf.zip' | wc -l | tr -d ' ')
-    [ "$mc" -gt 0 ] && printf '%s' "<tr><td>Offline US maps - $mc files</td><td class='muted'>OsmAnd</td><td>$(du -ch "$ROOT"/OsmAnd/*.obf.zip 2>/dev/null | tail -1 | cut -f1)</td></tr>"
+    [ "$mc" -gt 0 ] && printf '%s' "<tr><td>Offline maps (OsmAnd) - $mc files</td><td class='muted'>OsmAnd</td><td>$(du -ch "$ROOT"/OsmAnd/*.obf.zip 2>/dev/null | tail -1 | cut -f1)</td></tr>"
     printf '%s' "</table>"
   fi
   printf '%s' "</div></body></html>"
@@ -1255,12 +1279,34 @@ log "=== Drive check list: CHECKSUMS-SHA256.txt ==="
 # Format (same on every OS): "<lowercase sha256>  ./path/with/forward/slashes", byte-sorted.
 # Skipped: the list itself, the log, the OsmAnd work files, unfinished downloads, OS clutter.
 if command -v sha256sum >/dev/null 2>&1; then SHA="sha256sum"; else SHA="shasum -a 256"; fi
-log "Hashing every file (one pass over the whole drive - this can take a while)..."
+# --only (#195): hash only what the pieces write (RH, paths as "./..."), plus any file the old
+# list lacks; keep every other line; files that are gone drop out. Not by modification time:
+# unzip and tar restore an archive's old times. Get-OfflineLibrary.ps1 builds the same RH.
+OLD_SUMS=""; RH='README\.html|CHECK-DRIVE\.(sh|command|bat)|check-drive\.ps1'
+if [ -n "${ONLY:-}" ] && [ -f "$ROOT/CHECKSUMS-SHA256.txt" ]; then
+  OLD_SUMS="$ROOT/CHECKSUMS-SHA256.txt"
+  for p in $ONLY; do case "$p" in
+    translate) RH="$RH|AI-Offline/[^/]+|AI-Offline/models/$TR_MODEL" ;;
+    medlineplus) RH="$RH|Medical/MedlinePlus/.*" ;;
+    extra-zims) RH="$RH|Extra-Archives/.*" ;;
+    browser-maps) RH="$RH|Maps-Browser/.*" ;;
+    education) RH="$RH|Education/KhanAcademy/.*" ;;
+    kolibri) RH="$RH|Education/Kolibri/.*|Phone-Apps/.*" ;;
+    wikipedia) RH="$RH|Wikipedia/.*" ;;
+  esac; done
+  log "Hashing only the files --only wrote ($ONLY); the other lines are kept..."
+else log "Hashing every file (one pass over the whole drive - this can take a while)..."; fi
+# ENVIRON, not -v: awk -v would turn the regex's \. into a plain dot.
 ( cd "$ROOT" && find . -type f \
     ! -name 'CHECKSUMS-SHA256.txt*' ! -name '_download.log' ! -name '_filelist.txt' ! -name '_index.xml' \
     ! -name '*.part' ! -name '*.aria2' ! -name '._*' ! -name '.DS_Store' \
     ! -path './.Spotlight-V100/*' ! -path './.fseventsd/*' ! -path './.Trashes/*' ! -path './System Volume Information/*' |
-  LC_ALL=C sort | while IFS= read -r f; do $SHA "$f" || echo "$f" >&2; done ) > "$ROOT/CHECKSUMS-SHA256.txt.new" 2> "$ROOT/CHECKSUMS-SHA256.txt.err"
+  LC_ALL=C sort | OLD="$OLD_SUMS" RE="^\\./($RH)\$" awk '
+    BEGIN { if (ENVIRON["OLD"] != "") while ((getline l < ENVIRON["OLD"]) > 0) k[substr(l, 67)] = l }
+    ($0 in k) && $0 !~ ENVIRON["RE"] { print "K" k[$0]; next } { print "H" $0 }' |
+  while IFS= read -r f; do
+    case "$f" in K*) printf '%s\n' "${f#K}" ;; *) $SHA "${f#H}" || echo "${f#H}" >&2 ;; esac
+  done ) > "$ROOT/CHECKSUMS-SHA256.txt.new" 2> "$ROOT/CHECKSUMS-SHA256.txt.err"
 if [ -s "$ROOT/CHECKSUMS-SHA256.txt.err" ]; then
   log "ERROR: could not read these files for the checksum list: $(tr '\n' ' ' < "$ROOT/CHECKSUMS-SHA256.txt.err")"; exit 1
 fi

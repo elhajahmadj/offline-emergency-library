@@ -70,7 +70,16 @@ read -r choice
 case "$choice" in
   p|P)
     pick_and_install; rc=$?
-    if [ "$rc" = 2 ]; then run_installer; rc=$?; fi
+    if [ "$rc" = 2 ]; then
+      # pick_and_install could not proceed (no picker page, or no selection file in Downloads).
+      # The user asked to pick, so do not silently start a full (large) install - ask first.
+      printf "Install everything instead? [y/N] "
+      read -r ans
+      case "$ans" in
+        y|Y|yes|YES) run_installer; rc=$? ;;
+        *) echo "Cancelled. Nothing was downloaded."; rc=3 ;;
+      esac
+    fi
     ;;
   *)
     run_installer; rc=$?
@@ -79,7 +88,7 @@ esac
 
 echo ""
 if [ "${rc:-1}" = 0 ]; then
-  echo "Done. Open START-HERE.html in the folder you chose."
+  echo "Done. Open START-HERE.html in the OfflineLibrary folder inside the folder you chose."
 elif [ "${rc:-1}" = 3 ]; then
   : # user cancelled at the confirm step; no error
 else

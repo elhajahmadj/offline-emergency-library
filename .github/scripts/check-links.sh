@@ -47,6 +47,29 @@ urls=(
   "https://archive.org/metadata/productiveveget00lloy"
   "https://archive.org/metadata/productivepoult02lewigoog"
   "https://archive.org/metadata/cu31924003227729"
+  "https://archive.org/download/productiveveget00lloy/productiveveget00lloy.pdf"
+  "https://archive.org/download/cu31924003227729/cu31924003227729.pdf"
+  "https://archive.org/metadata/105-page-survival-field-manual"
+  "https://archive.org/metadata/Survival-FirstAidForSoldiers-AFieldManual"
+  "https://archive.org/metadata/UsArmyFirstAidManualFm4-25.11"
+  "https://archive.org/metadata/fm-3-05.70-survival-2002"
+  "https://archive.org/metadata/fm-5-426-carpentry-1995"
+  "https://archive.org/metadata/fm-90-3-desert-operations-1993"
+  "https://archive.org/metadata/tm-10-412-armed-forces-recipe-service-2003"
+  "https://archive.org/metadata/tm-9-8000-principles-of-automotive-vehicles-1985"
+  "https://archive.org/metadata/u-s-army-guide-to-rigging"
+  "https://archive.org/metadata/use-and-care-of-hand-tools-and-measuring-tools-1983"
+  "https://archive.org/metadata/where-there-is-no-doctor"
+  "https://archive.org/metadata/where-there-is-no-dentist-web-full-book"
+  "https://nchfp.uga.edu/papers/guide/INTRO_HomeCanrev0715.pdf"
+  "https://nchfp.uga.edu/papers/guide/GUIDE01_HomeCan_rev0715.pdf"
+  "https://nchfp.uga.edu/papers/guide/GUIDE02_HomeCan_rev0715.pdf"
+  "https://nchfp.uga.edu/papers/guide/GUIDE03_HomeCan_rev0715.pdf"
+  "https://nchfp.uga.edu/papers/guide/GUIDE04_HomeCan_rev0715.pdf"
+  "https://nchfp.uga.edu/papers/guide/GUIDE05_HomeCan_rev0715.pdf"
+  "https://nchfp.uga.edu/papers/guide/GUIDE06_HomeCan_rev0715.pdf"
+  "https://nchfp.uga.edu/papers/guide/GUIDE07_HomeCan_rev0715.pdf"
+  "https://www.usuhs.edu/sites/default/files/2025-09/Layperson%27s_Guide_to_Prolonged_Casualty_Care_090825_ACC.pdf"
   "https://www.gutenberg.org/cache/epub/26923/pg26923-images.html"
   "https://www.epa.gov/sites/default/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf"
   "https://iris.who.int/server/api/core/bitstreams/3bda1306-da5d-487d-b2ad-aff995112a7a/content"
@@ -68,7 +91,8 @@ gh_auth=()
 check() { # url
   local code auth=()
   case "$1" in https://api.github.com/*) auth=("${gh_auth[@]}");; esac
-  code=$(curl -s -L -o /dev/null -w '%{http_code}' --max-time 45 "${retry[@]}" "${auth[@]}" -A "oel-ci" "$1")
+  # -r 0-0: ask for one byte, so a PDF or Java build is not downloaded in full (206 counts as OK).
+  code=$(curl -s -L -r 0-0 -o /dev/null -w '%{http_code}' --max-time 45 "${retry[@]}" "${auth[@]}" -A "oel-ci" "$1")
   if [ "$code" -ge 200 ] && [ "$code" -lt 400 ]; then
     echo "  OK  ($code)  $1"
   else
@@ -92,9 +116,22 @@ gh_has_asset() { # repo  releases-path  regex  label
     echo "  FAIL $4 (no asset matching /$3/)"; fail=1
   fi
 }
-gh_has_asset "ggml-org/llama.cpp"   "releases?per_page=20" "bin-win-cpu-x64\\.zip"        "llama.cpp Windows CPU build"
-gh_has_asset "ggml-org/llama.cpp"   "releases?per_page=20" "bin-ubuntu-x64\\.tar\\.gz"    "llama.cpp Linux build"
-gh_has_asset "ggml-org/llama.cpp"   "releases?per_page=20" "bin-macos-arm64\\.tar\\.gz"   "llama.cpp macOS build"
+# The installer needs ONE recent llama.cpp release that has every archive in its LLAMA_ASSETS
+# (it skips the engine otherwise), so check that same rule, not each file on its own.
+llama_has_build() {
+  local assets rels urls t x ok
+  assets="$(sed -nE 's/^LLAMA_ASSETS="([^"]+)"/\1/p' "$(dirname "$0")/../../get-offline-library.sh")"
+  [ -n "$assets" ] || { echo "  FAIL llama.cpp: LLAMA_ASSETS not found in get-offline-library.sh"; fail=1; return; }
+  rels=$(curl -s "${gh_hdr[@]}" --max-time 45 "${retry[@]}" "https://api.github.com/repos/ggml-org/llama.cpp/releases?per_page=20")
+  urls=$(printf '%s' "$rels" | grep -oE '"browser_download_url": *"[^"]+"' | sed -E 's/.*"(https[^"]+)"$/\1/')
+  for t in $(printf '%s' "$rels" | grep -oE '"tag_name": *"[^"]+"' | sed -E 's/.*"([^"]+)"$/\1/'); do
+    ok=1
+    for x in $assets; do printf '%s\n' "$urls" | grep -q "/download/$t/llama-$t-bin-${x%%:*}\$" || { ok=0; break; }; done
+    [ "$ok" = 1 ] && { echo "  OK   llama.cpp $t has every platform build the installer needs"; return; }
+  done
+  echo "  FAIL llama.cpp: no recent release has every platform build in LLAMA_ASSETS ($assets)"; fail=1
+}
+llama_has_build
 gh_has_asset "nomic-ai/gpt4all"     "releases/latest"      "installer-win64-v.*\\.exe"    "GPT4All Windows installer"
 gh_has_asset "kiwix/kiwix-android"  "releases/latest"      "universal-standalone\\.apk"   "Kiwix Android APK"
 gh_has_asset "caddyserver/caddy"    "releases/latest"      "_mac_arm64\\.tar\\.gz"       "Caddy web server (browser maps)"

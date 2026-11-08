@@ -44,7 +44,7 @@ When this skill is invoked, your job is simple:
 4. When it finishes, tell the user to open **`START-HERE.html`** in the destination.
 
 ## Notes for the assistant
-- The full library is **~60 GB** and can take hours depending on the connection. It is
+- The full library is **~85 GB** and can take hours depending on the connection. It is
   **resumable** — if interrupted, just run the same command again.
 - The script auto-resolves the **latest** versions (llama.cpp engine, Kiwix reader,
   GPT4All, and the ZIM archives) so it keeps working over time.

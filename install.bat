@@ -36,11 +36,10 @@ if errorlevel 1 goto :failed
 goto :done
 
 :picker
-if not exist "%~dp0web\index.html" (
-  echo The picker page ^(web\index.html^) is not in this folder. Installing everything instead.
-  echo.
-  goto :full
-)
+if exist "%~dp0web\index.html" goto :haspage
+echo The picker page ^(web\index.html^) is not in this folder.
+goto :askfull
+:haspage
 echo Opening the picker page in your browser...
 start "" "%~dp0web\index.html"
 echo.
@@ -53,11 +52,12 @@ set "SEL="
 for /f "delims=" %%F in ('dir /b /a-d /o-d "%USERPROFILE%\Downloads\selection*.json" 2^>nul') do (
   if not defined SEL set "SEL=%USERPROFILE%\Downloads\%%F"
 )
-if not defined SEL (
-  echo No selection*.json found in %USERPROFILE%\Downloads. Installing everything instead.
-  echo.
-  goto :full
-)
+if defined SEL goto :hassel
+rem Kept out of a parenthesised block on purpose: a profile path containing ')'
+rem (e.g. C:\Users\Jo (work)) would otherwise break the block.
+echo No selection*.json found in %USERPROFILE%\Downloads.
+goto :askfull
+:hassel
 echo.
 echo Using: %SEL%
 echo ----------------------------------------------------------------
@@ -83,9 +83,20 @@ goto :done
 
 :done
 echo.
-echo Done. Open START-HERE.html in the folder you chose.
+echo Done. Open START-HERE.html in the OfflineLibrary folder inside the folder you chose.
 pause
 exit /b 0
+
+:askfull
+rem A pick could not proceed (no page, or no selection file). The user chose Pick,
+rem so confirm before starting a full (large) install instead of doing it silently.
+echo.
+set "ans="
+set /p "ans=Install everything instead? [y/N]: "
+if /i "%ans%"=="y" goto :full
+if /i "%ans%"=="yes" goto :full
+echo Cancelled. Nothing was downloaded.
+goto :cancelled
 
 :cancelled
 echo.

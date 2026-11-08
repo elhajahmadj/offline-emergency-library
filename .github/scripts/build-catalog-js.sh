@@ -28,10 +28,10 @@ mkdir -p web
 if [ "${1:-}" = "--check" ]; then
   tmp="$(mktemp)"; trap 'rm -f "$tmp"' EXIT
   build > "$tmp"
-  if ! diff -q "$tmp" "$OUT" >/dev/null 2>&1; then
+  if ! diff -q <(tr -d '\015' < "$tmp") <(tr -d '\015' < "$OUT") >/dev/null 2>&1; then
     echo "FAIL: $OUT is out of date with $SRC."
     echo "Run: bash .github/scripts/build-catalog-js.sh  (then commit $OUT)"
-    diff -u "$OUT" "$tmp" 2>/dev/null | head -40
+    diff -u <(tr -d '\015' < "$OUT") <(tr -d '\015' < "$tmp") 2>/dev/null | head -40
     exit 1
   fi
   echo "OK: $OUT matches $SRC."

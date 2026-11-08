@@ -1,0 +1,32 @@
+name: Test request or report
+description: Ask for something to be tested on real hardware, or report what you tested
+title: "[Test]: "
+labels: ["testing"]
+body:
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      multiple: true
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Commit or release tested (or to test)
+      placeholder: e.g. main at 507408d, or v1.4.0
+  - type: textarea
+    id: what
+    attributes:
+      label: What to test, or what you ran and what happened
+      description: Include the command, flags and region, and the relevant `_download.log` lines.
+    validations:
+      required: true
+  - type: textarea
+    id: untested
+    attributes:
+      label: What was not tested
