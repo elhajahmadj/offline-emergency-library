@@ -116,7 +116,7 @@ a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:
 .person p{margin:0;color:var(--ink)}
 footer{margin-top:30px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}</style>
 </head><body><div class="wrap">
-<div class="topbar"><h1>About Sine Nexu</h1><nav class="topnav"><a href="landing.html">Home</a><a href="index.html">Picker</a></nav></div>
+<div class="topbar"><h1>About Sine Nexu</h1><nav class="topnav"><a href="landing.html">Home</a><a href="index.html">Picker</a><a href="sources.html">Sources</a></nav></div>
 <p class="lead">Sine Nexu is a free, offline emergency library — survival, medical, repair, food and reference knowledge, plus an offline AI, on a drive that works with <strong>no internet and no power grid</strong> behind it.</p>
 
 <h2 class="sec">Our mission</h2>
