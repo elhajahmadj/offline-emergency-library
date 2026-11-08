@@ -35,7 +35,7 @@ button.btn.ghost:hover{border-color:var(--accent)}
 .summary li{margin:2px 0}.summary .muted{color:var(--muted)}
 .total{font-size:20px;margin:8px 0}.total b{color:var(--accent2)}
 textarea{width:100%;height:120px;background:var(--code);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:10px;font-family:Consolas,monospace;font-size:13px;margin-top:8px}
-.note{color:var(--muted);font-size:13px}.pill{display:inline-block;background:rgba(127,127,127,.15);border-radius:20px;padding:1px 9px;font-size:12px;color:var(--muted);margin-left:6px}
+.note{color:var(--muted);font-size:13px}.runbox{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.pill{display:inline-block;background:rgba(127,127,127,.15);border-radius:20px;padding:1px 9px;font-size:12px;color:var(--muted);margin-left:6px}
 footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:14px}
 .err{background:rgba(255,90,95,.12);border:1px solid var(--bad);border-radius:10px;padding:14px;margin:16px 0}
 </style>
@@ -332,6 +332,26 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
     b.appendChild(exportTools);
     b.appendChild(handoff);
     b.appendChild(el("p","note","If the installer opened this page, just go back to its window when you have saved — it takes over automatically. If you opened this page yourself, run the launcher (<code>install.bat</code> / <code>install.command</code> / <code>install.sh</code>) and choose the picker option. By hand: <code>--select selection.json</code> / <code>-Selection selection.json</code>."));
+    // --- Option C: a ready-to-run installer for this exact selection ---
+    var runbox = el("div","runbox");
+    runbox.appendChild(el("p","note","<strong>Prefer one file to run?</strong> Download a ready-to-run installer for your selection — it fetches only what you picked and starts, no picker and no JSON to hand-feed."));
+    var osRow = el("div","tools");
+    var osList = [["win","Windows (.bat)","install-my-kit.bat","text/plain"],
+                  ["mac","macOS (.command)","install-my-kit.command","text/x-shellscript"],
+                  ["linux","Linux (.sh)","install-my-kit.sh","text/x-shellscript"]];
+    var mine = guessOS();
+    osList.sort(function(a,bb){ return (bb[0]===mine) - (a[0]===mine); });
+    var runHint = el("p","note"); runHint.style.display="none"; runHint.style.marginTop="8px";
+    osList.forEach(function(o,i){
+      var btn = el("button", (o[0]===mine && i===0) ? "btn" : "btn ghost", (o[0]===mine?"⤓ ":"") + o[1]);
+      btn.disabled = probs.length>0;
+      btn.title = probs.length ? "Fix the warnings above first" : "";
+      btn.onclick = function(){ downloadText(installerScript(o[0], json), o[2], o[3]); runHint.innerHTML = runInstructions(o[0], o[2]); runHint.style.display=""; };
+      osRow.appendChild(btn);
+    });
+    runbox.appendChild(osRow);
+    runbox.appendChild(runHint);
+    b.appendChild(runbox);
     var ta = el("textarea"); ta.readOnly=true; ta.value=json;
     b.appendChild(ta);
 
@@ -346,6 +366,68 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
     a.download = "selection.json";
     document.body.appendChild(a); a.click();
     setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+
+  function downloadText(text, filename, mime){
+    var blob = new Blob([text], {type: mime||"text/plain"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+
+  function guessOS(){
+    var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "";
+    var ua = navigator.userAgent || "";
+    if (/win/i.test(p) || /windows/i.test(ua)) return "win";
+    if (/mac/i.test(p) || /mac os x/i.test(ua) || /iphone|ipad/i.test(ua)) return "mac";
+    return "linux";
+  }
+
+  function runInstructions(os, fname){
+    if (os === "win") return "Saved <code>"+fname+"</code> to your <strong>Downloads</strong>. <strong>Double-click it.</strong> If Windows shows a security prompt, choose <strong>Run</strong> (or More info → Run anyway). It downloads only your selection and asks where to save.";
+    if (os === "mac") return "Saved <code>"+fname+"</code> to your <strong>Downloads</strong>. macOS will not run a downloaded script by double-click, so open <strong>Terminal</strong> and run:<br><code>bash ~/Downloads/"+fname+"</code>";
+    return "Saved <code>"+fname+"</code> to your <strong>Downloads</strong>. Open a <strong>terminal</strong> and run:<br><code>bash ~/Downloads/"+fname+"</code>";
+  }
+
+  var RAW_BASE = "https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main";
+  function installerScript(os, json){
+    if (os === "win"){
+      var b64 = btoa(unescape(encodeURIComponent(json)));
+      return [
+        "@echo off",
+        "title Offline Emergency Library - install my kit",
+        "setlocal",
+        "echo Installing your selected Offline Emergency Library kit...",
+        "echo.",
+        "set \"SEL=%TEMP%\\oel-selection.json\"",
+        "set \"B64F=%TEMP%\\oel-selection.b64\"",
+        ">\"%B64F%\" echo " + b64,
+        "certutil -f -decode \"%B64F%\" \"%SEL%\" >nul 2>&1",
+        "if errorlevel 1 ( echo Could not prepare your selection. & pause & exit /b 1 )",
+        "set \"PS1=%TEMP%\\Get-OfflineLibrary.ps1\"",
+        "curl.exe -fLsS -o \"%PS1%\" \"" + RAW_BASE + "/Get-OfflineLibrary.ps1\"",
+        "if errorlevel 1 ( echo Could not download the installer engine. Check your internet. & pause & exit /b 1 )",
+        "powershell -NoProfile -ExecutionPolicy Bypass -File \"%PS1%\" -Selection \"%SEL%\"",
+        "pause"
+      ].join("\r\n") + "\r\n";
+    }
+    var eng = "get-offline-library.sh";
+    return [
+      "#!/usr/bin/env bash",
+      "# Ready-to-run installer for your selected Offline Emergency Library kit.",
+      "# If double-click does not work, run:  bash \"$0\"",
+      "set -e",
+      "echo \"Installing your selected Offline Emergency Library kit...\"",
+      "SEL=\"$(mktemp)\"",
+      "cat > \"$SEL\" <<'OEL_SELECTION_EOF'",
+      json,
+      "OEL_SELECTION_EOF",
+      "TMP=\"$(mktemp -d)\"",
+      "curl -fLsS -o \"$TMP/" + eng + "\" \"" + RAW_BASE + "/" + eng + "\" || { echo \"Could not download the installer engine. Check your internet.\"; exit 1; }",
+      "bash \"$TMP/" + eng + "\" --select \"$SEL\""
+    ].join("\n") + "\n";
   }
 
   // online note (handoff only works locally; full browse-only site is #191)
