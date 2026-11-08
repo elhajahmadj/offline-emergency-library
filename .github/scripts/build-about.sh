@@ -36,7 +36,17 @@ render() {
     # pull the "## People" section (up to the next "## " or end)
     my ($people) = $md =~ /^##\s+People\s*\n(.*?)(?=^##\s|\z)/ms;
     die "could not find a \"## People\" section in CONTRIBUTORS.md\n" unless defined $people;
-    $people =~ s/\n[ \t]*\n.*//s;   # stop at the first blank line (drops the trailing "Want to help?" paragraph)
+    # Split at the first blank line: the list is the contiguous bullet block right after the
+    # heading; everything after the blank line is the trailing "Want to help?" prose. A blank
+    # line *inside* the list would otherwise silently drop every contributor after it, so if the
+    # tail still contains top-level bullets, that is a split list and we fail loudly.
+    my ($list, $tail) = split /\n[ \t]*\n/, $people, 2;
+    $tail = "" unless defined $tail;
+    my $tail_bullets = () = $tail =~ /^-\s+/mg;
+    die sprintf("a blank line splits the \"## People\" list: %d contributor bullet(s) after it ".
+                "would be dropped; remove the blank line\n", $tail_bullets) if $tail_bullets > 0;
+    $people = $list;
+    my $bullets = () = $people =~ /^-\s+/mg;   # count every top-level bullet (one per contributor)
 
     # each person is a top-level "- " bullet; continuation lines are indented
     my @items;
@@ -57,6 +67,12 @@ render() {
       push @items, { handle => $handle, url => $url, name => $name, desc => $rest };
     }
     die "no contributors parsed from the People section\n" unless @items;
+    # every bullet must parse into exactly one person; otherwise someone was silently dropped
+    # (e.g. a handle without the **bold** link form, or a stray blank line splitting the list).
+    die sprintf("parsed %d contributor(s) but found %d bullet(s) under \"## People\"; ".
+                "every person must be a top-level \"- **[\@handle](url)**\" bullet with no blank ".
+                "lines inside the list\n", scalar(@items), $bullets)
+      unless scalar(@items) == $bullets;
 
     for my $p (@items) {
       my $h    = esc($p->{handle});
@@ -103,14 +119,18 @@ mkdir -p web
 if [ "${1:-}" = "--check" ]; then
   tmp="$(mktemp)"; trap 'rm -f "$tmp"' EXIT
   build > "$tmp" || { echo "FAIL: could not generate about page from $SRC"; exit 1; }
-  if ! diff -q "$tmp" "$OUT" >/dev/null 2>&1; then
+  if ! diff -q <(tr -d '\015' < "$tmp") <(tr -d '\015' < "$OUT") >/dev/null 2>&1; then
     echo "FAIL: $OUT is out of date with $SRC."
     echo "Run: bash .github/scripts/build-about.sh  (then commit $OUT)"
-    diff -u "$OUT" "$tmp" 2>/dev/null | head -40
+    diff -u <(tr -d '\015' < "$OUT") <(tr -d '\015' < "$tmp") 2>/dev/null | head -40
     exit 1
   fi
   echo "OK: $OUT matches $SRC ($(grep -c '<article class="person">' "$OUT") contributors)."
 else
-  build > "$OUT" || { echo "FAIL: could not generate $OUT"; exit 1; }
+  # Build into a temp first so a failure (e.g. a malformed CONTRIBUTORS.md) cannot leave a
+  # truncated/empty $OUT behind; only replace it once generation succeeds.
+  tmp="$(mktemp)"; trap 'rm -f "$tmp"' EXIT
+  build > "$tmp" || { echo "FAIL: could not generate $OUT"; exit 1; }
+  mv "$tmp" "$OUT"
   echo "Wrote $OUT ($(grep -c '<article class="person">' "$OUT") contributors)."
 fi

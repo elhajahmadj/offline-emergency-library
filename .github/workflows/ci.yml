@@ -17,8 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Bash syntax check
-        run: bash -n get-offline-library.sh
+      - name: Bash syntax check (every .sh and .command)
+        run: git ls-files '*.sh' '*.command' | while read -r f; do bash -n "$f" || exit 1; done
+      - name: Manual downloads, link checks and guides agree (both installers)
+        run: bash .github/scripts/check-consistency.sh
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -36,13 +38,15 @@ jobs:
         run: bash .github/scripts/check-catalog.sh
       - name: About page is up to date with CONTRIBUTORS (#189)
         run: bash .github/scripts/build-about.sh --check
+      - name: Checksum list parity, full run and --only (#195)
+        run: bash .github/scripts/check-checksums.sh
       - name: MedlinePlus page CSP hash (inline script allowed by hash)
         run: bash .github/scripts/check-csp-hash.sh
       - name: PowerShell parse + analyze
         shell: pwsh
         run: |
           $err = $null
-          foreach ($f in 'Get-OfflineLibrary.ps1','build-readme-index.ps1') {
+          foreach ($f in (git ls-files '*.ps1')) {
             [void][System.Management.Automation.Language.Parser]::ParseFile("$PWD/$f", [ref]$null, [ref]$err)
             if ($err) { $err | ForEach-Object { Write-Error $_.Message }; exit 1 }
             Write-Host "parse OK: $f"

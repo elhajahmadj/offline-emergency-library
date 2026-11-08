@@ -22,7 +22,7 @@ if exist "%~dp0Get-OfflineLibrary.ps1" (
 )
 if errorlevel 1 goto :failed
 echo.
-echo Done. Open START-HERE.html in the folder you chose.
+echo Done. Open START-HERE.html in the OfflineLibrary folder inside the folder you chose.
 pause
 exit /b 0
 
