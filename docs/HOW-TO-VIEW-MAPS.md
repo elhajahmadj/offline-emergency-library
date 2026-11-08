@@ -2,21 +2,53 @@
 
 The `OsmAnd\` folder contains offline maps (`.obf.zip` files) for the **region you chose at
 download time** (the default is the **United States**). You can use them **on a computer
-(no phone needed)** or **on a phone/tablet**. Browser maps and the phone app work with **no
-internet**; the OsmAndMapCreator viewer (Option 1) needs internet on Windows and macOS.
-Dependencies for each are bundled or explained below.
+(no phone needed)** or **on a phone/tablet**. The OffRoad desktop viewer, browser maps and
+the phone app work with **no internet**; the older OsmAndMapCreator viewer (Option 1) needs
+internet on Windows and macOS. Dependencies for each are bundled or explained below.
 
 ---
 
-## Street maps in a web browser — ✅ recommended on a computer (opt-in: `-BrowserMaps` / `--browser-maps`)
+## OffRoad desktop viewer - recommended on a computer (any region, no internet)
+
+The `OsmAnd\MapViewer-Desktop\` folder includes **OffRoad**, a desktop viewer that reads the same
+OsmAnd `.obf` maps as the phone app. It renders them locally, so it works with **no internet**
+on Windows, macOS and Linux, for **US and non-US regions**.
+
+1. Open `OsmAnd\MapViewer-Desktop\`.
+2. **Windows:** double-click **`VIEW-MAPS-OFFLINE.bat`**.
+   **macOS / Linux:** run **`./VIEW-MAPS-OFFLINE.sh`** from a terminal in that folder.
+   - The **first run** unzips the map files into `OsmAnd\obf\` (this can take several minutes
+     and uses extra space - see the space note below).
+   - Later runs skip straight to the viewer.
+3. OffRoad opens with your region's maps. Pan and zoom with the mouse. Use **Search** for a
+   town or street; the search and rendering use the local map files.
+
+**Dependencies: fully handled.** The folder includes a **portable Java runtime** (`jre\`),
+OffRoad (`offroad\`), and a small world basemap. Nothing else is needed on a 64-bit PC.
+The launcher sets up a private OffRoad folder and links it to `OsmAnd\obf\`, so the maps are
+not copied a second time.
+
+**Tested:** Windows 11 x64 with a current Andorra OBF file, Java 21, outbound HTTP blocked and
+no network connections from the viewer; streets, buildings, parks and place names rendered.
+The same Java package is bundled for macOS and Linux, but those two systems were **not
+runtime-tested** for this change. OffRoad is beta software (0.6-beta2) and its project has not
+released since 2021; it is [GPL-3.0](https://sourceforge.net/p/offroadosm/code/ci/master/tree/LICENSE).
+If it will not start, use `VIEW-MAPS-ON-PC` on Linux or the browser maps below.
+
+> **Space note:** the maps download as compressed `.obf.zip` (~17 GB). Desktop viewing
+> needs them **unzipped** to `.obf` (~30 GB), so the first run roughly doubles the map
+> space. Make sure the drive has ~30 GB free before using desktop maps. (If space is
+> tight, you can delete `OsmAnd\obf\` afterward; re-running the launcher recreates it.)
+
+---
+
+## Street maps in a web browser - optional US street detail
 
 Add `-BrowserMaps` (Windows) or `--browser-maps` (macOS/Linux) when you run the installer to also get
 **street maps that open in any web browser**, on Windows, macOS or Linux. No app and no Java are needed.
 
-**This is the recommended way to view maps on a computer, especially on Windows** — it renders
-reliably in the browser, with no internet. The OsmAndMapCreator desktop viewer below cannot draw the
-drive's maps on Windows or macOS ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)).
-Browser maps cover the **US** only; for other countries, use an Android phone (Option 2).
+Use this when you want extra street detail for the **US**. For any other country, use the OffRoad
+viewer above; it reads the region maps already on the drive.
 
 1. Open the `Maps-Browser\` folder.
 2. **Windows:** double-click `OPEN-MAPS.bat`. **macOS / Linux:** run `bash OPEN-MAPS.sh` in a terminal.
@@ -25,7 +57,7 @@ Browser maps cover the **US** only; for other countries, use an Android phone (O
 
 - **US only.** These are the US state maps made by Project NOMAD (Protomaps). With `US` (the default) you get
   all 50 states (~16.5 GB). With `-Region US_texas` you get only Texas. Every drive also gets a low-detail
-  world map (~0.2 GB). For other countries, use the OsmAnd maps below.
+  world map (~0.2 GB). For other countries, use OffRoad with the OsmAnd maps below.
 - **Space:** browser maps come **on top of** the OsmAnd maps, which are always downloaded with them
   (~17.8 GB for the US). A full US drive with `-BrowserMaps` needs about **34 GB for maps**.
 - They show streets, towns, parks and water. They cannot plan a route; use OsmAnd for directions.
@@ -79,14 +111,14 @@ Notes:
 
 ---
 
-## Option 1 — On a computer with the OsmAndMapCreator viewer
+## Option 1 - Legacy OsmAndMapCreator viewer
 
 **On Windows and macOS this viewer needs internet:** it shows online map tiles from
 `tile.osmand.net`, not the maps on the drive. With no internet the map area stays **blank**
 ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)). For offline use on a
-computer, use the **browser maps** above (US) or an **Android phone** (Option 2; any region).
-On **Linux x64** the bundled build has the offline renderer, so it may work offline, but that is
-untested. Everything you need to launch it is bundled — **no separate install, no Java to set up.**
+computer, use **OffRoad** above instead. On **Linux x64** the bundled build has the offline
+renderer, so it may work offline, but that is untested. Everything you need to launch it is
+bundled - **no separate install, no Java to set up.**
 
 1. Open `OsmAnd\MapViewer-Desktop\`.
 2. **Windows:** double-click **`VIEW-MAPS-ON-PC.bat`**.
@@ -105,9 +137,8 @@ and the **OsmAndMapCreator** app (`app\`). Nothing else is required to launch it
 > maps on the drive. The offline renderer it needs (`osmand-win-amd64.lib` on Windows,
 > `osmand-mac-universal.lib` on macOS) is not in the bundled build, which only has the Linux one.
 > With internet the map draws; with **no internet it is blank**. This was reproduced on Windows 11
-> and macOS. **Offline on a computer, use the browser maps at the top of this guide** (US maps;
-> re-run the installer with `-BrowserMaps` to add them). For non-US regions, use the maps on an
-> **Android phone/tablet** (Option 2 below), which is fully tested.
+> and macOS. **Offline on a computer, use OffRoad at the top of this guide** for any region, or
+> the **Android phone/tablet** map (Option 2 below).
 
 > **Space note:** the maps download as compressed `.obf.zip` (~17 GB). Desktop viewing
 > needs them **unzipped** to `.obf` (~30 GB), so the first run roughly doubles the map
@@ -151,8 +182,9 @@ This is an Apple platform limitation — there's no offline sideloading like And
 
 | You have… | Use | Dependency status |
 |---|---|---|
-| A Windows PC (US maps) | **Browser maps** (recommended) | ✅ renders reliably; opt-in `-BrowserMaps` (US only) |
-| A computer, non-US maps | **Option 2** (Android phone/tablet) | ✅ bundled APK. The Option 1 desktop viewer is blank offline on Windows and macOS ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)); Linux untested |
+| A Windows PC, any region | **OffRoad** (`VIEW-MAPS-OFFLINE`) | ✅ bundled, offline, runtime-tested on Windows 11 |
+| A Windows PC, extra US street detail | **Browser maps** (optional) | ✅ renders reliably; opt-in `-BrowserMaps` (US only) |
+| A macOS or Linux computer | **OffRoad** (`VIEW-MAPS-OFFLINE`) | ✅ bundled; not runtime-tested in this change |
 | An Android phone/tablet | **Option 2** (bundled APK) | ✅ bundled APK |
 | An iPhone/iPad | **Option 3** (App Store) | ⚠️ install the app while online |
 
@@ -162,8 +194,10 @@ This is an Apple platform limitation — there's no offline sideloading like And
 
 - The maps are standard **OsmAnd `.obf`** vector maps — detailed roads, towns, terrain,
   and search; routing works in the phone app.
-- The desktop viewer (OsmAndMapCreator) is utilitarian. It works for finding places, roads,
-  and coordinates with internet on Windows and macOS; offline on those, use browser maps or a phone.
+- OffRoad is the offline desktop viewer. It is beta software and its last release was in 2021;
+  the bundled Java runtime and world basemap are pinned so the download stays reproducible.
+- The legacy OsmAndMapCreator viewer works for finding places, roads and coordinates with
+  internet on Windows and macOS; offline on those, use OffRoad or a phone.
 - Keep a **paper topographic map and compass** as an ultimate backup - electronics fail.
   Print [Map and compass - navigation without a device](MAP-AND-COMPASS.html)
   and practice reading terrain, following bearings and finding direction without power.

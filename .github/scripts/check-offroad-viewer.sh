@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Offline regression for the cross-platform OffRoad viewer (#107): the generated launcher
+# must prepare and link the existing OBF folder, and start the bundled viewer with the
+# Java 21 compatibility flag. A fake java records the arguments, so no GUI or network is used.
+set -eu
+cd "$(git rev-parse --show-toplevel)" || exit 1
+tmp="$(mktemp -d)" || exit 1
+trap 'rm -rf "$tmp"' EXIT
+fail=0
+ok(){ printf 'PASS: %s\n' "$*"; }
+bad(){ printf 'FAIL: %s\n' "$*"; fail=1; }
+
+extract(){
+  awk -v marker="$1" 'index($0,marker){go=1;next} go && $0=="EOS"{exit} go'
+}
+
+viewer="$tmp/Maps with spaces/MapViewer-Desktop"
+maps="$tmp/Maps with spaces"
+mkdir -p "$viewer/offroad" "$viewer/jre/bin" "$maps/obf"
+extract 'cat > "$MVD/prepare-maps.sh"' < get-offline-library.sh > "$viewer/prepare-maps.sh"
+extract 'cat > "$MVD/VIEW-MAPS-OFFLINE.sh"' < get-offline-library.sh > "$viewer/VIEW-MAPS-OFFLINE.sh"
+printf '' > "$viewer/offroad/OffRoad.jar"
+cat > "$viewer/jre/bin/java" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$@" > "$CAPTURE"
+EOF
+chmod +x "$viewer/prepare-maps.sh" "$viewer/VIEW-MAPS-OFFLINE.sh" "$viewer/jre/bin/java"
+
+if CAPTURE="$tmp/args" bash "$viewer/VIEW-MAPS-OFFLINE.sh" > "$tmp/launch.log" 2>&1; then
+  ok "launcher exits successfully in a path with spaces"
+else
+  bad "launcher failed: $(tail -n 3 "$tmp/launch.log" | tr '\n' ' ')"
+fi
+
+[ -s "$tmp/args" ] && ok "fake Java was started" || bad "Java was not started"
+[ -f "$viewer/offroad-home/.OffRoad/offroad.properties" ] && ok "first-run settings file exists" || bad "first-run settings file is missing"
+grep -Fxq -- "-Duser.home=$viewer/offroad-home" "$tmp/args" && ok "OffRoad state is isolated under the viewer folder" || bad "user.home was not isolated"
+grep -Fxq -- '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true' "$tmp/args" && ok "Java 21 compatibility flag is present" || bad "Java 21 compatibility flag is missing"
+grep -Fxq -- "$viewer/offroad/OffRoad.jar" "$tmp/args" && ok "the bundled OffRoad jar is launched" || bad "the OffRoad jar argument is missing"
+
+link="$viewer/offroad-home/.OffRoad/maps"
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*)
+    printf 'SKIP: native symlinks need extra privileges in Git Bash; CI runs this check on Linux\n'
+    ;;
+  *)
+    [ -L "$link" ] && ok "OffRoad map folder is a link, not a second map copy" || bad "OffRoad map folder is not a link"
+    [ "$(cd "$link" 2>/dev/null && pwd -P)" = "$(cd "$maps/obf" && pwd -P)" ] && ok "the link resolves to the prepared OBF folder" || bad "the link does not resolve to the OBF folder"
+    ;;
+esac
+
+grep -Fq 'OffRoad-bin-0.6-beta2.zip' get-offline-library.sh && ok "bash installer downloads OffRoad" || bad "bash installer has no OffRoad download"
+grep -Fq 'OffRoad-bin-0.6-beta2.zip' Get-OfflineLibrary.ps1 && ok "PowerShell installer downloads OffRoad" || bad "PowerShell installer has no OffRoad download"
+grep -Fq 'mklink /J' Get-OfflineLibrary.ps1 && ok "Windows launcher links instead of copying maps" || bad "Windows launcher has no junction"
+grep -Fq 'ClassTailor.noOptimize' Get-OfflineLibrary.ps1 && ok "Windows launcher carries the Java 21 flag" || bad "Windows launcher lacks the Java 21 flag"
+grep -Fq 'offroad/OffRoad.jar' get-offline-library.sh && grep -Fq 'offroad\OffRoad.jar' Get-OfflineLibrary.ps1 && ok "both launchers point at the extracted OffRoad jar" || bad "a launcher points at the wrong OffRoad path"
+grep -Fq 'World_basemap_mini_2.obf.zip' get-offline-library.sh && grep -Fq 'World_basemap_mini_2.obf.zip' Get-OfflineLibrary.ps1 && ok "both installers include OffRoad's world basemap" || bad "world basemap download is missing from an installer"
+
+if [ "$fail" -ne 0 ]; then
+  echo "OffRoad viewer checks failed."
+  exit 1
+fi
+echo "OffRoad viewer checks passed."

@@ -730,12 +730,20 @@ if(-not $SkipMaps){
         Fetch-Sized "https://download.osmand.net/download.php?standard=yes&file=$($r.name)" $out $r.containerSize
       }
     }
+    # OffRoad draws the maps at every zoom level and asks for this world map on first start.
+    # It is small, region-independent, and also usable by the Android app.
+    $world = 'World_basemap_mini_2.obf.zip'
+    $worldPath = Join-Path $Root "OsmAnd\$world"
+    if((-not $BmOnly) -and -not (Test-Path $worldPath)){
+      Log "osmand: $world (world basemap for the desktop viewer)"
+      Fetch-Sized "https://download.osmand.net/download.php?standard=yes&file=$world" $worldPath 40301077 -Soft
+    }
   }catch{ Log "osmand ERROR: $($_.Exception.Message)" }
 } else { Log '=== [8/8] Maps SKIPPED ===' }
 
 # ---------------- desktop map viewer (use the maps on a PC, no phone needed) -----------
 if(-not $SkipMaps){
-  Log '=== [8b] Desktop map viewer (OsmAndMapCreator + portable Java) ==='
+  Log '=== [8b] Desktop map viewers (OffRoad + OsmAndMapCreator + portable Java) ==='
   $mvd = Join-Path $Root 'OsmAnd\MapViewer-Desktop'
   New-Item -ItemType Directory -Force $mvd,(Join-Path $mvd 'app') | Out-Null
   try{
@@ -784,6 +792,26 @@ if(-not $SkipMaps){
         Move-Item $jreSrc.FullName $jreDst
       } else { Log '  mapviewer ERROR: could not unpack jre.zip (old Java kept). Delete it and re-run.' }
       Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    # OffRoad is a cross-platform OsmAnd-format viewer: it renders the .obf files locally
+    # on Windows and macOS too, which the bundled OsmAndMapCreator cannot (#107).
+    $orc = Join-Path $mvd 'OffRoad.zip'
+    $oru = 'https://master.dl.sourceforge.net/project/offroadosm/OffRoad_Unstable/0.6-beta2/OffRoad-bin-0.6-beta2.zip'
+    Log 'mapviewer: OffRoad 0.6-beta2'
+    $gotOffroad = $true
+    try{ Fetch-Sized $oru $orc 41634058 -Soft }catch{ Log "  note: $($_.Exception.Message)"; $gotOffroad = $false }
+    if($gotOffroad){
+      $offNew = Join-Path $mvd 'offroad.new'
+      if(Test-Path $offNew){ Remove-Item $offNew -Recurse -Force }
+      try{ Expand-Archive $orc -DestinationPath $offNew -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
+      if(Test-Path (Join-Path $offNew 'OffRoad.jar')){
+        $offDst = Join-Path $mvd 'offroad'
+        if(Test-Path $offDst){ Remove-Item $offDst -Recurse -Force }
+        Move-Item $offNew $offDst
+      } else {
+        Remove-Item $offNew -Recurse -Force -ErrorAction SilentlyContinue
+        Log '  mapviewer ERROR: could not unpack OffRoad.zip (old viewer kept). Delete it and re-run.'
+      }
     }
   }catch{ Log "mapviewer ERROR: $($_.Exception.Message)" }
 
@@ -842,6 +870,47 @@ call OsmAndMapCreator.bat
 pause
 "@
   Set-Content -Path (Join-Path $mvd 'VIEW-MAPS-ON-PC.bat') -Value $mvbat -Encoding ascii
+
+  $offbat = @"
+@echo off
+title Offline Maps on PC - OffRoad
+cd /d "%~dp0"
+set "JAVA_HOME=%~dp0jre"
+set "PATH=%~dp0jre\bin;%PATH%"
+echo Preparing map files for offline viewing (first run can take several minutes)...
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0prepare-maps.ps1"
+if errorlevel 1 goto :failed
+set "OFFROAD_HOME=%~dp0offroad-home"
+if not exist "%OFFROAD_HOME%\.OffRoad" mkdir "%OFFROAD_HOME%\.OffRoad"
+if not exist "%OFFROAD_HOME%\.OffRoad\offroad.properties" type nul > "%OFFROAD_HOME%\.OffRoad\offroad.properties"
+if not exist "%OFFROAD_HOME%\.OffRoad\maps" (
+  mklink /J "%OFFROAD_HOME%\.OffRoad\maps" "%~dp0..\obf" >nul
+  if errorlevel 1 goto :link_failed
+)
+if not exist "%~dp0offroad\OffRoad.jar" goto :viewer_missing
+set "JAVA=%~dp0jre\bin\java.exe"
+if not exist "%JAVA%" set "JAVA=java"
+echo Launching the OffRoad map viewer (fully offline)...
+"%JAVA%" "-Duser.home=%OFFROAD_HOME%" "-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true" -jar "%~dp0offroad\OffRoad.jar"
+pause
+exit /b
+
+:failed
+echo ERROR: could not prepare the map files.
+pause
+exit /b 1
+
+:link_failed
+echo ERROR: could not link the map folder for OffRoad.
+pause
+exit /b 1
+
+:viewer_missing
+echo ERROR: OffRoad viewer is missing. Re-run the installer.
+pause
+exit /b 1
+"@
+  Set-Content -Path (Join-Path $mvd 'VIEW-MAPS-OFFLINE.bat') -Value $offbat -Encoding ascii
 }
 
 # ================================================================ 8c. Browser maps (opt-in)
@@ -928,7 +997,7 @@ if(((-not $SkipMaps) -or $BmOnly) -and $BrowserMaps){
   }catch{ Log "browser maps ERROR: $($_.Exception.Message)" }
 } else {
   Log "=== [8c] Browser maps not selected - add -BrowserMaps to include (~16.5 GB for the US) ==="
-  if(-not $SkipMaps){ Log "  Tip (Windows): browser maps is the offline desktop viewer - the bundled OsmAndMapCreator draws online tiles on Windows, so its map is blank with no internet (#15). Re-run with -BrowserMaps to add US street maps that open in any browser." }
+  if(-not $SkipMaps){ Log "  Tip (Windows): run OsmAnd\MapViewer-Desktop\VIEW-MAPS-OFFLINE.bat for offline maps on this PC, any region. Browser maps remain optional US street detail." }
 }
 
 # ================================================================ phone apps
@@ -1440,18 +1509,22 @@ elseif($gbad){ ScFail ("AI model(s) not complete or damaged - delete each one an
 elseif($gwarn){ ScWarn ("could not reach Hugging Face to check these AI models (not verified): " + ($gwarn -join ' ')) }
 else { ScPass "$gn AI models (.gguf): size and SHA-256 match Hugging Face" }
 
-# 6. Desktop map viewer (OsmAndMapCreator + portable Java runtime) (#100)
+# 6. Desktop map viewers (OffRoad and OsmAndMapCreator + portable Java runtime)
 $mvd = Join-Path $Root 'OsmAnd\MapViewer-Desktop'
 if(-not $SkipMaps){
   $bat = Join-Path $mvd 'app\OsmAndMapCreator.bat'
+  $offJar = Join-Path $mvd 'offroad\OffRoad.jar'
+  $offBat = Join-Path $mvd 'VIEW-MAPS-OFFLINE.bat'
   $jre = Join-Path $mvd 'jre\bin\java.exe'
-  if((Test-Path $bat) -and (Test-Path $jre)){
-    ScPass 'desktop map viewer (OsmAndMapCreator + Java runtime) ready'
+  if((Test-Path $bat) -and (Test-Path $offJar) -and (Test-Path $offBat) -and (Test-Path $jre)){
+    ScPass 'desktop map viewers (OffRoad + OsmAndMapCreator + Java runtime) ready'
   } else {
     $mvMiss = @()
     if(-not (Test-Path $bat)){ $mvMiss += 'app\OsmAndMapCreator.bat' }
+    if(-not (Test-Path $offJar)){ $mvMiss += 'offroad\OffRoad.jar' }
+    if(-not (Test-Path $offBat)){ $mvMiss += 'VIEW-MAPS-OFFLINE.bat' }
     if(-not (Test-Path $jre)){ $mvMiss += 'jre\bin\java.exe' }
-    ScFail ("desktop map viewer not complete - missing: " + ($mvMiss -join ', ') + ' - delete OsmAnd\MapViewer-Desktop\OsmAndMapCreator.zip (or the Java archive) and re-run the installer')
+    ScFail ("desktop map viewers not complete - missing: " + ($mvMiss -join ', ') + ' - delete OsmAnd\MapViewer-Desktop\OffRoad.zip or OsmAndMapCreator.zip (or the Java archive) and re-run the installer')
   }
 } elseif(Test-Path $mvd) {
   if($Only){

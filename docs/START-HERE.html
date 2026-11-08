@@ -72,7 +72,7 @@
 <tr>
 <td><code>OsmAnd\</code></td>
 <td>Offline maps (your chosen region; default US) — view on a PC or phone</td>
-<td>PC: <code>Maps-Browser\OPEN-MAPS.bat</code> (US, if built with <code>-BrowserMaps</code>); <code>MapViewer-Desktop\VIEW-MAPS-ON-PC.bat</code> needs internet on Windows/macOS; phone: bundled APK</td>
+<td>PC: <code>MapViewer-Desktop\VIEW-MAPS-OFFLINE.bat</code> (OffRoad, no internet, any region); <code>Maps-Browser\OPEN-MAPS.bat</code> (US street detail, if built with <code>-BrowserMaps</code>); phone: bundled APK</td>
 <td><code>OsmAnd\HOW-TO-VIEW-MAPS.html</code></td>
 </tr>
 <tr>
@@ -134,8 +134,13 @@
 <td>with <code>-Translate</code> / <code>--translate</code></td>
 </tr>
 <tr>
+<td><code>OsmAnd\MapViewer-Desktop\VIEW-MAPS-OFFLINE</code></td>
+<td>Open <strong>OffRoad</strong>, the recommended desktop viewer; it draws the drive's <code>.obf</code> maps with <strong>no internet</strong> on Windows, macOS and Linux. First run unzips the maps</td>
+<td>with maps</td>
+</tr>
+<tr>
 <td><code>OsmAnd\MapViewer-Desktop\VIEW-MAPS-ON-PC</code></td>
-<td>Open the <strong>desktop map viewer</strong> (OsmAndMapCreator); first run unzips the maps. <strong>Needs internet on Windows and macOS</strong> (draws online tiles); offline, use browser maps (US) or a phone</td>
+<td>Open the <strong>legacy OsmAndMapCreator viewer</strong>; first run unzips the maps. <strong>Needs internet on Windows and macOS</strong> (draws online tiles); use <code>VIEW-MAPS-OFFLINE</code> for offline maps</td>
 <td>with maps</td>
 </tr>
 <tr>
@@ -154,7 +159,7 @@
 <td>always</td>
 </tr>
 </tbody></table>
-<blockquote><strong>Windows vs macOS/Linux:</strong> the chat / Web-UI / translator launchers, <code>OPEN-MAPS</code> and <code>CHECK-DRIVE</code> ship in <strong>both</strong> forms on every drive — <code>.bat</code> on Windows and <code>.sh</code> on macOS/Linux (run them from a terminal); macOS also gets <code>CHECK-DRIVE.command</code> for a double-click. <strong><code>VIEW-MAPS-ON-PC</code> is the exception:</strong> it's written in just one form, matching the OS that built the drive — <code>.bat</code> on a Windows-built drive, <code>.sh</code> on a macOS/Linux-built one. The GPU chat launcher uses Metal on a Mac and Vulkan on Linux.</blockquote>
+<blockquote><strong>Windows vs macOS/Linux:</strong> the chat / Web-UI / translator launchers, <code>OPEN-MAPS</code> and <code>CHECK-DRIVE</code> ship in <strong>both</strong> forms on every drive - <code>.bat</code> on Windows and <code>.sh</code> on macOS/Linux (run them from a terminal); macOS also gets <code>CHECK-DRIVE.command</code> for a double-click. <strong><code>VIEW-MAPS-OFFLINE</code> and <code>VIEW-MAPS-ON-PC</code> are the exceptions:</strong> they are written in just one form, matching the OS that built the drive - <code>.bat</code> on a Windows-built drive, <code>.sh</code> on a macOS/Linux-built one. The GPU chat launcher uses Metal on a Mac and Vulkan on Linux.</blockquote>
 <hr>
 <h2>Quick start by need</h2>
 <ul>
@@ -220,8 +225,8 @@
 </tr>
 <tr>
 <td>Maps on a computer</td>
-<td>Bundled desktop viewer + portable Java (needs internet on Windows/macOS; offline use <code>Maps-Browser</code> or a phone, #15)</td>
-<td>⚠️ <code>OsmAnd\MapViewer-Desktop</code></td>
+<td>Bundled OffRoad viewer + portable Java (offline, any region; Windows runtime-tested)</td>
+<td>✅ <code>OsmAnd\MapViewer-Desktop</code></td>
 </tr>
 <tr>
 <td>Maps on Android</td>

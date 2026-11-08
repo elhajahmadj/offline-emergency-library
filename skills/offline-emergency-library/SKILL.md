@@ -60,13 +60,15 @@ When this skill is invoked, your job is simple:
   videos; `-EduLang`/`--edu-lang` en|es|fr). `-Kolibri` / `--kolibri` adds the **Kolibri**
   learning app, where the user picks subjects + video quality in-app (tens of GB). Only add
   either if the user asks for courses/education.
+- **Desktop maps are offline through OffRoad.** The installer bundles OffRoad in
+  `OsmAnd\MapViewer-Desktop\VIEW-MAPS-OFFLINE`; it reads the drive's OBF maps with no internet,
+  on Windows, macOS and Linux, for any region. Windows rendering is runtime-tested; the macOS
+  and Linux packages are bundled but not runtime-tested. The older `VIEW-MAPS-ON-PC` viewer
+  (OsmAndMapCreator) needs internet on Windows and macOS.
 - **Browser maps are opt-in.** `-BrowserMaps` / `--browser-maps` adds US street maps that open in
   any web browser (`Maps-Browser\OPEN-MAPS`; ~16.5 GB for all states, follows `-Region`). Offer it
-  whenever the user asks for maps on a computer: on Windows and macOS the bundled desktop viewer
-  (OsmAndMapCreator) needs internet — it draws online tiles, not the drive's maps — so browser maps
-  are the only offline computer viewer there (US only). It adds to the OsmAnd maps (~17.8 GB for the
-  US), so a full US drive needs about 34 GB for maps. For a non-US region on a computer, the only
-  offline path is still the Android app.
+  when the user wants extra US street detail. It adds to the OsmAnd maps (~17.8 GB for the US),
+  so a full US drive needs about 34 GB for maps.
 - **Extra archives are opt-in.** `-ExtraZims` / `--extra-zims` adds the **Wikivoyage** travel
   guide and **Wikibooks** open textbooks (Kiwix ZIM, ~5.8 GB, CC BY-SA) in `Extra-Archives\`. Only
   add it if the user asks for travel guides or textbooks.

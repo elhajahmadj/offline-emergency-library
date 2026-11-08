@@ -44,12 +44,10 @@ try {
       [IO.File]::WriteAllText($helper, $match.Groups[1].Value)
     } else {
       $src = Source 'get-offline-library.sh'
-      $match = [regex]::Match($src, '(?ms)cat > "\$MVD/VIEW-MAPS-ON-PC\.sh" <<''EOS''\n(.*?)^EOS')
+      $match = [regex]::Match($src, '(?ms)cat > "\$MVD/prepare-maps\.sh" <<''EOS''\n(.*?)^EOS')
       Assert $match.Success 'Bash helper found'
-      $helper = Join-Path $viewer 'VIEW-MAPS-ON-PC.sh'
+      $helper = Join-Path $viewer 'prepare-maps.sh'
       [IO.File]::WriteAllText($helper, $match.Groups[1].Value)
-      New-Item -ItemType Directory -Force (Join-Path $viewer 'app'),(Join-Path $viewer 'jre') | Out-Null
-      [IO.File]::WriteAllText((Join-Path $viewer 'app\OsmAndMapCreator.sh'), "exit 0`n")
     }
     function RunHelper {
       if($kind -eq 'PowerShell'){

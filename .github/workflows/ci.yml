@@ -28,6 +28,8 @@ jobs:
         run: node --test doc-qa/retrieval.test.mjs
       - name: Browser-only additions preserve OsmAnd metadata
         run: bash .github/scripts/check-browser-map-isolation.sh
+      - name: OffRoad cross-platform viewer launcher
+        run: bash .github/scripts/check-offroad-viewer.sh
       - name: Changelog fragments have valid names and content
         run: bash .github/scripts/compile-changelog.sh > /dev/null
       - name: Changelog compiler regression checks

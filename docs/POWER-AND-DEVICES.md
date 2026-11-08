@@ -168,8 +168,10 @@ Browser maps are shipped (PR #38) and are available as an opt-in flag
 US-only and require about 16.5 GB of additional disk space on top of the OsmAnd
 maps. If using that opt-in version, prepare maps/viewer assets and test the whole
 setup offline first; do not assume it supports every region or Pi configuration.
-The current bundled desktop Java map viewer is blank with no internet on Windows
-and macOS (issue #15). A phone with tested offline maps is a simpler fallback.
+The bundled OffRoad desktop viewer reads the drive's OBF maps with no internet on
+Windows, macOS and Linux (issue #107). The older OsmAndMapCreator viewer is still
+included for Linux but needs internet on Windows and macOS (issue #15). A phone
+with the bundled Android app remains a tested fallback.
 
 ## 4. Rehearse before relying on it
 

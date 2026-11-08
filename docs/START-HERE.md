@@ -45,7 +45,7 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 | `Wikipedia\` | Full Wikipedia (all articles, no images) | Kiwix | — |
 | `Education\` | Courses + videos (opt-in): Khan Academy archive (Kiwix) **or** Kolibri app (pick subjects) | Kiwix / Kolibri | `Education\READ-ME-FIRST.html`, `Education\HOW-TO-KOLIBRI.html` |
 | `Extra-Archives\` | Travel guide (Wikivoyage) + open textbooks (Wikibooks) (opt-in) | Kiwix | `Kiwix-Reader\HOW-TO-USE-KIWIX.html` |
-| `OsmAnd\` | Offline maps (your chosen region; default US) — view on a PC or phone | PC: `Maps-Browser\OPEN-MAPS.bat` (US, if built with `-BrowserMaps`); `MapViewer-Desktop\VIEW-MAPS-ON-PC.bat` needs internet on Windows/macOS; phone: bundled APK | `OsmAnd\HOW-TO-VIEW-MAPS.html` |
+| `OsmAnd\` | Offline maps (your chosen region; default US) - view on a PC or phone | PC: `MapViewer-Desktop\VIEW-MAPS-OFFLINE.bat` (OffRoad, no internet, any region); `Maps-Browser\OPEN-MAPS.bat` (US street detail, if built with `-BrowserMaps`); phone: bundled APK | `OsmAnd\HOW-TO-VIEW-MAPS.html` |
 | `OsmAnd\MAP-AND-COMPASS.html` | Paper-map, compass and natural navigation | Print the guide and carry a paper topo map and compass | `OsmAnd\MAP-AND-COMPASS.html` |
 | `Kiwix-Reader\` | The reader for all `.zim` archives | Portable app | `Kiwix-Reader\HOW-TO-USE-KIWIX.html` |
 | `Maps-Browser\` | Street maps in a web browser (opt-in, US) | `OPEN-MAPS.bat` / `OPEN-MAPS.sh` | `OsmAnd\HOW-TO-VIEW-MAPS.html` |
@@ -66,7 +66,8 @@ are opt-in).
 | `AI-Offline\CHAT-GPU-Qwen7B.bat` / `chat-GPU-Qwen7B.sh` | Offline AI chat on a **GPU** (Qwen 7B, ~6 GB VRAM) for a big speed-up | full install |
 | `AI-Offline\WEB-UI.bat` / `web-ui.sh` | Offline AI in your **browser** — starts a local server, then open `http://127.0.0.1:8080` | always |
 | `AI-Offline\TRANSLATE.bat` / `translate.sh` | Offline **translator** (Qwen3 4B); see `AI-Offline\HOW-TO-TRANSLATE.html` | with `-Translate` / `--translate` |
-| `OsmAnd\MapViewer-Desktop\VIEW-MAPS-ON-PC` | Open the **desktop map viewer** (OsmAndMapCreator); first run unzips the maps. **Needs internet on Windows and macOS** (draws online tiles); offline, use browser maps (US) or a phone | with maps |
+| `OsmAnd\MapViewer-Desktop\VIEW-MAPS-OFFLINE` | Open **OffRoad**, the recommended desktop viewer; it draws the drive's `.obf` maps with **no internet** on Windows, macOS and Linux. First run unzips the maps | with maps |
+| `OsmAnd\MapViewer-Desktop\VIEW-MAPS-ON-PC` | Open the **legacy OsmAndMapCreator viewer**; first run unzips the maps. **Needs internet on Windows and macOS** (draws online tiles); use `VIEW-MAPS-OFFLINE` for offline maps | with maps |
 | `Maps-Browser\OPEN-MAPS.bat` / `.sh` | **Street maps in a web browser** (opt-in browser maps); opens `http://localhost:8097` | with `-BrowserMaps` / `--browser-maps` |
 | `AI-Offline\Manual-QA\START-DOCS.bat` / `start-docs.command` / `start-docs.sh` | **Ask the manuals** with source passages and PDF links - starts a local server, then open `http://127.0.0.1:8081/AI-Offline/Manual-QA/` | always |
 | `CHECK-DRIVE.bat` / `.sh` | **Re-check every file** on the drive for damage and print only the problems | always |
@@ -74,9 +75,9 @@ are opt-in).
 > **Windows vs macOS/Linux:** the chat / Web-UI / translator launchers, `OPEN-MAPS` and
 > `CHECK-DRIVE` ship in **both** forms on every drive — `.bat` on Windows and `.sh` on
 > macOS/Linux (run them from a terminal); macOS also gets `CHECK-DRIVE.command` for a
-> double-click. **`VIEW-MAPS-ON-PC` is the exception:** it's written in just one form,
-> matching the OS that built the drive — `.bat` on a Windows-built drive, `.sh` on a
-> macOS/Linux-built one. The GPU chat launcher uses Metal on a Mac and Vulkan on Linux.
+> double-click. **`VIEW-MAPS-OFFLINE` and `VIEW-MAPS-ON-PC` are the exceptions:** they are
+> written in just one form, matching the OS that built the drive - `.bat` on a Windows-built
+> drive, `.sh` on a macOS/Linux-built one. The GPU chat launcher uses Metal on a Mac and Vulkan on Linux.
 
 ---
 
@@ -126,7 +127,7 @@ are opt-in).
 | `.zim` archives | **Kiwix** (portable, no install) | ✅ `E:\Kiwix-Reader\app` |
 | Offline AI chat | Nothing extra (self-contained engine) | ✅ `E:\AI-Offline\engine` |
 | AI doc-Q&A | **GPT4All** (one-time install; self-contained, CPU) | ✅ installer in `DocReader-GPT4All` |
-| Maps on a computer | Bundled desktop viewer + portable Java (needs internet on Windows/macOS; offline use `Maps-Browser` or a phone, #15) | ⚠️ `OsmAnd\MapViewer-Desktop` |
+| Maps on a computer | Bundled OffRoad viewer + portable Java (offline, any region; Windows runtime-tested) | ✅ `OsmAnd\MapViewer-Desktop` |
 | Maps on Android | Bundled **OsmAnd~ APK** (sideload offline) | ✅ `OsmAnd\PhoneApp-Android` |
 | Maps on iPhone/iPad | OsmAnd from the App Store | app store (get while online) |
 

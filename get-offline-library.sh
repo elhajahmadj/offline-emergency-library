@@ -787,9 +787,16 @@ if [ "$SKIP_MAPS" = 0 ]; then
     fetch_sized "https://download.osmand.net/download.php?standard=yes&file=$fn" "$ROOT/OsmAnd/$fn" "$cs"
   done < "$ROOT/OsmAnd/_filelist.txt"
   fi
+  # OffRoad draws the maps at every zoom level and asks for this world map on first start.
+  # It is small, region-independent, and also usable by the Android app.
+  world="World_basemap_mini_2.obf.zip"
+  if [ "$BM_ONLY" = 0 ] && [ ! -f "$ROOT/OsmAnd/$world" ]; then
+    log "osmand: $world (world basemap for the desktop viewer)"
+    ( fetch_sized "https://download.osmand.net/download.php?standard=yes&file=$world" "$ROOT/OsmAnd/$world" 40301077 soft ) || true
+  fi
 
   # desktop map viewer (OsmAndMapCreator + portable Java) — use maps on a PC, no phone
-  log "=== [8b] Desktop map viewer (OsmAndMapCreator + portable Java) ==="
+  log "=== [8b] Desktop map viewers (OffRoad + OsmAndMapCreator + portable Java) ==="
   MVD="$ROOT/OsmAnd/MapViewer-Desktop"; mkdir -p "$MVD/app"
   if [ "$HAVE_UNZIP" = 1 ]; then
     # "latest" URLs keep their file name across new editions: fetch by remote size (#57)
@@ -812,12 +819,23 @@ if [ "$SKIP_MAPS" = 0 ]; then
       else log "  mapviewer ERROR: could not unpack jre.tar.gz (old Java kept). Delete it and re-run."; fi
       rm -rf "$MVD/_jre"
     fi
-    cat > "$MVD/VIEW-MAPS-ON-PC.sh" <<'EOS'
+    # OffRoad is a cross-platform OsmAnd-format viewer: it renders the .obf files locally
+    # on Windows and macOS too, which the bundled OsmAndMapCreator cannot (#107).
+    log "mapviewer: OffRoad 0.6-beta2"
+    oru="https://master.dl.sourceforge.net/project/offroadosm/OffRoad_Unstable/0.6-beta2/OffRoad-bin-0.6-beta2.zip"
+    if ( fetch_sized "$oru" "$MVD/OffRoad.zip" 41634058 soft ); then
+      rm -rf "$MVD/offroad.new"
+      if unzip -o -q "$MVD/OffRoad.zip" -d "$MVD/offroad.new" && [ -f "$MVD/offroad.new/OffRoad.jar" ]; then
+        rm -rf "$MVD/offroad"; mv "$MVD/offroad.new" "$MVD/offroad"
+      else
+        rm -rf "$MVD/offroad.new"; log "  mapviewer ERROR: could not unpack OffRoad.zip (old viewer kept). Delete it and re-run."
+      fi
+    fi
+    # Shared map preparation: unzip the .obf.zip files into <OsmAnd>/obf. Staged, so a
+    # damaged replacement must not destroy the previous map.
+    cat > "$MVD/prepare-maps.sh" <<'EOS'
 #!/usr/bin/env bash
 DIR="$(cd "$(dirname "$0")" && pwd)"
-# find bundled java
-JAVA="$(find "$DIR/jre" -name java -type f 2>/dev/null | head -n1)"
-[ -n "$JAVA" ] && export PATH="$(dirname "$JAVA"):$PATH"
 MAPS="$(cd "$DIR/.." && pwd)"; OBF="$MAPS/obf"; mkdir -p "$OBF"
 echo "Preparing maps for desktop viewing (first run can take several minutes)..."
 for z in "$MAPS"/*.obf.zip; do
@@ -839,14 +857,41 @@ for z in "$MAPS"/*.obf.zip; do
   trap - EXIT
 done
 echo "Maps ready in: $OBF"
+EOS
+    cat > "$MVD/VIEW-MAPS-OFFLINE.sh" <<'EOS'
+#!/usr/bin/env bash
+DIR="$(cd "$(dirname "$0")" && pwd)"
+JAVA="$(find "$DIR/jre" -name java -type f 2>/dev/null | head -n1)"
+[ -n "$JAVA" ] || JAVA=java
+bash "$DIR/prepare-maps.sh" || exit 1
+OFFROAD_HOME="$DIR/offroad-home"
+MAP_LINK="$OFFROAD_HOME/.OffRoad/maps"
+mkdir -p "$OFFROAD_HOME/.OffRoad" || exit 1
+# OffRoad logs a scary first-run panic when its own settings file is absent.
+: >> "$OFFROAD_HOME/.OffRoad/offroad.properties" || exit 1
+# A link keeps the second copy of the maps at zero bytes. Remove a stale link only.
+if [ -L "$MAP_LINK" ] && [ ! -e "$MAP_LINK" ]; then rm -f "$MAP_LINK"; fi
+if [ ! -e "$MAP_LINK" ]; then
+  ln -s "$DIR/../obf" "$MAP_LINK" || { echo "ERROR: could not link the map folder at $MAP_LINK" >&2; exit 1; }
+fi
+[ -f "$DIR/offroad/OffRoad.jar" ] || { echo "ERROR: OffRoad viewer is missing. Re-run the installer." >&2; exit 1; }
+echo "Launching the OffRoad map viewer (fully offline)..."
+exec "$JAVA" "-Duser.home=$OFFROAD_HOME" "-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true" -jar "$DIR/offroad/OffRoad.jar"
+EOS
+    cat > "$MVD/VIEW-MAPS-ON-PC.sh" <<'EOS'
+#!/usr/bin/env bash
+DIR="$(cd "$(dirname "$0")" && pwd)"
+# find bundled java
+JAVA="$(find "$DIR/jre" -name java -type f 2>/dev/null | head -n1)"
+[ -n "$JAVA" ] && export PATH="$(dirname "$JAVA"):$PATH"
+bash "$DIR/prepare-maps.sh" || exit 1
 echo "If the map area stays BLANK: on macOS this viewer draws online map tiles, not the"
 echo "drive's maps, so it is blank with no internet (issue 15; Linux may work offline, untested)."
-echo "Offline: use the browser maps"
-echo "(Maps-Browser/OPEN-MAPS.sh, if built with --browser-maps; US only) or an Android phone."
+echo "For offline maps on Windows, macOS or Linux, use VIEW-MAPS-OFFLINE instead."
 # one launch only (bash runs both sh and bash scripts); the old "sh || bash" started a 2nd viewer when the 1st exited non-zero
 bash "$DIR/app/OsmAndMapCreator.sh"
 EOS
-    chmod +x "$MVD/VIEW-MAPS-ON-PC.sh" 2>/dev/null
+    chmod +x "$MVD/prepare-maps.sh" "$MVD/VIEW-MAPS-OFFLINE.sh" "$MVD/VIEW-MAPS-ON-PC.sh" 2>/dev/null
     find "$MVD/app" -name "*.sh" -exec chmod +x {} \; 2>/dev/null
     find "$MVD/jre" -name java -exec chmod +x {} \; 2>/dev/null
   else
@@ -1418,18 +1463,22 @@ elif [ -n "$gbad" ]; then sc_fail "AI model(s) not complete or damaged - delete 
 elif [ -n "$gwarn" ]; then sc_warn "could not reach Hugging Face to check these AI models (not verified):$gwarn"
 else sc_pass "$gt AI models (.gguf): size and SHA-256 match Hugging Face"; fi
 
-# 6. Desktop map viewer (OsmAndMapCreator + portable Java runtime) (#100)
+# 6. Desktop map viewers (OffRoad and OsmAndMapCreator + portable Java runtime)
 MVD="$ROOT/OsmAnd/MapViewer-Desktop"
 if [ "$SKIP_MAPS" = 0 ]; then
   BAT="$MVD/app/OsmAndMapCreator.sh"
+  OFFJAR="$MVD/offroad/OffRoad.jar"
+  OFFBAT="$MVD/VIEW-MAPS-OFFLINE.sh"
   JRE="$(find "$MVD/jre" -name java -type f 2>/dev/null | head -n1)"
-  if [ -f "$BAT" ] && [ -n "$JRE" ]; then
-    sc_pass "desktop map viewer (OsmAndMapCreator + Java runtime) ready"
+  if [ -f "$BAT" ] && [ -f "$OFFJAR" ] && [ -f "$OFFBAT" ] && [ -n "$JRE" ]; then
+    sc_pass "desktop map viewers (OffRoad + OsmAndMapCreator + Java runtime) ready"
   else
     mv_miss=""
     [ -f "$BAT" ] || mv_miss="$mv_miss app/OsmAndMapCreator.sh"
+    [ -f "$OFFJAR" ] || mv_miss="$mv_miss offroad/OffRoad.jar"
+    [ -f "$OFFBAT" ] || mv_miss="$mv_miss VIEW-MAPS-OFFLINE.sh"
     [ -n "$JRE" ] || mv_miss="$mv_miss jre/bin/java"
-    sc_fail "desktop map viewer not complete - missing:$mv_miss - delete OsmAnd/MapViewer-Desktop/OsmAndMapCreator.zip (or the Java archive) and re-run the installer"
+    sc_fail "desktop map viewers not complete - missing:$mv_miss - delete OsmAnd/MapViewer-Desktop/OffRoad.zip or OsmAndMapCreator.zip (or the Java archive) and re-run the installer"
   fi
 elif [ -d "$MVD" ]; then
   if [ -n "$ONLY" ]; then

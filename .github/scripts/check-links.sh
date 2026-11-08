@@ -14,6 +14,8 @@ urls=(
   "https://download.kiwix.org/zim/wikibooks/"
   "https://download.kiwix.org/release/kiwix-desktop/"
   "https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip"
+  "https://download.osmand.net/download.php?standard=yes&file=World_basemap_mini_2.obf.zip"
+  "https://master.dl.sourceforge.net/project/offroadosm/OffRoad_Unstable/0.6-beta2/OffRoad-bin-0.6-beta2.zip"
   "https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jre/hotspot/normal/eclipse"
   "https://api.adoptium.net/v3/binary/latest/21/ga/linux/aarch64/jre/hotspot/normal/eclipse"
   "https://api.adoptium.net/v3/binary/latest/21/ga/mac/x64/jre/hotspot/normal/eclipse"

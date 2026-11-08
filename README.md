@@ -60,7 +60,7 @@ Smaller drive, another country's maps, or extra content? See
 | **Offline doc-Q&A** | GPT4All — ask an AI questions about your PDFs, with citations | ~0.7 GB | CPU, one-time install |
 | **Wikipedia** | Full English Wikipedia (all articles, no images) — Kiwix-readable | ~49 GB | Kiwix |
 | **Browser maps** *(opt-in)* | US street maps that open in **any web browser** (Project NOMAD / Protomaps + MapLibre viewer + Caddy), `-BrowserMaps` / `--browser-maps` | US ≈16.5 GB (one state: less) | **Any computer** with a browser |
-| **Offline maps** | Maps for the region you pick (**default US**; any country/region/continent — see below) + **bundled desktop viewer** (OsmAndMapCreator + portable Java; needs internet on Windows/macOS, see below) + **bundled Android app (APK)** | US ≈17 GB; varies by region (+~0.4 GB tools) | **PC (no phone) or phone** |
+| **Offline maps** | Maps for the region you pick (**default US**; any country/region/continent - see below) + **bundled OffRoad desktop viewer** (reads the maps offline on Windows, macOS and Linux) + **bundled Android app (APK)** | US ≈17 GB; varies by region (+~0.5 GB tools) | **PC (no phone) or phone** |
 | **Repair archive** | iFixit — cars, appliances, electronics, phones | ~3.4 GB | Kiwix |
 | **DIY archive** | Appropedia — plumbing, electrical, construction, energy, water, food | ~0.6 GB | Kiwix |
 | **Medical** | Offline medical Wikipedia (WikiMed) | ~1.8 GB | Kiwix |
@@ -143,7 +143,7 @@ Downloading ~85 GB can take several hours.
 | **Offline AI — GPU model (Qwen 7B)** | A graphics card with **~6 GB VRAM** (NVIDIA/AMD/Intel) for a big speed boost. Optional. |
 | **Offline translator** *(opt-in)* | 64-bit PC, **~6 GB RAM** (about 4.8 GB in use while it runs). CPU only. |
 | **GPT4All doc-Q&A** | 64-bit PC, ~8 GB RAM recommended. CPU only. Self-contained (no Python/CUDA). |
-| **Maps on a computer** | **No phone needed.** Offline: browser maps (US, `-BrowserMaps`). The bundled desktop viewer (OsmAndMapCreator + portable Java) draws online tiles on Windows and macOS, so it is blank with no internet ([#15](https://github.com/elhajahmadj/offline-emergency-library/issues/15)); use an Android phone for non-US offline maps. First use of the desktop viewer unzips maps (~30 GB). |
+| **Maps on a computer** | **No phone needed.** Run `MapViewer-Desktop\VIEW-MAPS-OFFLINE`: the bundled OffRoad viewer draws your region's OsmAnd maps with no internet on Windows, macOS and Linux, including non-US regions (Offline rendering tested on Windows 11; macOS and Linux are bundled but not runtime-tested). Browser maps (US, `-BrowserMaps`) remain an option for US street detail. First use unzips the maps (~30 GB). |
 | **Maps on a phone** | Android: bundled **OsmAnd~ APK** (sideload offline). iPhone/iPad: install **OsmAnd** from the App Store while online. |
 
 **Key points:**
@@ -204,7 +204,7 @@ and it continues where it left off.
 | Offline AI chat | ✅ (x64/ARM + Vulkan GPU) | ✅ (Metal GPU) | ✅ (x64/ARM + Vulkan GPU) |
 | GPT4All doc-Q&A | ✅ `.exe` | ✅ `.dmg` | ✅ `.run` |
 | Kiwix desktop | ✅ bundled portable | App Store / kiwix.org | ✅ bundled AppImage (x64) |
-| Maps on PC | ⚠️ viewer needs internet; offline: browser maps (US) | ⚠️ viewer needs internet; offline: browser maps (US) | viewer bundled (offline untested); browser maps (US) |
+| Maps on PC | ✅ OffRoad offline (tested); browser maps (US) | ✅ OffRoad bundled (not runtime-tested); browser maps (US) | ✅ OffRoad bundled (not runtime-tested); browser maps (US) |
 | All content (Wikipedia, ZIM, PDF, maps, APKs) | ✅ | ✅ | ✅ |
 
 ### Quick start with a smaller download
@@ -234,7 +234,7 @@ in `HOW-TO-ASK-YOUR-DOCS`).
 **This is not a fixed 2-3 GB bundle.** The model, references and bundled tools
 already take several GB, and maps vary by region. Maps still default to **US**
 (about 17 GB of maps alone); choose a small sub-region as above, or add
-`-SkipMaps` / `--skip-maps` to omit maps, their viewer and the OsmAnd app.
+`-SkipMaps` / `--skip-maps` to omit maps, their viewers and the OsmAnd app.
 Education and Kolibri remain opt-in and can be combined with lite.
 
 To expand later, re-run into the **same destination without the lite flag**.
@@ -255,7 +255,7 @@ runs 100% offline afterward:
 | GPT4All | github.com/nomic-ai/gpt4all |
 | Kiwix reader + ZIM archives | download.kiwix.org |
 | Wikipedia | download.kiwix.org |
-| Maps + desktop viewer | download.osmand.net |
+| Maps + desktop viewers | download.osmand.net; sourceforge.net/projects/offroadosm |
 | Browser maps (optional) | github.com/Crosstalk-Solutions/project-nomad-maps (maps, style), unpkg.com (MapLibre GL JS, pmtiles.js), github.com/caddyserver/caddy (web server) |
 | Portable Java | api.adoptium.net (Eclipse Temurin) |
 | Manuals (PDF) | archive.org |
@@ -500,7 +500,7 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 | Caddy web server | Apache-2.0 | Yes |
 | Portable Java (Eclipse Temurin / OpenJDK) | GPL-2.0 WITH Classpath-exception | Yes |
 | Kiwix reader; Kiwix / OsmAnd~ phone apps | GPL-3.0 | Yes |
-| OsmAnd maps viewer (OsmAndMapCreator) + OsmAnd~ app | GPL-3.0 (code); artwork [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/), some proprietary (TTS voices) | Code yes; bundled artwork **non-commercial** |
+| OsmAnd map viewers (OsmAndMapCreator and OffRoad) + OsmAnd~ app | GPL-3.0 (code); artwork [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/), some proprietary (TTS voices) | Code yes; bundled artwork **non-commercial** |
 | Map data (OpenStreetMap; OsmAnd + Protomaps basemap) | [ODbL-1.0](https://opendatacommons.org/licenses/odbl/1-0/) | Yes (attribution + share-alike) |
 | Wikipedia, WikiMed medical; Appropedia DIY; Wikivoyage + Wikibooks (opt-in) | CC BY-SA | Yes (attribution + share-alike) |
 | US Army field/technical manuals | US government works (public domain) ⸸ | Yes |
