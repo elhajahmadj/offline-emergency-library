@@ -242,10 +242,6 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
     });
   }
 
-  function sectionKnownSize(ids){
-    var sum=0; ids.forEach(function(id){ if(selectedPieces[id]){ var g=gbOf(id); if(g!==null) sum+=g; } }); return sum;
-  }
-
   function groupCard(g){
     var ids = g.ids.filter(function(id){ return P[id]; });
     if(!ids.length) return null;
