@@ -1,0 +1,32 @@
+name: Content suggestion
+description: A manual, book, archive or other source to add to the library
+title: "[Content]: "
+labels: ["content"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The kit only ships content that is free, openly licensed or public domain. Please
+        link the page that states the license; "free to download" is not a license.
+  - type: input
+    id: source
+    attributes:
+      label: What is it, and where does it download from?
+      placeholder: e.g. FM 3-25.26 Map Reading (archive.org item fm-3-25-26)
+    validations:
+      required: true
+  - type: input
+    id: license
+    attributes:
+      label: License, with a link to where it is stated
+      placeholder: e.g. US government work (public domain), link to the rights page
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it helps offline or in an emergency
+  - type: input
+    id: size
+    attributes:
+      label: Approximate size

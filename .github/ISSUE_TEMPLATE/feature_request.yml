@@ -1,5 +1,5 @@
 name: Feature request / idea
-description: Suggest content, a region, or an improvement
+description: Suggest a feature, a region, or an improvement (for new manuals or archives, use "Content suggestion")
 title: "[Idea]: "
 labels: ["enhancement"]
 body:
@@ -7,15 +7,10 @@ body:
     id: idea
     attributes:
       label: What would you like to see?
-      description: Content to add, a region, a platform, a workflow improvement, etc.
+      description: A region, a platform, a feature or a workflow improvement.
     validations:
       required: true
   - type: textarea
     id: why
     attributes:
       label: Why is it useful for offline / emergency use?
-  - type: input
-    id: license
-    attributes:
-      label: Source & license (for content requests)
-      description: Where would it come from, and is it free / openly-licensed / public domain?

@@ -57,7 +57,7 @@ if($data){ [void]$sb.Append("<h2>&#128451; Data</h2><table><tr><th>Item</th><th>
   $wiki = $data | Where-Object { $_.Name -like '*.bz2' }
   foreach($d in $wiki){ $rel=Rel $d.FullName; $dir=Split-Path $rel -Parent; [void]$sb.Append("<tr><td>$(Esc $d.Name) <span class='muted'>(Wikipedia - read via Kiwix/processing)</span></td><td class='muted'>$dir</td><td>$(Human $d.Length)</td></tr>") }
   $maps = $data | Where-Object { $_.Name -like '*.obf.zip' }
-  if($maps){ $sum=($maps|Measure-Object Length -Sum).Sum; [void]$sb.Append("<tr><td>Offline US maps - $($maps.Count) files <span class='muted'>(see OsmAnd/HOW-TO-VIEW-MAPS.html)</span></td><td class='muted'>OsmAnd</td><td>$(Human $sum)</td></tr>") }
+  if($maps){ $sum=($maps|Measure-Object Length -Sum).Sum; [void]$sb.Append("<tr><td>Offline maps (OsmAnd) - $($maps.Count) files <span class='muted'>(see OsmAnd/HOW-TO-VIEW-MAPS.html)</span></td><td class='muted'>OsmAnd</td><td>$(Human $sum)</td></tr>") }
   [void]$sb.Append("</table>") }
 
 [void]$sb.Append("</div></body></html>")

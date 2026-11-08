@@ -64,19 +64,21 @@ Smaller drive, another country's maps, or extra content? See
 | **Repair archive** | iFixit — cars, appliances, electronics, phones | ~3.4 GB | Kiwix |
 | **DIY archive** | Appropedia — plumbing, electrical, construction, energy, water, food | ~0.6 GB | Kiwix |
 | **Medical** | Offline medical Wikipedia (WikiMed) | ~1.8 GB | Kiwix |
-| **Survival & preparedness** | FEMA *Are You Ready?*, EPA water disinfection, knots guide, *Hunting with the Bow & Arrow* (Pope, 1923) (public domain) | ~55 MB | Browser (PDF) |
+| **Survival & preparedness** | FEMA *Are You Ready?*, EPA water disinfection, knots guide, *Hunting with the Bow & Arrow* (Pope, 1923), Kephart's *Book of Camping and Woodcraft* (1910), *Deadfalls and Snares* (1907), *Bait Angling for Common Fishes* (1907) (public domain) | ~90 MB | Browser (PDF) |
 | **Household DIY** | *The Boy Mechanic, Vol. 1: 700 Things to Do* (1913, public domain) — make-it-yourself projects from common materials; dated, some projects unsafe by modern standards (see manuals README) | ~50 MB | Browser (PDF) |
+| **Metalworking** | Army TM 9-237 *Welding Theory and Application*, *Practical Blacksmithing* (1888), *Elements of Machine Work* (1910) (public domain) | ~70 MB | Browser (PDF) |
+| **Food growing** | *Productive Vegetable Growing* (Lloyd, 1918), *Productive Poultry Husbandry* (Lewis, 1913), *Langstroth on the Hive and the Honey-Bee* (1904) (public domain) | ~55 MB | Browser (PDF) |
 | **Natural medicine** | *King's American Dispensatory* (Felter & Lloyd) + Culpeper's *Complete Herbal* (public domain) — historical herbal/medicinal-plant references, **not** current medical advice (see [medical guide](docs/Medical-READ-ME-FIRST.md)) | ~175 MB | Browser (PDF) |
 | **Education** *(opt-in)* | Khan Academy archive (one file, all videos) **or** Kolibri app (pick subjects/low-res) | KA ZIM ~168 GB; Kolibri = your choice | Kiwix / Kolibri app |
 | **Offline translator** *(opt-in)* | Two-way text translator for talking with someone who speaks another language; a small multilingual AI model (Qwen3 4B, Apache 2.0) on the bundled llama.cpp engine, `-Translate` / `--translate`. Good for widely spoken languages, weak or unusable for some others ([guide](docs/HOW-TO-TRANSLATE.md)) | ~2.5 GB | CPU, ~6 GB RAM |
 | **Extra archives** *(opt-in)* | Wikivoyage travel guide + Wikibooks open textbooks (English, with images), `-ExtraZims` / `--extra-zims` | ~5.8 GB | Kiwix |
 | **Health topics** *(opt-in)* | MedlinePlus plain-language health topic summaries (US National Library of Medicine, public domain), English + Spanish, one searchable page for any browser, `-MedlinePlus` / `--medlineplus`; see the [medical guide](docs/Medical-READ-ME-FIRST.md) | ~30 MB | Any browser |
-| **Army manuals** | Public-domain US Army field/technical manuals (survival, first aid, field hygiene & sanitation, hand tools, carpentry, concrete & masonry, water supply & purification, auto mechanics, rigging, field cooking) | ~0.3 GB | Any browser (PDF) |
+| **Army manuals** | Public-domain US Army field/technical manuals (survival, first aid, field hygiene & sanitation, hand tools, carpentry, concrete & masonry, water supply & purification, auto mechanics, rigging, field cooking, desert operations, map reading & land navigation, cold weather) | ~0.3 GB | Any browser (PDF) |
 | **Medical books** | *Where There Is No Doctor / No Dentist* (Hesperian) | ~60 MB | Any browser (PDF) |
 | **Delayed-care guide** | *A Practical Guide to Prolonged Casualty Care* (USUHS + Henry M. Jackson Foundation, 2025; CC BY-NC-SA 4.0) — advanced care when help is hours or days away; not a substitute for a clinician | ~15 MB | Any browser (PDF) |
 | **Childbirth references** | WHO *Managing complications in pregnancy and childbirth* (2017) + *Recommendations on maternal health* (2025); trained-worker references with update cautions and CC BY-NC-SA 3.0 IGO terms in the [medical guide](docs/Medical-READ-ME-FIRST.md) | ~9 MB | Any browser (PDF) |
 | **Emergency childbirth** | *Emergency Childbirth* (US Office of Civil Defense / Public Health Service, public domain) — plain-language guide to delivering a baby when skilled help is delayed | <1 MB | Any browser (HTML) |
-| **Home canning** | *USDA Complete Guide to Home Canning* (2015 revision; US-government work) — safe canning of fruit, tomatoes, vegetables, meat, pickles, jams | ~14 MB | Any browser (PDF) |
+| **Home canning** | *USDA Complete Guide to Home Canning* (2015 revision; US-government work) — safe canning of fruit, tomatoes, vegetables, meat, pickles, jams; plus USDA *Canning, Freezing, Storing Garden Produce* (1977) | ~18 MB | Any browser (PDF) |
 | **Radio guide** | How ham/CB/shortwave/GMRS radio works + emergency comms | tiny | Any browser |
 | **Kiwix reader** | Portable app to read all `.zim` archives (no install) | ~0.15 GB | — |
 | **Phone apps** | Bundled Android APKs (Kiwix + OsmAnd) to port the library to a phone offline | ~0.4 GB | sideload on Android |
@@ -90,7 +92,7 @@ Kiwix archives and guides, and public-domain US-government manuals. **No piracy.
 ## 📦 Storage requirements — what kind of drive do I need?
 
 The full library is **~85 GB**. Always leave headroom (for the AI's temp files, GPT4All
-install, and future updates), so plan for more than 60 GB.
+install, and future updates), so plan for more than 100 GB.
 
 Before the first download, the installer prints a size estimate for the options you chose
 (maps for your region and every opt-in included) next to the free space, and warns if it
@@ -104,9 +106,10 @@ will not fit.
 | **External SSD** ⭐ | **Best choice.** Running the AI models from an SSD is far faster than from a flash drive or spinning disk. A 256 GB+ USB-C SSD is ideal. |
 | **Internal HDD/SSD** | Perfect if you're keeping it on a PC. |
 
-> **Tip:** If you only want the reference material (no AI), you can skip the big pieces
-> with `-SkipModels` and still get Wikipedia, maps, and all manuals in ~30 GB. If you also
-> skip Wikipedia and maps (`-SkipWikipedia -SkipMaps`), the AI + manuals fit in ~20 GB. (Wikipedia is now ~49 GB.)
+> **Tip:** Wikipedia (~49 GB) and US maps (~17 GB) are the big pieces. `-SkipModels` drops
+> only the 8B and 7B AI models (~9 GB; the small 3B model stays), so the library is still
+> ~77 GB. `-SkipWikipedia -SkipMaps` leaves the AI and all manuals in ~20 GB; add
+> `-SkipModels` too for ~11 GB. The installer prints the estimate for your choices first.
 >
 > **Adding Khan Academy?** It's **opt-in** and **~168 GB with videos** — budget for a
 > **256 GB+** (ideally 512 GB) drive if you include `-Education`.
@@ -165,11 +168,14 @@ Install this repo's skill, then say:
 It will ask **only**: *"Where would you like to save these files?"* — then download
 everything.
 
-### C) Windows — PowerShell one-liner (no Claude needed)
+### C) Windows - PowerShell (no Claude needed)
 ```powershell
-irm https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/Get-OfflineLibrary.ps1 | iex
+irm https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/Get-OfflineLibrary.ps1 -OutFile Get-OfflineLibrary.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Get-OfflineLibrary.ps1
 ```
-It will prompt you for the save location, then download everything.
+It will prompt you for the save location, then download everything. Run the saved file
+rather than piping it to `iex`: piped, the installer's exit closes the PowerShell window and
+any error message with it.
 
 ### D) macOS / Linux — one-liner
 ```bash
@@ -306,7 +312,7 @@ continent, add `-Region` (Windows) / `--region` (macOS/Linux):
 ```
 
 Accepts a country (`France`), several (`"Germany,Austria"`), a continent (`Europe`,
-`Africa`, `Asia`, `North-America`, `South-America`, `Central-America`,
+`Africa`, `Asia`, `NorthAmerica`, `SouthAmerica`, `CentralAmerica`,
 `Australia-Oceania`), a sub-region (`US_texas`, `Germany_bayern`), or `world`.
 **Common names and ISO codes also work** (`UK`, `USA`, `GBR`, `DEU`, `JPN`, `UAE`,
 `Holland`, `Czech`, …) — they're translated to the right OsmAnd name automatically.
@@ -401,7 +407,7 @@ None of them are needed for a normal install.
 | `-ExtraZims` / `--extra-zims` | **Add Wikivoyage + Wikibooks** (Kiwix ZIM, ~5.8 GB; CC BY-SA) into `Extra-Archives\` — off by default. WikiHow is not on download.kiwix.org today, so it is not included |
 | `-Translate` / `--translate` | **Add an offline translator** (Qwen3 4B model, ~2.5 GB; Apache 2.0) with `TRANSLATE.bat` / `translate.sh` in `AI-Offline\` - off by default. Uses the bundled AI engine, so nothing else is installed. See [HOW-TO-TRANSLATE](docs/HOW-TO-TRANSLATE.md) for which languages work |
 | `-MedlinePlus` / `--medlineplus` | **Add MedlinePlus health topics** (~30 MB; public domain) as one offline page, `Medical\MedlinePlus\MedlinePlus-Health-Topics.html` - off by default. Summaries only: the copyrighted encyclopedia and drug pages are not included |
-| `-SkipWikipedia` / `--skip-wikipedia` | Don't download the 24 GB Wikipedia dump (~24 GB saved) |
+| `-SkipWikipedia` / `--skip-wikipedia` | Don't download the Wikipedia dump (~49 GB saved) |
 | `-SkipMaps` / `--skip-maps` | Don't download the maps (~17 GB saved for US) |
 | `-SkipModels` / `--skip-models` | Skip the large 8B/7B AI models, keep the small 3B (~9 GB saved) |
 | `-Only <piece>[,<piece>]` / `--only <piece>[,<piece>]` | **Add just these pieces to a drive you already made** (see below). Pieces: `translate`, `medlineplus`, `extra-zims`, `browser-maps`, `education`, `kolibri`, `wikipedia`. Cannot be combined with `-Lite`, the `-Skip` options or the piece switches above |

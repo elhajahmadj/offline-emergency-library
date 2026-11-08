@@ -10,10 +10,11 @@ function DocQa-Download($url, $target) {
   Remove-Item -LiteralPath $part -Force -ErrorAction SilentlyContinue
   return $false
 }
-function Install-ManualQA($Root, $SourceDir) {
+# $RepoBase: the installer's repo base, pinned to one commit (#193); main when not passed.
+function Install-ManualQA($Root, $SourceDir, $RepoBase = 'https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main') {
   $out = Join-Path $Root 'AI-Offline\Manual-QA'
   New-Item -ItemType Directory -Force (Join-Path $out 'text') | Out-Null
-  $base = 'https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/doc-qa'
+  $base = "$RepoBase/doc-qa"
   foreach($name in 'index.html','reader.css','reader.mjs','retrieval.mjs','START-DOCS.bat','start-docs.sh','sources.tsv'){
     $local = Join-Path $SourceDir "doc-qa\$name"
     $target = Join-Path $out $name

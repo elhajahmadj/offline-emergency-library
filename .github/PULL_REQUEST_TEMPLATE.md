@@ -3,11 +3,16 @@
 ## What this changes
 
 
+<!-- One keyword per issue, or GitHub closes only the first: "Closes #12, closes #34" -->
+Closes #
+
+
 ## Checklist
 - [ ] I updated **both** installers if the change affects downloading/setup (PowerShell + Bash), or noted why only one
-- [ ] If I changed a guide, I edited `docs/*.md` **and** regenerated the matching `.html`
+- [ ] If I changed a guide, I edited `docs/*.md` **and** made the same edit in the matching `.html`
 - [ ] Content added is free / openly-licensed / public domain (no piracy)
-- [ ] `bash -n get-offline-library.sh` passes and the PowerShell script parses
+- [ ] I ran the offline checks in CONTRIBUTING "Before you open a PR" (syntax, consistency, launchers, catalog, changelog); a reproducible bug fix adds a check that fails without it
+- [ ] Sizes, flags, region and file names stated in docs or installer messages match the code
 - [ ] Default behavior preserved (asks only where to save; maps default to US)
 - [ ] New download sources: license named and linked in this PR, URL added to `.github/scripts/check-links.sh`
 - [ ] I did **not** edit `SHA256SUMS.txt` or `CHANGELOG.md` (a workflow updates the sums after merge)
