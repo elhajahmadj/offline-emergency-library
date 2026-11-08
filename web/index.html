@@ -318,17 +318,20 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;color:v
     var json = JSON.stringify(sel, null, 2);
     var exportTools = el("div","tools");
     var isLocal = (location.protocol === "file:");
-    var dl = el("button","btn", isLocal ? "⤓ Download selection.json" : "Get the kit ↗");
+    var dl = el("button","btn", isLocal ? "⤓ Save my kit &amp; start the installer" : "Get the kit ↗");
     dl.disabled = isLocal && probs.length>0;
     dl.title = !isLocal ? "Online this page is browse-only; the installer reads the file on your computer. Download the kit and open this page from the folder." : (probs.length ? "Fix the warnings above first" : "");
+    var handoff = el("p","note","✓ Saved to your <strong>Downloads</strong>. Now switch back to the <strong>installer window</strong> — the terminal that opened this page — and press a key. It starts downloading your kit automatically; there is nothing more to pick.");
+    handoff.style.display = "none";
     dl.onclick = isLocal
-      ? function(){ downloadJSON(json); }
+      ? function(){ downloadJSON(json); dl.textContent = "✓ Saved — go to the installer window"; dl.disabled = true; handoff.style.display = ""; }
       : function(){ window.open("https://github.com/elhajahmadj/offline-emergency-library","_blank","noopener"); };
     var copy = el("button","btn ghost","Copy");
     copy.onclick=function(){ ta.select(); try{document.execCommand("copy");}catch(e){} copy.textContent="Copied"; setTimeout(function(){copy.textContent="Copy";},1200); };
     exportTools.appendChild(dl); exportTools.appendChild(copy);
     b.appendChild(exportTools);
-    b.appendChild(el("p","note","Save it to your <strong>Downloads</strong> folder, then run the installer launcher (<code>install.bat</code> / <code>install.command</code> / <code>install.sh</code>) and choose the picker option. Or run it by hand: <code>--select selection.json</code> / <code>-Selection selection.json</code>."));
+    b.appendChild(handoff);
+    b.appendChild(el("p","note","If the installer opened this page, just go back to its window when you have saved — it takes over automatically. If you opened this page yourself, run the launcher (<code>install.bat</code> / <code>install.command</code> / <code>install.sh</code>) and choose the picker option. By hand: <code>--select selection.json</code> / <code>-Selection selection.json</code>."));
     var ta = el("textarea"); ta.readOnly=true; ta.value=json;
     b.appendChild(ta);
 

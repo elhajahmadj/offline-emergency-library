@@ -39,9 +39,9 @@ pick_and_install(){
   echo "Opening the picker page in your browser..."
   open_page "$page" || echo "Could not open it automatically; open $page by hand."
   echo ""
-  echo "In the page: tick what you want, then click \"Download selection.json\""
-  echo "(it saves to your Downloads folder). When you have done that, come back here."
-  read -r -p "Press Return once selection.json is in your Downloads... " _
+  echo "In the page: tick what you want, then click \"Save my kit\"."
+  echo "(It saves selection.json to your Downloads.) Then come back to THIS window."
+  read -r -p "Press Return here once you have saved - the download then starts automatically... " _
   local sel
   sel="$(ls -t "$HOME/Downloads"/selection*.json 2>/dev/null | head -1)"
   if [ -z "$sel" ]; then

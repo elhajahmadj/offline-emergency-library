@@ -43,9 +43,10 @@ goto :askfull
 echo Opening the picker page in your browser...
 start "" "%~dp0web\index.html"
 echo.
-echo In the page: tick what you want, then click "Download selection.json"
-echo (it saves to your Downloads folder). When you have done that, come back here.
+echo In the page: tick what you want, then click "Save my kit".
+echo (It saves selection.json to your Downloads.) Then come back to THIS window.
 echo.
+echo Press a key here once you have saved - the download then starts automatically.
 pause
 rem Newest selection*.json in Downloads (dir /o-d sorts newest first).
 set "SEL="
