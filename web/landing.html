@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sine Nexu — an offline emergency library</title>
+<meta name="description" content="Sine Nexu is a complete offline, no-internet emergency library: local AI, full Wikipedia, offline maps, and survival, repair and medical references on a drive that works with no internet and no power grid.">
+<!-- Static landing page (#203). Works from file:// — no server, no internet, no external
+     fonts or scripts. Same design tokens as the picker (web/index.html) and About page. -->
+<style>:root{--bg:#0f1420;--card:#171f2e;--ink:#e7ecf3;--muted:#9fb0c3;--accent:#4fd1c5;--accent2:#f6ad55;--line:#273246;--code:#0b0f17}
+@media(prefers-color-scheme:light){:root{--bg:#f4f6fb;--card:#fff;--ink:#15202b;--muted:#56657a;--accent:#0d9488;--accent2:#b45309;--line:#e2e8f0;--code:#f1f5f9}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:24px 20px 80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.brand{font-weight:700;font-size:18px;letter-spacing:.3px}
+.brand .sub{color:var(--muted);font-weight:400;font-size:13px;margin-left:6px}
+.topnav a{color:var(--muted);text-decoration:none;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap;margin-left:6px}
+.topnav a:hover{color:var(--ink);border-color:var(--accent)}
+.hero{padding:10px 0 6px}
+h1{font-size:44px;line-height:1.1;margin:0 0 10px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tag{font-size:20px;color:var(--ink);margin:0 0 14px;font-weight:600}
+.lead{color:var(--muted);font-size:17px;margin:0 0 22px;max-width:62ch}
+.cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:4px 0 8px}
+.btn{display:inline-block;background:var(--accent);color:#06281f;text-decoration:none;border-radius:10px;padding:11px 18px;font-size:15px;font-weight:700}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line);font-weight:600}
+.btn.ghost:hover{border-color:var(--accent)}
+h2.sec{font-size:22px;margin:38px 0 10px}
+p.body{color:var(--ink);margin:0 0 12px;max-width:66ch}
+.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:12px 0}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.box h3{margin:0 0 6px;font-size:16px}
+.box p{margin:0;color:var(--muted);font-size:14px}
+ol.steps{margin:10px 0;padding-left:0;list-style:none;counter-reset:s}
+ol.steps li{position:relative;padding:10px 0 10px 42px;border-bottom:1px solid var(--line)}
+ol.steps li:last-child{border-bottom:none}
+ol.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#06281f;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:13px}
+a{color:var(--accent)}
+.note{color:var(--muted);font-size:14px}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:14px}
+</style>
+</head><body><div class="wrap">
+
+<div class="topbar">
+  <div class="brand">Sine Nexu<span class="sub">offline emergency library</span></div>
+  <nav class="topnav"><a href="index.html">Picker</a><a href="about.html">About</a><a href="https://github.com/elhajahmadj/offline-emergency-library">GitHub ↗</a></nav>
+</div>
+
+<section class="hero">
+  <h1>Knowledge that doesn't need the internet.</h1>
+  <p class="tag">Sine Nexu — a complete offline emergency library you download with one command.</p>
+  <p class="lead">One command downloads a complete offline, no-internet library: a local AI assistant (CPU or GPU), document Q&amp;A, full Wikipedia, offline maps for any country or region, and survival, repair and medical archives plus public-domain manuals. It asks only where to save — then everything works with <strong>no internet and no power grid</strong> behind it.</p>
+  <div class="cta">
+    <a class="btn" href="index.html">Build your kit — open the picker →</a>
+    <a class="btn ghost" href="about.html">About &amp; mission</a>
+  </div>
+  <p class="note">The name is Latin: <em>sine nexu</em>, “without a connection”. That's the point.</p>
+</section>
+
+<h2 class="sec">Why we built it</h2>
+<p class="body">The internet is where almost all practical knowledge lives — until the moment you can't reach it. A storm takes out the power. A disaster takes out the network. You're somewhere remote with no signal at all. That's exactly when you most need to know how to stay safe, treat an injury, purify water, grow or preserve food, fix a critical piece of equipment, or find your way.</p>
+<p class="body">Sine Nexu exists for those moments. It's built for <strong>emergencies and grid-down situations</strong>, and for <strong>people in remote parts of the world</strong> who have little or no internet access. The whole library lives on a drive you own, so a phone or a laptop and that drive can be the reference you fall back on when there's nothing else.</p>
+
+<h2 class="sec">What's inside</h2>
+<div class="grid">
+  <div class="box"><h3>Offline AI assistant</h3><p>A local chat model (CPU or GPU) and document Q&amp;A you can ask in plain language — no account, no cloud.</p></div>
+  <div class="box"><h3>All of Wikipedia</h3><p>The full encyclopedia as an offline Kiwix archive, plus optional Wikivoyage and Wikibooks.</p></div>
+  <div class="box"><h3>Offline maps</h3><p>OsmAnd maps for any country or region (US by default), viewable on the desktop and in a browser.</p></div>
+  <div class="box"><h3>Survival &amp; repair</h3><p>Survival guides, the iFixit repair archive and the Appropedia DIY archive for fixing and making things.</p></div>
+  <div class="box"><h3>Medical references</h3><p>Plain-language health topics and medical guidance for when help isn't a phone call away.</p></div>
+  <div class="box"><h3>Public-domain manuals</h3><p>Army field manuals and verified public-domain books on food-growing, metalworking, fishing and more.</p></div>
+</div>
+
+<h2 class="sec">How it works</h2>
+<ol class="steps">
+  <li><strong>Pick what you want.</strong> Open the picker, tick the pieces and map regions you need, and it saves a tiny <code>selection.json</code>. Or just choose “install everything”.</li>
+  <li><strong>Run one command.</strong> Double-click the installer for your system (<code>install.bat</code>, <code>install.command</code> or <code>install.sh</code>). It asks only where to save.</li>
+  <li><strong>Use it anywhere, offline.</strong> It writes every guide in Markdown <em>and</em> HTML, opens from <code>START-HERE.html</code>, and keeps working with no internet — for years.</li>
+</ol>
+<p class="note">You need a drive with room to spare (an external SSD is ideal). You choose how much to download — from a lean kit to the full library.</p>
+
+<div class="cta" style="margin-top:22px">
+  <a class="btn" href="index.html">Open the picker →</a>
+  <a class="btn ghost" href="https://github.com/elhajahmadj/offline-emergency-library">Get it on GitHub ↗</a>
+</div>
+
+<footer>
+  Sine Nexu — the Offline Emergency Library. Free and open; only verified public-domain or openly-licensed content. See <a href="about.html">About &amp; mission</a> or the <a href="https://github.com/elhajahmadj/offline-emergency-library">project on GitHub</a>.
+</footer>
+
+</div></body></html>
