@@ -49,6 +49,33 @@ case "$(uname -s)" in
     ;;
 esac
 
+# Execute the installer-owned ARM64 package block with a local SQLite fixture. This
+# protects the install payload, not a source string: Apple Silicon must receive the
+# replacement under OffRoad manifest's original jar name, while other targets keep it.
+awk 'index($0,"        if [ \"$PLAT\" = mac ] && [ \"$JARCH\" = aarch64 ]; then"){go=1} go{print} go && $0=="        fi"{exit}' \
+  get-offline-library.sh > "$tmp/arm64-package.sh"
+[ -s "$tmp/arm64-package.sh" ] && ok "Apple Silicon package block found" || bad "Apple Silicon package block is missing"
+printf 'NEW-SQLITE\n' > "$tmp/sqlite-fixture.jar"
+for arch in aarch64 x64; do
+  pkg="$tmp/package-$arch"
+  mkdir -p "$pkg/offroad.new/lib"
+  printf 'ORIGINAL-SQLITE\n' > "$pkg/offroad.new/lib/sqlite-jdbc-3.30.1.jar"
+  (
+    MVD="$pkg"
+    PLAT=mac
+    JARCH="$arch"
+    SQLITE_FIXTURE="$tmp/sqlite-fixture.jar"
+    log(){ :; }
+    fetch_sized(){ cp "$SQLITE_FIXTURE" "$2"; }
+    . "$tmp/arm64-package.sh"
+  )
+  if [ "$arch" = aarch64 ]; then
+    [ "$(cat "$pkg/offroad.new/lib/sqlite-jdbc-3.30.1.jar")" = 'NEW-SQLITE' ] && ok "Apple Silicon installs ARM64-compatible SQLite under the manifest name" || bad "Apple Silicon kept the incompatible SQLite jar"
+  else
+    [ "$(cat "$pkg/offroad.new/lib/sqlite-jdbc-3.30.1.jar")" = 'ORIGINAL-SQLITE' ] && ok "non-ARM OffRoad package keeps its original SQLite jar" || bad "non-ARM package was unexpectedly modified"
+  fi
+done
+
 grep -Fq 'OffRoad-bin-0.6-beta2.zip' get-offline-library.sh && ok "bash installer downloads OffRoad" || bad "bash installer has no OffRoad download"
 grep -Fq 'OffRoad-bin-0.6-beta2.zip' Get-OfflineLibrary.ps1 && ok "PowerShell installer downloads OffRoad" || bad "PowerShell installer has no OffRoad download"
 grep -Fq 'mklink /J' Get-OfflineLibrary.ps1 && ok "Windows launcher links instead of copying maps" || bad "Windows launcher has no junction"

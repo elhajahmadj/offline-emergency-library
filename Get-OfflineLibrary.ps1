@@ -734,9 +734,12 @@ if(-not $SkipMaps){
     # It is small, region-independent, and also usable by the Android app.
     $world = 'World_basemap_mini_2.obf.zip'
     $worldPath = Join-Path $Root "OsmAnd\$world"
-    if((-not $BmOnly) -and -not (Test-Path $worldPath)){
+    $worldRow = $idx.osmand_regions.region | Where-Object { $_.name -eq $world } | Select-Object -First 1
+    if((-not $BmOnly) -and -not (Test-Path $worldPath) -and $worldRow){
       Log "osmand: $world (world basemap for the desktop viewer)"
-      Fetch-Sized "https://download.osmand.net/download.php?standard=yes&file=$world" $worldPath 40301077 -Soft
+      Fetch-Sized "https://download.osmand.net/download.php?standard=yes&file=$world" $worldPath $worldRow.containerSize -Soft
+    } elseif((-not $BmOnly) -and -not (Test-Path $worldPath)) {
+      Log "osmand note: $world is not in the current index; skipping the optional basemap."
     }
   }catch{ Log "osmand ERROR: $($_.Exception.Message)" }
 } else { Log '=== [8/8] Maps SKIPPED ===' }
@@ -880,13 +883,13 @@ set "PATH=%~dp0jre\bin;%PATH%"
 echo Preparing map files for offline viewing (first run can take several minutes)...
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0prepare-maps.ps1"
 if errorlevel 1 goto :failed
-set "OFFROAD_HOME=%~dp0offroad-home"
+set "OFFROAD_HOME=%LOCALAPPDATA%\OfflineLibrary-OffRoad"
 if not exist "%OFFROAD_HOME%\.OffRoad" mkdir "%OFFROAD_HOME%\.OffRoad"
 if not exist "%OFFROAD_HOME%\.OffRoad\offroad.properties" type nul > "%OFFROAD_HOME%\.OffRoad\offroad.properties"
-if not exist "%OFFROAD_HOME%\.OffRoad\maps" (
-  mklink /J "%OFFROAD_HOME%\.OffRoad\maps" "%~dp0..\obf" >nul
-  if errorlevel 1 goto :link_failed
-)
+rem Keep the junction on local NTFS so exFAT libraries work; recreate it after moves.
+rmdir "%OFFROAD_HOME%\.OffRoad\maps" >nul 2>&1
+mklink /J "%OFFROAD_HOME%\.OffRoad\maps" "%~dp0..\obf" >nul
+if errorlevel 1 goto :link_failed
 if not exist "%~dp0offroad\OffRoad.jar" goto :viewer_missing
 set "JAVA=%~dp0jre\bin\java.exe"
 if not exist "%JAVA%" set "JAVA=java"
@@ -1521,10 +1524,13 @@ if(-not $SkipMaps){
   } else {
     $mvMiss = @()
     if(-not (Test-Path $bat)){ $mvMiss += 'app\OsmAndMapCreator.bat' }
-    if(-not (Test-Path $offJar)){ $mvMiss += 'offroad\OffRoad.jar' }
     if(-not (Test-Path $offBat)){ $mvMiss += 'VIEW-MAPS-OFFLINE.bat' }
     if(-not (Test-Path $jre)){ $mvMiss += 'jre\bin\java.exe' }
-    ScFail ("desktop map viewers not complete - missing: " + ($mvMiss -join ', ') + ' - delete OsmAnd\MapViewer-Desktop\OffRoad.zip or OsmAndMapCreator.zip (or the Java archive) and re-run the installer')
+    if($mvMiss){
+      ScFail ("desktop map viewers not complete - missing: " + ($mvMiss -join ', ') + ' - delete OsmAnd\MapViewer-Desktop\OsmAndMapCreator.zip (or the Java archive) and re-run the installer')
+    } elseif(-not (Test-Path $offJar)) {
+      ScWarn 'optional OffRoad viewer was not downloaded - delete OsmAnd\MapViewer-Desktop\OffRoad.zip and re-run the installer to retry'
+    }
   }
 } elseif(Test-Path $mvd) {
   if($Only){

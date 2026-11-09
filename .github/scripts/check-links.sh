@@ -16,6 +16,7 @@ urls=(
   "https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip"
   "https://download.osmand.net/download.php?standard=yes&file=World_basemap_mini_2.obf.zip"
   "https://master.dl.sourceforge.net/project/offroadosm/OffRoad_Unstable/0.6-beta2/OffRoad-bin-0.6-beta2.zip"
+  "https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.46.1.3/sqlite-jdbc-3.46.1.3.jar"
   "https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jre/hotspot/normal/eclipse"
   "https://api.adoptium.net/v3/binary/latest/21/ga/linux/aarch64/jre/hotspot/normal/eclipse"
   "https://api.adoptium.net/v3/binary/latest/21/ga/mac/x64/jre/hotspot/normal/eclipse"

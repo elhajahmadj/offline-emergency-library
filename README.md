@@ -501,6 +501,7 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 | Portable Java (Eclipse Temurin / OpenJDK) | GPL-2.0 WITH Classpath-exception | Yes |
 | Kiwix reader; Kiwix / OsmAnd~ phone apps | GPL-3.0 | Yes |
 | OsmAnd map viewers (OsmAndMapCreator and OffRoad) + OsmAnd~ app | GPL-3.0 (code); artwork [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/), some proprietary (TTS voices) | Code yes; bundled artwork **non-commercial** |
+| SQLite JDBC (xerial; Apple Silicon OffRoad compatibility) | [Apache-2.0](https://github.com/xerial/sqlite-jdbc/blob/master/LICENSE) | Yes |
 | Map data (OpenStreetMap; OsmAnd + Protomaps basemap) | [ODbL-1.0](https://opendatacommons.org/licenses/odbl/1-0/) | Yes (attribution + share-alike) |
 | Wikipedia, WikiMed medical; Appropedia DIY; Wikivoyage + Wikibooks (opt-in) | CC BY-SA | Yes (attribution + share-alike) |
 | US Army field/technical manuals | US government works (public domain) ⸸ | Yes |

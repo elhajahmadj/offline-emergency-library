@@ -790,9 +790,12 @@ if [ "$SKIP_MAPS" = 0 ]; then
   # OffRoad draws the maps at every zoom level and asks for this world map on first start.
   # It is small, region-independent, and also usable by the Android app.
   world="World_basemap_mini_2.obf.zip"
-  if [ "$BM_ONLY" = 0 ] && [ ! -f "$ROOT/OsmAnd/$world" ]; then
+  world_cs="$(grep -oE "<region [^>]*name=\"$world\"[^>]*>" "$ROOT/OsmAnd/_index.xml" | head -n1 | grep -oE 'containerSize="[0-9]+"' | grep -oE '[0-9]+')"
+  if [ "$BM_ONLY" = 0 ] && [ ! -f "$ROOT/OsmAnd/$world" ] && [ -n "$world_cs" ]; then
     log "osmand: $world (world basemap for the desktop viewer)"
-    ( fetch_sized "https://download.osmand.net/download.php?standard=yes&file=$world" "$ROOT/OsmAnd/$world" 40301077 soft ) || true
+    ( fetch_sized "https://download.osmand.net/download.php?standard=yes&file=$world" "$ROOT/OsmAnd/$world" "$world_cs" soft ) || true
+  elif [ "$BM_ONLY" = 0 ] && [ ! -f "$ROOT/OsmAnd/$world" ]; then
+    log "osmand note: $world is not in the current index; skipping the optional basemap."
   fi
 
   # desktop map viewer (OsmAndMapCreator + portable Java) — use maps on a PC, no phone
@@ -826,7 +829,20 @@ if [ "$SKIP_MAPS" = 0 ]; then
     if ( fetch_sized "$oru" "$MVD/OffRoad.zip" 41634058 soft ); then
       rm -rf "$MVD/offroad.new"
       if unzip -o -q "$MVD/OffRoad.zip" -d "$MVD/offroad.new" && [ -f "$MVD/offroad.new/OffRoad.jar" ]; then
-        rm -rf "$MVD/offroad"; mv "$MVD/offroad.new" "$MVD/offroad"
+        # OffRoad 0.6-beta2's SQLite has no Mac/aarch64 native. Keep the manifest's
+        # original jar name while replacing it with the ARM64-compatible xerial build.
+        if [ "$PLAT" = mac ] && [ "$JARCH" = aarch64 ]; then
+          sqlu="https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.46.1.3/sqlite-jdbc-3.46.1.3.jar"
+          if ( fetch_sized "$sqlu" "$MVD/sqlite-jdbc-3.46.1.3.jar" 14127503 soft ) && [ -f "$MVD/offroad.new/lib/sqlite-jdbc-3.30.1.jar" ]; then
+            mv -f "$MVD/sqlite-jdbc-3.46.1.3.jar" "$MVD/offroad.new/lib/sqlite-jdbc-3.30.1.jar"
+          else
+            rm -rf "$MVD/offroad.new"
+            log "  mapviewer ERROR: Apple Silicon needs sqlite-jdbc 3.46.1.3; old OffRoad kept. Re-run to retry."
+          fi
+        fi
+        if [ -f "$MVD/offroad.new/OffRoad.jar" ]; then
+          rm -rf "$MVD/offroad"; mv "$MVD/offroad.new" "$MVD/offroad"
+        fi
       else
         rm -rf "$MVD/offroad.new"; log "  mapviewer ERROR: could not unpack OffRoad.zip (old viewer kept). Delete it and re-run."
       fi
@@ -1475,10 +1491,13 @@ if [ "$SKIP_MAPS" = 0 ]; then
   else
     mv_miss=""
     [ -f "$BAT" ] || mv_miss="$mv_miss app/OsmAndMapCreator.sh"
-    [ -f "$OFFJAR" ] || mv_miss="$mv_miss offroad/OffRoad.jar"
     [ -f "$OFFBAT" ] || mv_miss="$mv_miss VIEW-MAPS-OFFLINE.sh"
     [ -n "$JRE" ] || mv_miss="$mv_miss jre/bin/java"
-    sc_fail "desktop map viewers not complete - missing:$mv_miss - delete OsmAnd/MapViewer-Desktop/OffRoad.zip or OsmAndMapCreator.zip (or the Java archive) and re-run the installer"
+    if [ -n "$mv_miss" ]; then
+      sc_fail "desktop map viewers not complete - missing:$mv_miss - delete OsmAnd/MapViewer-Desktop/OsmAndMapCreator.zip (or the Java archive) and re-run the installer"
+    elif [ ! -f "$OFFJAR" ]; then
+      sc_warn "optional OffRoad viewer was not downloaded - delete OsmAnd/MapViewer-Desktop/OffRoad.zip and re-run the installer to retry"
+    fi
   fi
 elif [ -d "$MVD" ]; then
   if [ -n "$ONLY" ]; then
