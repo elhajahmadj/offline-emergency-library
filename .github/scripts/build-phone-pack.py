@@ -15,6 +15,7 @@ import hashlib
 import json
 import re
 import sys
+import time
 import urllib.parse
 import urllib.request
 import zipfile
@@ -82,10 +83,18 @@ def installer_urls():
     return out
 
 
-def get(url):
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=300) as r:
-        return r.read()
+def get(url, tries=3):
+    # archive.org times out now and then; a few spaced retries keep one blip from failing the run.
+    for attempt in range(1, tries + 1):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=300) as r:
+                return r.read()
+        except OSError as e:
+            if attempt == tries:
+                raise
+            print(f"  retry {attempt}/{tries - 1} after: {e}", flush=True)
+            time.sleep(20 * attempt)
 
 
 def resolve(kind, src):
