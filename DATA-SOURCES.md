@@ -25,8 +25,8 @@ the selector; everything else is part of a normal install.
 |---|---|---|
 | **AI engine — llama.cpp** | `https://github.com/ggml-org/llama.cpp` — release builds resolved from `https://api.github.com/repos/ggml-org/llama.cpp/releases`, then fetched as `https://github.com/ggml-org/llama.cpp/releases/download/<tag>/llama-<tag>-bin-<platform>.<ext>` (`.zip` on Windows, `.tar.gz` on macOS/Linux) | MIT |
 | **Chat model — Llama 3.2 3B Instruct (GGUF)** | `https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF` | Llama 3.2 Community License |
-| **Chat model — Llama 3.1 8B Instruct (GGUF)** *(default; skip with `--skip-models` / the picker's lite preset)* | `https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF` | Llama 3.1 Community License |
-| **Chat model — Qwen2.5 7B Instruct (GGUF)** *(default; skip with `--skip-models` / the picker's lite preset)* | `https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF` | Apache-2.0 |
+| **Chat model — Llama 3.1 8B Instruct (GGUF)** *(default; skip with `--skip-models` or `--lite`)* | `https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF` | Llama 3.1 Community License |
+| **Chat model — Qwen2.5 7B Instruct (GGUF)** *(default; skip with `--skip-models` or `--lite`)* | `https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF` | Apache-2.0 |
 | **Translator model — Qwen3 4B Instruct (GGUF)** *(opt-in: `--translate`)* | `https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF` | Apache-2.0 |
 | **Document Q&A app — GPT4All** *(default; skipped by `--lite`)* | `https://github.com/nomic-ai/gpt4all` — installer resolved from the repo's GitHub releases | MIT |
 
@@ -78,14 +78,14 @@ Downloaded from the Internet Archive, `https://archive.org/` — the installer r
 `https://archive.org/metadata/<item>` for each item, then fetches the PDF from
 `https://archive.org/download/<item>/...`. Unless noted, these are **US Government works (public
 domain)** or **out-of-copyright** books. Two Army manuals are *not* plain public-release works, and
-are marked ☦ below — see the [README License note](README.md#license).
+are marked ⸸ below — see the [README License note](README.md#license).
 
 | Title | Item |
 |---|---|
 | FM 21-76 US Army Survival Manual | `https://archive.org/metadata/fm-21-76-us-army-survival-manual` |
-| FM 3-05.70 Survival (2002) ☦ *distribution-restricted ("U.S. Government agencies and their contractors only")* | `https://archive.org/metadata/fm-3-05.70-survival-2002` |
+| FM 3-05.70 Survival (2002) ⸸ *distribution-restricted ("U.S. Government agencies and their contractors only")* | `https://archive.org/metadata/fm-3-05.70-survival-2002` |
 | 105-Page Survival Field Manual | `https://archive.org/metadata/105-page-survival-field-manual` |
-| Survival and First Aid for Soldiers ☦ *contains American Heart Association copyrighted material* | `https://archive.org/metadata/Survival-FirstAidForSoldiers-AFieldManual` |
+| Survival and First Aid for Soldiers ⸸ *contains American Heart Association copyrighted material* | `https://archive.org/metadata/Survival-FirstAidForSoldiers-AFieldManual` |
 | FM 4-25.11 First Aid | `https://archive.org/metadata/UsArmyFirstAidManualFm4-25.11` |
 | FM 3-25.26 Map Reading and Land Navigation | `https://archive.org/metadata/FM3-25x26` |
 | FM 31-70 Basic Cold Weather Manual (1968) | `https://archive.org/metadata/fm-31-70-basic-cold-weather-manual-1968` |
