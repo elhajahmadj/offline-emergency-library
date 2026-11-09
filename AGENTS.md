@@ -18,6 +18,10 @@ _Last verified: 2026-11-09_
   macOS and Linux for any region. Review fixes put Windows's private junction on local
   NTFS so exFAT drives and relocation work, and replace SQLite JDBC on Apple Silicon
   with an ARM64-compatible build (Windows runtime QA; macOS and Linux not tested here).
+  Issue 79 adds the phone docs pack: `.github/workflows/phone-pack.yml` builds the
+  `sources.tsv` manuals plus phone-useful guides into a zip on the fixed `phone-pack`
+  release, linked by a QR code (`web/phone-pack-qr.svg`) and documented in `USE-ON-PHONE`.
+  The release does not exist until that workflow first runs on `main`.
 - Works: aria2 fallback, cancellation and partial-file protection have offline regression checks;
   large-model chat launchers follow the model selection in both installers (issue 168);
   changelog compilation rejects invalid bullet starts and missing numeric PR references,
@@ -78,3 +82,6 @@ differs between the installers or is missing from `check-links.sh`, a guide lack
 its paths added to `RH` / `$rh` in both installers.
 `node --test doc-qa/retrieval.test.mjs` checks ranking without inference; the CI
 lint job runs it on PRs and the existing weekly schedule.
+`.github/scripts/build-phone-pack.py OUT.zip [--from DRIVE]` builds the phone pack and
+stops on any PDF whose hash differs from `sources.tsv`, so the release keeps its last good
+zip. The QR code encodes a fixed release URL; regenerate it only if the URL changes.

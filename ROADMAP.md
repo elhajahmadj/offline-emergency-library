@@ -13,10 +13,10 @@ Want one of these? Comment on (or open) the matching issue. PRs welcome.
       OsmAnd region names. _Done in v1.3._
 
 ## Phone experience
-- [ ] **"Phone docs" pack** — a small bundle of the RAG-friendly PDFs + guides, importable
+- [x] **"Phone docs" pack** - a small bundle of the RAG-friendly PDFs + guides, importable
       into on-device document-AI apps (e.g. NomadAI), for iOS and Android.
       ([#79](https://github.com/elhajahmadj/offline-emergency-library/issues/79))
-- [ ] QR code + one-tap download link for the phone pack.
+- [x] QR code + one-tap download link for the phone pack.
       ([#79](https://github.com/elhajahmadj/offline-emergency-library/issues/79))
 
 ## Content

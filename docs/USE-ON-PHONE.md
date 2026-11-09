@@ -13,6 +13,33 @@ You can carry most of this library on a phone — handy for grab-and-go emergenc
 
 ---
 
+## Phone docs pack (no drive needed)
+
+A small zip with the most useful reading for a phone: the survival, first-aid, medical,
+repair and food-growing manuals that the kit's manual reader uses (PDF), plus short
+emergency guides (Markdown). About 410 MB. It does not include Wikipedia, maps or the AI.
+
+**Get it while you have internet:**
+- Open the HTML version of this guide on a computer and scan its QR code with the phone
+  camera, or tap [this download link](https://github.com/elhajahmadj/offline-emergency-library/releases/download/phone-pack/Offline-Emergency-Phone-Pack.zip).
+- The [release page](https://github.com/elhajahmadj/offline-emergency-library/releases/tag/phone-pack)
+  shows the current size and file list.
+
+**Use it:**
+1. Unzip it. iPhone/iPad: tap the zip in the **Files** app. Android: open it in your file
+   manager and choose **Extract**.
+2. Open the PDFs in any PDF app, and the `.md` guides in any text viewer.
+3. To ask questions about them offline, import the PDFs and `.md` guides into an on-device
+   document-AI app, for example **NomadAI** (iOS and Android; its document library takes
+   PDF, `.txt` and `.md`). Install the app while online. Other local document-chat apps
+   work the same way.
+
+**Licenses:** `LICENSES.txt` in the zip lists each file's license. The Army manuals and
+old books are public domain and the guides are MIT. The Hesperian, WHO and USUHS medical
+books are non-commercial, so share the pack free of charge only.
+
+---
+
 ## Android — step by step
 
 ### 1. Install the apps (offline)
@@ -100,3 +127,4 @@ model is about 2 GB). The bundled Windows AI is the primary experience; phone AI
 - **iPhone/iPad:** install Kiwix + OsmAnd from the App Store while online. Kiwix opens the
   `.zim` files straight from the drive; maps are imported into OsmAnd.
 - **AI on phone:** optional, via a separate mobile app + the small model file.
+- **Manuals only, no drive:** download the phone docs pack (QR code or link above).

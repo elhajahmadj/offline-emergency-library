@@ -1,0 +1,57 @@
+name: Publish phone docs pack
+
+# #79: build the phone docs pack and attach it to the fixed "phone-pack" release, so the
+# download link and QR code (web/phone-pack-qr.svg) never change. The release is kept out of
+# "Latest" so version releases stay on top.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "doc-qa/sources.tsv"
+      - "docs/*.md"
+      - "get-offline-library.sh"
+      - ".github/scripts/build-phone-pack.py"
+      - ".github/workflows/phone-pack.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phone-pack
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ZIP: Offline-Emergency-Phone-Pack.zip
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the pack (downloads each PDF and checks its sources.tsv hash)
+        run: python3 .github/scripts/build-phone-pack.py "$ZIP"
+      - name: Upload to the phone-pack release
+        run: |
+          mb=$(( ($(stat -c %s "$ZIP") + 500000) / 1000000 ))
+          {
+            echo "**Phone docs pack: about $mb MB.** Built from ${GITHUB_SHA::7} on $(date -u +%Y-%m-%d)."
+            echo
+            echo "Manual PDFs and short emergency guides for a phone. Unzip it, then open the PDFs in any"
+            echo "reader or import the PDFs and .md guides into an on-device document-AI app."
+            echo "How to: docs/USE-ON-PHONE.md. Licenses: LICENSES.txt inside the zip. Some items are"
+            echo "non-commercial (CC BY-NC-SA, Hesperian), so share the pack free of charge only."
+            echo
+            echo '```'
+            unzip -Z1 "$ZIP"
+            echo '```'
+          } > notes.md
+          if gh release view phone-pack > /dev/null 2>&1; then
+            gh release edit phone-pack --notes-file notes.md --latest=false
+          else
+            gh release create phone-pack --target "$GITHUB_SHA" --title "Phone docs pack" \
+              --notes-file notes.md --latest=false
+          fi
+          gh release upload phone-pack "$ZIP" --clobber

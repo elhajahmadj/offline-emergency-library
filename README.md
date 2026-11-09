@@ -171,6 +171,7 @@ Downloading ~85 GB can take several hours.
 | **GPT4All doc-Q&A** | 64-bit PC, ~8 GB RAM recommended. CPU only. Self-contained (no Python/CUDA). |
 | **Maps on a computer** | **No phone needed.** Run `MapViewer-Desktop\VIEW-MAPS-OFFLINE`: the bundled OffRoad viewer draws your region's OsmAnd maps with no internet on Windows, macOS and Linux, including non-US regions (Offline rendering tested on Windows 11; macOS and Linux are bundled but not runtime-tested). Browser maps (US, `-BrowserMaps`) remain an option for US street detail. First use unzips the maps (~30 GB). |
 | **Maps on a phone** | Android: bundled **OsmAnd~ APK** (sideload offline). iPhone/iPad: install **OsmAnd** from the App Store while online. |
+| **Manuals on a phone, no drive** | The [phone docs pack](https://github.com/elhajahmadj/offline-emergency-library/releases/tag/phone-pack): manual PDFs and short guides in one zip for any PDF reader or on-device document-AI app. See `USE-ON-PHONE`. |
 
 **Key points:**
 - **No GPU is required** for the AI — it runs on an ordinary CPU (just slower). A 6 GB GPU

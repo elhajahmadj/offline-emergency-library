@@ -22,6 +22,8 @@ Look for issues labeled **`good first issue`** and **`help wanted`**.
 - `maps-viewer/`, `medlineplus/`, `drive/` - files the installers copy onto the drive
   (browser-map viewer, MedlinePlus page, CHECK-DRIVE)
 - `catalog.json` - piece ids and sizes for `--select` / `-Selection`
+- `.github/scripts/build-phone-pack.py` - builds the phone docs pack from `doc-qa/sources.tsv`
+  and the guides it lists; `.github/workflows/phone-pack.yml` publishes it
 - `changelog.d/` - one changelog fragment per PR (see its README)
 - `.github/scripts/` - the CI checks; most run offline in seconds
 - `skills/offline-emergency-library/SKILL.md` — the Claude Code skill
