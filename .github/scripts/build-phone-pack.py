@@ -29,6 +29,10 @@ PACK_URL = ("https://github.com/elhajahmadj/offline-emergency-library/"
 GUIDES = ["EMERGENCY-ESSENTIALS", "PSYCHOLOGICAL-FIRST-AID", "MAP-AND-COMPASS",
           "RADIO-GUIDE", "RADIO-FREQUENCIES", "POWER-AND-DEVICES"]
 
+# Not public-release (FM 3-05.70: distribution restricted; FM 21-11: copyrighted AHA parts).
+# The installer may fetch them for the user's own drive; this project must not host them.
+DRIVE_ONLY = {"FM 3-05.70 Survival (2002).pdf", "Survival and First Aid for Soldiers.pdf"}
+
 README = f"""Offline Emergency Library - phone docs pack
 =============================================
 
@@ -51,7 +55,8 @@ Project: https://github.com/elhajahmadj/offline-emergency-library
 LICENSE_NOTES = """
 License terms
 -------------
-- US Army manuals: US government works, public domain.
+- US Army manuals: US government works, public domain. (Two Army manuals whose covers
+  restrict distribution or carry copyrighted material are left out of this pack.)
 - Other "Public domain" books: published before 1930, public domain in the US.
 - A Practical Guide to Prolonged Casualty Care: (c) 2025 Henry M. Jackson Foundation,
   CC BY-NC-SA 4.0, https://creativecommons.org/licenses/by-nc-sa/4.0/ (included unchanged).
@@ -128,6 +133,8 @@ def build(tmp, drive):
     with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as z:
         for path, algo, digest, attribution in sources():
             name = Path(path).name
+            if name in DRIVE_ONLY:
+                continue
             if drive:
                 data = (drive / path).read_bytes()
             else:

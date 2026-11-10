@@ -85,3 +85,6 @@ lint job runs it on PRs and the existing weekly schedule.
 `.github/scripts/build-phone-pack.py OUT.zip [--from DRIVE]` builds the phone pack and
 stops on any PDF whose hash differs from `sources.tsv`, so the release keeps its last good
 zip. The QR code encodes a fixed release URL; regenerate it only if the URL changes.
+The builder finds each manual's source from the `get_pdf` / `get_pdf_url` lines in
+`get-offline-library.sh`; keep those lines' shape unchanged, or update the builder with them.
+`DRIVE_ONLY` in the builder lists manuals that must not be hosted in the pack.
