@@ -14,10 +14,9 @@ Usage:
 import hashlib
 import json
 import re
+import subprocess
 import sys
-import time
 import urllib.parse
-import urllib.request
 import zipfile
 from pathlib import Path
 
@@ -88,18 +87,15 @@ def installer_urls():
     return out
 
 
-def get(url, tries=3):
-    # archive.org times out now and then; a few spaced retries keep one blip from failing the run.
-    for attempt in range(1, tries + 1):
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": UA})
-            with urllib.request.urlopen(req, timeout=300) as r:
-                return r.read()
-        except OSError as e:
-            if attempt == tries:
-                raise
-            print(f"  retry {attempt}/{tries - 1} after: {e}", flush=True)
-            time.sleep(20 * attempt)
+def get(url, retries=6):
+    # archive.org drops TLS connections from CI runners now and then; curl with --retry-all-errors
+    # (what the installer and the source-health check use) rides it out where urllib did not.
+    r = subprocess.run(["curl", "-fLsS", "--connect-timeout", "30", "--max-time", "600",
+                        "--retry", str(retries), "--retry-all-errors", "--retry-delay", "20",
+                        "-A", UA, url], capture_output=True)
+    if r.returncode:
+        raise OSError(f"curl exit {r.returncode} for {url}: {r.stderr.decode(errors='replace').strip()}")
+    return r.stdout
 
 
 def resolve(kind, src):
