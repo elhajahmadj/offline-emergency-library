@@ -11,9 +11,14 @@ while IFS=$'\t' read -r pdf algorithm pdfhash url texthash mode attribution; do
     text/*) path="doc-qa/$url" ;;
     https://archive.org/download/*)
       path="$tmp/$texthash.txt"
-      # Archive's download nodes answer a transient 500 under load; retry before calling it down.
-      if ! curl -fLsS --connect-timeout 15 --max-time 90 --retry 6 --retry-all-errors --retry-delay 5 "$url" -o "$path"; then
-        echo "FAIL: source unavailable after retries: $pdf"; fail=1; continue
+      # Archive's download nodes often time out or answer 5xx from CI runners, so only a
+      # definite 4xx (item gone or moved) fails; a network outage is a warning, not a red PR.
+      if ! code="$(curl -fLsS --connect-timeout 15 --max-time 90 --retry 3 --retry-all-errors --retry-delay 5 -w '%{http_code}' "$url" -o "$path")"; then
+        case "$code" in
+          4*) echo "FAIL: source gone (HTTP $code): $pdf"; fail=1 ;;
+          *) echo "::warning::source unreachable (HTTP ${code:-none}), text not checked: $pdf" ;;
+        esac
+        continue
       fi ;;
     *) echo "FAIL: unrecognized text URL for $pdf"; fail=1; continue ;;
   esac
