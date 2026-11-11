@@ -40,6 +40,8 @@ jobs:
         run: bash .github/scripts/check-catalog.sh
       - name: Component table has a license and source for every download (#67)
         run: bash .github/scripts/check-components.sh
+      - name: SOURCES.md is up to date with components.tsv (#67)
+        run: bash .github/scripts/build-sources.sh --check
       - name: Region tokens pick the same maps in both installers
         run: bash .github/scripts/check-regions.sh
       - name: Picker catalog.js matches catalog.json (#188)

@@ -8,7 +8,9 @@ This page is the human-readable companion to
 [`.github/scripts/check-links.sh`](.github/scripts/check-links.sh), the machine-checked list CI
 runs weekly to catch a provider moving a path before users do. The README
 [Trust & verification](README.md#-trust--verification) and [License](README.md#license) tables
-summarise the same sources at a higher level.
+summarise the same sources at a higher level. [`SOURCES.md`](SOURCES.md) is a compact,
+machine-generated table of every component and its license link, built from
+[`components.tsv`](components.tsv) (#67).
 
 Some sources are **index-driven**: the exact file name changes over time (a new map edition, a
 new engine build), so the installer reads an index first and then fetches by name. For those we
