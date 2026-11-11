@@ -34,6 +34,8 @@ GUIDES = ["EMERGENCY-ESSENTIALS", "PSYCHOLOGICAL-FIRST-AID", "MAP-AND-COMPASS",
 # Not public-release (FM 3-05.70: distribution restricted; FM 21-11: copyrighted AHA parts).
 # The installer may fetch them for the user's own drive; this project must not host them.
 DRIVE_ONLY = {"FM 3-05.70 Survival (2002).pdf", "Survival and First Aid for Soldiers.pdf"}
+# Hostable, but left out to keep the pack small on mobile data (TM 9-243 is ~138 MB; #234).
+TOO_BIG = {"TM 9-243 Use and Care of Hand Tools.pdf"}
 
 README = f"""Offline Emergency Library - phone docs pack
 =============================================
@@ -152,7 +154,7 @@ def build(tmp, drive):
     with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as z:
         for path, algo, digest, attribution in sources():
             name = Path(path).name
-            if name in DRIVE_ONLY:
+            if name in DRIVE_ONLY or name in TOO_BIG:
                 continue
             if drive:
                 data = (drive / path).read_bytes()

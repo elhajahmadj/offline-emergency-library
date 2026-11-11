@@ -15,9 +15,9 @@ You can carry most of this library on a phone — handy for grab-and-go emergenc
 
 ## Phone docs pack (no drive needed)
 
-One zip (about 390 MB, so use Wi-Fi) with the most useful reading for a phone: the survival,
+One zip (about 250 MB, so use Wi-Fi) with the most useful reading for a phone: the survival,
 first-aid, medical, repair and food-growing manuals that the kit's manual reader uses (PDF),
-plus short emergency guides (Markdown). Two Army manuals with distribution limits stay drive-only. It does not include Wikipedia, maps or the AI.
+plus short emergency guides (Markdown). Two Army manuals with distribution limits, and the large hand-tools manual (TM 9-243), stay drive-only. It does not include Wikipedia, maps or the AI.
 
 **Get it while you have internet:**
 - Open the HTML version of this guide on a computer and scan its QR code with the phone
