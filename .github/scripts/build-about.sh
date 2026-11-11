@@ -117,7 +117,7 @@ a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:
 .person p{margin:0;color:var(--ink)}
 footer{margin-top:30px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}</style>
 </head><body><div class="wrap">
-<div class="topbar"><h1>About Sine Nexu</h1><nav class="topnav"><a href="landing.html">Home</a><a href="index.html">Picker</a><a class="here" href="about.html">About</a><a href="sources.html">Sources</a><a href="https://github.com/elhajahmadj/offline-emergency-library">GitHub ↗</a></nav></div>
+<div class="topbar"><h1>About Sine Nexu</h1><nav class="topnav"><a href="landing.html">Home</a><a href="index.html">Picker</a><a href="docs.html">Docs</a><a class="here" href="about.html">About</a><a href="sources.html">Sources</a><a href="https://github.com/elhajahmadj/offline-emergency-library">GitHub ↗</a></nav></div>
 <p class="lead">Sine Nexu is a free, offline emergency library — survival, medical, repair, food and reference knowledge, plus an offline AI, on a drive that works with <strong>no internet and no power grid</strong> behind it.</p>
 
 <h2 class="sec">Our mission</h2>
@@ -133,7 +133,7 @@ footer{margin-top:30px;color:var(--muted);font-size:14px;border-top:1px solid va
 <h2 class="sec">Contributors</h2>
 <p class="note">Everyone who has improved Sine Nexu. Per-fix detail is in the <a href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/CHANGELOG.md">CHANGELOG</a>.</p>
 $body<footer>Add yourself by editing <code>CONTRIBUTORS.md</code> — the contributor list on this page is generated from it. ❤️<br>
-<a href="landing.html">Home</a> · <a href="index.html">Picker</a> · <a href="about.html">About</a> · <a href="sources.html">Sources</a> · <a href="privacy.html">Privacy</a> · <a href="https://github.com/elhajahmadj/offline-emergency-library">GitHub</a></footer>
+<a href="landing.html">Home</a> · <a href="index.html">Picker</a> · <a href="docs.html">Docs</a> · <a href="about.html">About</a> · <a href="sources.html">Sources</a> · <a href="privacy.html">Privacy</a> · <a href="https://github.com/elhajahmadj/offline-emergency-library">GitHub</a></footer>
 </div></body></html>
 EOF
 }

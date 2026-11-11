@@ -40,7 +40,7 @@ jobs:
         run: bash .github/scripts/build-about.sh
       - name: Verify the site has its core files
         run: |
-          for f in web/index.html web/landing.html web/catalog.js web/regions.js web/about.html web/sources.html web/privacy.html web/phone-pack-qr.svg; do
+          for f in web/index.html web/landing.html web/catalog.js web/regions.js web/about.html web/docs.html web/sources.html web/privacy.html web/phone-pack-qr.svg; do
             test -f "$f" || { echo "missing $f"; exit 1; }
           done
       - uses: actions/configure-pages@v5

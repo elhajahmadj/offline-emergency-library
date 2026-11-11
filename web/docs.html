@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Documentation — how to use your library — Sine Nexu</title>
+<meta name="description" content="How to navigate and actually use the Sine Nexu offline emergency library once it is on your drive: where everything lives and how to open the AI, Kiwix archives, maps, manuals and phone apps — all offline.">
+<!-- Documentation / usage page (#205). Static, self-contained, works from file:// — no external
+     fonts or scripts. Same design tokens as the landing/about/sources/privacy/picker pages.
+     This page does NOT duplicate the docs/*.md|*.html guides; it links into them (the GitHub
+     render, since the published site serves web/ only) and describes the on-drive paths. Keep
+     task links and folder names in sync with docs/I-NEED-TO.* and the installers. -->
+<style>:root{--bg:#0f1420;--card:#171f2e;--ink:#e7ecf3;--muted:#9fb0c3;--accent:#4fd1c5;--accent2:#f6ad55;--line:#273246;--code:#0b0f17}
+@media(prefers-color-scheme:light){:root{--bg:#f4f6fb;--card:#fff;--ink:#15202b;--muted:#56657a;--accent:#0d9488;--accent2:#b45309;--line:#e2e8f0;--code:#f1f5f9}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px}
+h1{font-size:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin:0 0 6px}
+h2.sec{font-size:20px;margin:34px 0 8px;scroll-margin-top:16px}
+h3{font-size:16px;margin:16px 0 4px}
+.lead{color:var(--muted);margin:0 0 18px;max-width:70ch}
+.topbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.topnav a{color:var(--muted);text-decoration:none;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap;margin-left:6px}
+.topnav a:hover{color:var(--ink);border-color:var(--accent)}
+.topnav a.here{color:var(--ink);border-color:var(--accent)}
+.note{color:var(--muted);font-size:14px;margin:0 0 10px}
+.opt{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--accent2);border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:13px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 18px;margin:12px 0}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 20px;margin:14px 0 6px}
+.toc b{display:block;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.toc a{display:inline-block;margin:3px 14px 3px 0;font-size:14.5px}
+.steps{padding-left:20px;margin:6px 0}.steps li{margin:5px 0}
+table{border-collapse:collapse;width:100%;margin:4px 0;font-size:14.5px}
+th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:13px}
+tr:last-child td{border-bottom:none}
+td .path{color:var(--muted);font-size:13px;word-break:break-word}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:12px 0}
+details summary{cursor:pointer;font-weight:600}
+details p,details li{color:var(--muted);font-size:14px}
+.pill{display:inline-block;font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;margin:4px 8px 4px 0;color:var(--ink);text-decoration:none}
+.pill:hover{border-color:var(--accent)}
+footer{margin-top:36px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}</style>
+</head><body><div class="wrap">
+
+<div class="topbar"><h1>Documentation</h1><nav class="topnav"><a href="landing.html">Home</a><a href="index.html">Picker</a><a class="here" href="docs.html">Docs</a><a href="about.html">About</a><a href="sources.html">Sources</a><a href="https://github.com/elhajahmadj/offline-emergency-library">GitHub ↗</a></nav></div>
+
+<p class="lead">You picked your content, ran the installer, and now you have a drive or folder full of files. This page is the single <strong>“how do I get around?”</strong> guide: what the layout looks like, what to open first, and how to actually use each piece — <strong>all offline</strong>.</p>
+<p class="note">This page links into the full guides that are already on your drive (and in the <a href="https://github.com/elhajahmadj/offline-emergency-library/tree/main/docs">repository’s <code>docs/</code> folder</a>); it doesn’t repeat them. Haven’t built a drive yet? Start at the <a href="index.html">Picker</a>.</p>
+
+<div class="toc"><b>On this page</b>
+<a href="#start">Getting started</a>
+<a href="#need">I need to…</a>
+<a href="#ai">Offline AI</a>
+<a href="#kiwix">Kiwix archives</a>
+<a href="#maps">Maps</a>
+<a href="#manuals">Manuals &amp; PDFs</a>
+<a href="#phone">On a phone</a>
+<a href="#layout">Folder layout</a>
+<a href="#faq">Troubleshooting</a>
+</div>
+
+<h2 class="sec" id="start">Getting started</h2>
+<div class="box">
+<p>Open the drive and look for <strong><code>START-HERE</code></strong> at the top level — double-click <code>START-HERE.html</code> (it opens in any browser, no internet needed). It’s the front door: a short map of everything on the drive and where to go for each need.</p>
+<p class="note">Next to it you’ll find <code>CHECK-DRIVE</code> (confirms the files copied intact) and the <code>I-NEED-TO</code> quick index below. Nothing here “installs” onto your computer — the whole library runs straight from the drive.</p>
+<p><a class="pill" href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/docs/START-HERE.md">Open START-HERE ↗</a></p>
+</div>
+
+<h2 class="sec" id="need">I need to… <span class="note" style="font-weight:400">(emergency quick index)</span></h2>
+<p class="note">In a hurry? The <code>I-NEED-TO</code> guide is the fastest path from a problem to the right file. The common tasks:</p>
+<div class="box"><table>
+<tr><th>I need to…</th><th>Open</th></tr>
+<tr><td>Treat an injury or illness</td><td class="path">Medical manuals in <code>Medical/Manuals-PDF/</code> (<em>Where There Is No Doctor</em>, first-aid field manuals); or ask the offline AI</td></tr>
+<tr><td>Find clean water / purify it</td><td class="path">EPA water-disinfection guide and FEMA <em>Are You Ready?</em> in <code>Manuals/Survival-Preparedness/</code></td></tr>
+<tr><td>Grow or preserve food</td><td class="path"><code>Manuals/Food-Growing/</code> and the USDA canning guides in <code>Manuals/Food-Preservation/</code></td></tr>
+<tr><td>Fix or build something</td><td class="path"><code>Manuals/Repair-Metalworking/</code>, <code>Manuals/Carpentry/</code>, and the iFixit archive in Kiwix</td></tr>
+<tr><td>Navigate with a map</td><td class="path">Desktop map viewer, or OsmAnd on a phone — see <a href="#maps">Maps</a></td></tr>
+<tr><td>Ask a question in plain language</td><td class="path">The offline AI assistant — see <a href="#ai">Offline AI</a></td></tr>
+<tr><td>Read Wikipedia / books / courses</td><td class="path">Kiwix reader — see <a href="#kiwix">Kiwix archives</a></td></tr>
+</table></div>
+<p><a class="pill" href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/docs/I-NEED-TO.md">Open the full “I need to…” index ↗</a></p>
+
+<h2 class="sec" id="ai">Offline AI assistant</h2>
+<div class="box">
+<p>A chat assistant that runs entirely on your own computer — no internet, no account. Good for “explain this”, “what do I do if…”, and summarising the manuals in plain language.</p>
+<ol class="steps">
+<li><strong>Launch it</strong> from the AI folder on the drive (<code>Run-Offline-AI</code> / the chat launcher for your system). First start loads the model into memory and can take a minute.</li>
+<li><strong>Pick the model for the job.</strong> A small model always ships for speed; larger chat models (and an optional translator) are there if you selected them — bigger is slower but more capable. No GPU is required; it runs on an ordinary CPU.</li>
+<li><strong>Ask your own documents.</strong> The separate <strong>document-Q&amp;A</strong> app (GPT4All) can read the bundled PDFs and cite them — point it at the manuals folder and ask. See <em>Ask Your Documents</em>.</li>
+</ol>
+<p><a class="pill" href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/docs/HOW-TO-RUN-OFFLINE-AI.md">Run the offline AI ↗</a><a class="pill" href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/docs/HOW-TO-ASK-YOUR-DOCS.md">Ask your documents ↗</a></p>
+</div>
+
+<h2 class="sec" id="kiwix">Kiwix archives (Wikipedia, books, courses)</h2>
+<div class="box">
+<p>Kiwix is the reader for the big <code>.zim</code> archives — offline Wikipedia, medical Wikipedia, iFixit repair guides, Appropedia DIY, and (if you chose them) Wikivoyage, Wikibooks and Khan Academy.</p>
+<ol class="steps">
+<li><strong>Open the reader</strong> from the maps/archives area of the drive (<code>Kiwix</code> desktop app for your system), or install Kiwix on a phone.</li>
+<li><strong>Open a <code>.zim</code> file</strong> from the archives folder — each archive is one <code>.zim</code>. Kiwix lists them once the folder is added.</li>
+<li><strong>Search</strong> within an archive from the box at the top; everything works with no connection.</li>
+</ol>
+<p><a class="pill" href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/docs/HOW-TO-USE-KIWIX.md">How to use Kiwix ↗</a></p>
+</div>
+
+<h2 class="sec" id="maps">Offline maps</h2>
+<div class="box">
+<p>Two ways to use maps, both offline after the one-time download:</p>
+<h3>On a computer — no phone needed</h3>
+<p>Run the bundled desktop map viewer (<code>MapViewer-Desktop/VIEW-MAPS-OFFLINE</code>). It draws your region’s OsmAnd maps on Windows, macOS and Linux. First use unzips the maps. US street detail is also available as <strong>browser maps</strong> if you selected them.</p>
+<h3>On a phone</h3>
+<p><strong>Android:</strong> sideload the bundled OsmAnd~ app (no internet needed). <strong>iPhone/iPad:</strong> install OsmAnd from the App Store while you still have a connection, then import your region’s map files from the drive.</p>
+<p><a class="pill" href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/docs/HOW-TO-VIEW-MAPS.md">How to view maps ↗</a><a class="pill" href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/docs/MAP-AND-COMPASS.md">Map &amp; compass (paper backup) ↗</a></p>
+</div>
+
+<h2 class="sec" id="manuals">Manuals &amp; PDFs</h2>
+<div class="box">
+<p>The field manuals, medical references, survival, food-growing and metalworking PDFs live under <code>Manuals/</code> and <code>Medical/</code>. Open any of them in a normal PDF reader. The <code>Manuals-READ-ME-FIRST</code> guide explains the focused core set and which book covers what.</p>
+<p class="note">Licences vary — most are public-domain US-Government works or out-of-copyright books; a few medical titles are non-commercial, and two Army manuals carry distribution/copyright caveats. The full breakdown is on the <a href="sources.html">Sources</a> page.</p>
+<p><a class="pill" href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/docs/Manuals-READ-ME-FIRST.md">Manuals — read me first ↗</a><a class="pill" href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/docs/EMERGENCY-ESSENTIALS.md">Emergency essentials ↗</a></p>
+</div>
+
+<h2 class="sec" id="phone">Carrying it on a phone</h2>
+<div class="box">
+<p>Don’t want to carry a drive? The <strong>phone docs pack</strong> is the medical, survival, repair and food-growing manuals plus short guides in one small zip — open the PDFs in any reader, or import them into an on-device document-AI app. Maps and the apps install from the <em>Use on a phone</em> guide.</p>
+<p><a class="pill" href="https://github.com/elhajahmadj/offline-emergency-library/releases/tag/phone-pack">Phone docs pack ↗</a><a class="pill" href="https://github.com/elhajahmadj/offline-emergency-library/blob/main/docs/USE-ON-PHONE.md">Use the library on a phone ↗</a></p>
+</div>
+
+<h2 class="sec" id="layout">How the drive is organised</h2>
+<div class="box"><table>
+<tr><th>Folder</th><th>What’s in it</th></tr>
+<tr><td class="path"><code>START-HERE.html</code></td><td>The front door — open this first.</td></tr>
+<tr><td class="path"><code>Manuals/</code></td><td>Field manuals, survival, repair, carpentry, food-growing, radio, food-preservation PDFs.</td></tr>
+<tr><td class="path"><code>Medical/</code></td><td>Medical references (<em>Where There Is No Doctor</em>, first aid, WHO) and MedlinePlus if selected.</td></tr>
+<tr><td class="path"><code>Archives/</code> (Kiwix <code>.zim</code>)</td><td>Offline Wikipedia, iFixit, Appropedia, and any extra archives you chose.</td></tr>
+<tr><td class="path"><code>Maps/</code> · <code>MapViewer-Desktop/</code></td><td>OsmAnd map files, the desktop viewer, and browser maps if selected.</td></tr>
+<tr><td class="path">AI folder</td><td>The chat assistant, the models, and the document-Q&amp;A app.</td></tr>
+<tr><td class="path"><code>Phone-Apps/</code></td><td>Android app files (OsmAnd~, Kiwix) to sideload offline.</td></tr>
+<tr><td class="path">Education / <code>Kolibri</code></td><td>Khan Academy and the Kolibri learning app, if selected.</td></tr>
+</table>
+<p class="note">Exact folder names depend on what you selected; <code>START-HERE</code> always reflects your drive. Everything is plain files — browse them in your file manager.</p>
+</div>
+
+<h2 class="sec" id="faq">Troubleshooting &amp; FAQ</h2>
+<div class="box">
+<details><summary>A file won’t open</summary>
+<p>PDFs open in any PDF reader or browser; <code>.html</code> guides open in any browser; <code>.zim</code> archives need the Kiwix reader (not a browser). If a launcher doesn’t start, open its folder and run the version for your operating system.</p></details>
+<details><summary>Do I need internet to use any of this?</summary>
+<p>No. After the one-time download, everything on the drive works with no connection. The only things that need a connection are first-time app installs on a phone (OsmAnd/Kiwix from an app store) — do those before you go off-grid.</p></details>
+<details><summary>The AI is slow or runs out of memory</summary>
+<p>Use a smaller chat model, and close other programs. Larger models need more RAM and are slower on a CPU. The document-Q&amp;A app is lighter if you mainly want to search the manuals.</p></details>
+<details><summary>How much space does everything take?</summary>
+<p>It depends on what you picked — a full build with maps and Wikipedia is large. The <a href="index.html">Picker</a> shows a running size total as you select, and the <a href="sources.html">Sources</a> page lists every component.</p></details>
+<details><summary>Is this website the whole library?</summary>
+<p>No — this site is browse-only (the picker, docs, sources and about). The actual library is the drive you build with the installer. Downloading only makes sense locally.</p></details>
+<details><summary>Where do I get help?</summary>
+<p>Open an issue on <a href="https://github.com/elhajahmadj/offline-emergency-library/issues">the project’s GitHub</a>.</p></details>
+</div>
+
+<footer>
+  Sine Nexu — the Offline Emergency Library. This page ties together the guides on your drive; the guides themselves are the source of truth.<br>
+  <a href="landing.html">Home</a> · <a href="index.html">Picker</a> · <a href="docs.html">Docs</a> · <a href="about.html">About &amp; mission</a> · <a href="sources.html">Sources</a> · <a href="privacy.html">Privacy</a> · <a href="https://github.com/elhajahmadj/offline-emergency-library">GitHub</a>
+</footer>
+
+</div></body></html>
