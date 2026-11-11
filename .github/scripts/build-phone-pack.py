@@ -13,9 +13,12 @@ Usage:
 """
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
+import tempfile
+import time
 import urllib.parse
 import zipfile
 from pathlib import Path
@@ -87,15 +90,32 @@ def installer_urls():
     return out
 
 
-def get(url, retries=6):
-    # archive.org drops TLS connections from CI runners now and then; curl with --retry-all-errors
-    # (what the installer and the source-health check use) rides it out where urllib did not.
-    r = subprocess.run(["curl", "-fLsS", "--connect-timeout", "30", "--max-time", "600",
-                        "--retry", str(retries), "--retry-all-errors", "--retry-delay", "20",
-                        "-A", UA, url], capture_output=True)
-    if r.returncode:
-        raise OSError(f"curl exit {r.returncode} for {url}: {r.stderr.decode(errors='replace').strip()}")
-    return r.stdout
+def get(url, retries=6, delay=20):
+    # Retry transient failures - timeouts, 5xx, and the TLS connection drops archive.org hands
+    # CI runners - but fail fast on a definite 4xx. curl's --retry-all-errors also retries a 404,
+    # so a source that is really gone burned ~2 minutes (6 x 20 s) before failing; now a 4xx
+    # stops on the first try with the URL in the error (#236). -L follows archive.org's redirect
+    # to a data node; no -f, so we read the real status from -w and decide ourselves.
+    last = ""
+    for attempt in range(1, retries + 1):
+        fd, tmp = tempfile.mkstemp()
+        try:
+            os.close(fd)
+            r = subprocess.run(["curl", "-sSL", "--connect-timeout", "30", "--max-time", "600",
+                                "-w", "%{http_code}", "-o", tmp, "-A", UA, url],
+                               capture_output=True)
+            code = r.stdout.decode(errors="replace").strip()
+            if r.returncode == 0 and code.startswith("2"):
+                return Path(tmp).read_bytes()
+            if code.startswith("4"):          # item gone or moved - retrying will not help
+                raise OSError(f"HTTP {code} for {url}")
+            last = (f"HTTP {code}" if code and code != "000"
+                    else f"curl exit {r.returncode}: {r.stderr.decode(errors='replace').strip()}")
+        finally:
+            Path(tmp).unlink(missing_ok=True)
+        if attempt == retries:
+            raise OSError(f"{last} for {url} after {retries} tries")
+        time.sleep(delay)
 
 
 def resolve(kind, src):
