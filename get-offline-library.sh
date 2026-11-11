@@ -251,7 +251,7 @@ space_estimate(){
   [ "$SKIP_MODELS" = 0 ] && est 8.9 "8B + 7B AI models"
   [ "$LITE" = 0 ] && [ -z "$ONLY" ] && est 4.5 "GPT4All, iFixit, Appropedia"
   [ "$SKIP_WIKI" = 0 ] && est 49.1 "Wikipedia"
-  [ "$SKIP_MAPS" = 0 ] && est "$(awk -v m="$MAP_MB" 'BEGIN{printf "%.1f", m/1024 + 0.5}')" "maps for '$REGION' + desktop viewer"
+  [ "$SKIP_MAPS" = 0 ] && est "$(LC_ALL=C awk -v m="$MAP_MB" 'BEGIN{printf "%.1f", m/1024 + 0.5}')" "maps for '$REGION' + desktop viewer"
   if [ "$BROWSER_MAPS" = 1 ] && { [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; }; then
     # all of the US ~15.4 GB; states ~0.4 of their OsmAnd size (#102); always + the world map
     bm=0
@@ -259,14 +259,14 @@ space_estimate(){
       tl="$(alias_region "$tok" | tr 'A-Z' 'a-z')"
       case "$tl" in us|world|northamerica) bm=all ;; us_*) [ "$bm" = all ] || bm=state ;; esac
     done
-    case "$bm" in all) bmgb=15.4 ;; state) bmgb="$(awk -v m="$MAP_MB" 'BEGIN{print 0.4*m/1024}')" ;; *) bmgb=0 ;; esac
-    est "$(awk -v b="$bmgb" 'BEGIN{printf "%.1f", b + 0.2}')" "browser maps"
+    case "$bm" in all) bmgb=15.4 ;; state) bmgb="$(LC_ALL=C awk -v m="$MAP_MB" 'BEGIN{print 0.4*m/1024}')" ;; *) bmgb=0 ;; esac
+    est "$(LC_ALL=C awk -v b="$bmgb" 'BEGIN{printf "%.1f", b + 0.2}')" "browser maps"
   fi
   [ "$EDU" = 1 ] && est 168 "Khan Academy"
   [ "$EXTRA_ZIMS" = 1 ] && est 5.8 "Wikivoyage + Wikibooks"
   [ "$TRANSLATE" = 1 ] && est 2.3 "translator model"
   [ "$MEDLINEPLUS" = 1 ] && est 0.1 "MedlinePlus health topics"
-  EST_GB="$(printf '%s' "$EST" | awk -F'|' '{s+=$1} END{printf "%.1f", s}')"
+  EST_GB="$(printf '%s' "$EST" | LC_ALL=C awk -F'|' '{s+=$1} END{printf "%.1f", s}')"
 }
 
 # ---- guided install (#80) ----
@@ -278,11 +278,11 @@ guided_questions(){
   ask(){ printf '%s' "$1"; ans=""; read -r ans < /dev/tty || ans=""; }
   # free space where the files will go (the folder may not exist yet: use its nearest parent)
   d="$DEST"; while [ ! -d "$d" ] && [ "$d" != "$(dirname "$d")" ]; do d="$(dirname "$d")"; done
-  free="$(df -Pk "$d" 2>/dev/null | awk 'NR==2{printf "%.1f", $4/1048576}')"
-  MAP_MB="$(awk -v g="$GUIDE_US_GB" 'BEGIN{printf "%d", g*1024}')"
+  free="$(df -Pk "$d" 2>/dev/null | LC_ALL=C awk 'NR==2{printf "%.1f", $4/1048576}')"
+  MAP_MB="$(LC_ALL=C awk -v g="$GUIDE_US_GB" 'BEGIN{printf "%d", g*1024}')"
   gsize(){ resolve_pieces "$1" "" > /dev/null; space_estimate; printf '%s' "$EST_GB"; }   # run in $( ): changes nothing here
   s1="$(gsize "$PRESET_SMALL")"; s2="$(gsize "$PRESET_STANDARD")"; s3="$(gsize "$PRESET_EVERYTHING")"
-  fit(){ [ -n "$free" ] && awk -v n="$1" -v f="$free" 'BEGIN{exit !(n<=f)}'; }
+  fit(){ [ -n "$free" ] && LC_ALL=C awk -v n="$1" -v f="$free" 'BEGIN{exit !(n<=f)}'; }
   pick=1; fit "$s2" && pick=2; fit "$s3" && pick=3
   [ -n "$free" ] || pick=2
   echo ""
@@ -315,7 +315,7 @@ guided_questions(){
   esac
   if [ "$preset" != 3 ]; then   # Everything has these already
     with="$(gsize "$P $GUIDE_EXTRAS")"; less="$(gsize "$P")"
-    more="$(awk -v a="$with" -v b="$less" 'BEGIN{printf "%.1f", a-b}')"
+    more="$(LC_ALL=C awk -v a="$with" -v b="$less" 'BEGIN{printf "%.1f", a-b}')"
     def=N; fit "$with" && def=Y
     echo ""
     while :; do
@@ -511,17 +511,17 @@ fi
 
 # ---- space estimate for the chosen flags (#68): space_estimate, defined above ----
 space_estimate
-FREE_GB="$(df -Pk "$ROOT" 2>/dev/null | awk 'NR==2{printf "%.1f", $4/1048576}')"
+FREE_GB="$(df -Pk "$ROOT" 2>/dev/null | LC_ALL=C awk 'NR==2{printf "%.1f", $4/1048576}')"
 # Folder bytes do not prove this selection's downloads are complete: they can be
 # unrelated files, old editions, unpacked maps or preallocated partial files (#102).
 NEED_GB="$EST_GB"
 log "Space estimate for this selection: about $EST_GB GB"
-printf '%s' "$EST" | while IFS='|' read -r g n; do log "$(awk -v g="$g" -v n="$n" 'BEGIN{printf "  %6.1f GB  %s", g, n}')"; done
+printf '%s' "$EST" | while IFS='|' read -r g n; do log "$(LC_ALL=C awk -v g="$g" -v n="$n" 'BEGIN{printf "  %6.1f GB  %s", g, n}')"; done
 [ "$KOLIBRI" = 1 ] && log "     (Kolibri content is not counted: you pick it in the app)"
 if [ -n "$FREE_GB" ]; then
   log "Conservative space budget: $NEED_GB GB. Free: $FREE_GB GB."
   log "Existing files are not subtracted; a re-run may need less space."
-  if awk -v n="$NEED_GB" -v f="$FREE_GB" 'BEGIN{exit !(n>f)}'; then
+  if LC_ALL=C awk -v n="$NEED_GB" -v f="$FREE_GB" 'BEGIN{exit !(n>f)}'; then
     log "WARNING: NOT ENOUGH SPACE for the full selection. Budget about $NEED_GB GB, but only $FREE_GB GB is free."
     log "  Use a bigger drive, free up space, or choose less: --lite, --skip-wikipedia (49 GB), --skip-models (9 GB),"
     log "  a smaller --region, --skip-maps, or leave off an opt-in."
