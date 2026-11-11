@@ -109,8 +109,11 @@ def get(url, retries=6, delay=20):
                 return Path(tmp).read_bytes()
             if code.startswith("4"):          # item gone or moved - retrying will not help
                 raise OSError(f"HTTP {code} for {url}")
-            last = (f"HTTP {code}" if code and code != "000"
-                    else f"curl exit {r.returncode}: {r.stderr.decode(errors='replace').strip()}")
+            # With -L, if a hop after a redirect fails, curl exits non-zero but %{http_code}
+            # still holds the redirect's 3xx - so key the message on curl's exit, not the code,
+            # or a transport failure masquerades as "HTTP 302" and hides the real error (#236).
+            last = (f"HTTP {code}" if r.returncode == 0
+                    else f"curl exit {r.returncode} (last HTTP {code}): {r.stderr.decode(errors='replace').strip()}")
         finally:
             Path(tmp).unlink(missing_ok=True)
         if attempt == retries:
