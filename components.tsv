@@ -1,0 +1,37 @@
+# One component table as data (#67). One row per thing the kit downloads, with its license,
+# license link and upstream source. The `piece` column references an id in catalog.json, which
+# owns that piece's installer flag, presets and size — so this file adds the license/source facts
+# without duplicating what catalog.json already holds. CI (.github/scripts/check-components.sh)
+# fails if any row is missing a license, a license link or a source, or names a piece that does
+# not exist in catalog.json. Keep in sync with web/sources.html and DATA-SOURCES.md.
+#
+# component	piece	license	license_url	source
+AI engine (llama.cpp)	core	MIT	https://github.com/ggml-org/llama.cpp/blob/master/LICENSE	https://github.com/ggml-org/llama.cpp
+Chat model — Llama 3.2 3B	core	Llama 3.2 Community	https://www.llama.com/llama3_2/license/	https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF
+Chat model — Llama 3.1 8B	models	Llama 3.1 Community	https://www.llama.com/llama3_1/license/	https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF
+Chat model — Qwen2.5 7B	models	Apache-2.0	https://www.apache.org/licenses/LICENSE-2.0	https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF
+Translator — Qwen3 4B	translate	Apache-2.0	https://www.apache.org/licenses/LICENSE-2.0	https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF
+Document Q&A app — GPT4All	gpt4all-repair	MIT	https://github.com/nomic-ai/gpt4all/blob/main/LICENSE.txt	https://github.com/nomic-ai/gpt4all
+Kiwix desktop reader	core	GPL-3.0	https://www.gnu.org/licenses/gpl-3.0.html	https://download.kiwix.org/release/kiwix-desktop/
+Wikipedia (full, no images)	wikipedia	CC BY-SA 4.0	https://creativecommons.org/licenses/by-sa/4.0/	https://download.kiwix.org/zim/wikipedia/
+WikiMed medical Wikipedia	core	CC BY-SA 4.0	https://creativecommons.org/licenses/by-sa/4.0/	https://download.kiwix.org/zim/wikipedia/
+iFixit repair archive	gpt4all-repair	CC BY-NC-SA 3.0	https://creativecommons.org/licenses/by-nc-sa/3.0/	https://download.kiwix.org/zim/ifixit/
+Appropedia DIY / sustainability	gpt4all-repair	CC BY-SA 4.0	https://creativecommons.org/licenses/by-sa/4.0/	https://download.kiwix.org/zim/other/
+Khan Academy	education	CC BY-NC-SA 3.0	https://creativecommons.org/licenses/by-nc-sa/3.0/	https://download.kiwix.org/zim/other/
+Wikivoyage + Wikibooks	extra-zims	CC BY-SA 4.0	https://creativecommons.org/licenses/by-sa/4.0/	https://download.kiwix.org/zim/wikivoyage/
+OsmAnd map files (your region; default US)	maps	ODbL-1.0	https://opendatacommons.org/licenses/odbl/1-0/	https://download.osmand.net/get_indexes
+OsmAndMapCreator desktop viewer	maps	GPL-3.0	https://www.gnu.org/licenses/gpl-3.0.html	https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip
+Portable Java runtime (Eclipse Temurin)	maps	GPL-2.0-with-classpath-exception	https://openjdk.org/legal/gplv2+ce.html	https://api.adoptium.net/
+Browser maps — US tiles + style	browser-maps	ODbL-1.0	https://opendatacommons.org/licenses/odbl/1-0/	https://github.com/Crosstalk-Solutions/project-nomad-maps
+Browser maps — viewer & server	browser-maps	Apache-2.0	https://github.com/caddyserver/caddy/blob/master/LICENSE	https://github.com/caddyserver/caddy
+Field manuals & public-domain books (PDF)	core	US-Gov public domain / out-of-copyright	https://www.usa.gov/government-works	https://archive.org
+USDA Complete Guide to Home Canning	core	US-Gov public domain	https://www.usa.gov/government-works	https://nchfp.uga.edu/
+WHO — pregnancy, childbirth & maternal health	core	CC BY-NC-SA 3.0 IGO	https://creativecommons.org/licenses/by-nc-sa/3.0/igo/	https://iris.who.int/
+A Practical Guide to Prolonged Casualty Care	core	CC BY-NC-SA 4.0	https://creativecommons.org/licenses/by-nc-sa/4.0/	https://www.usuhs.edu/
+EPA — Emergency Disinfection of Drinking Water	core	US-Gov public domain	https://www.usa.gov/government-works	https://www.epa.gov/
+Where There Is No Doctor / No Dentist (Hesperian)	core	Hesperian non-commercial	https://hesperian.org/about/copyrights-and-permissions/	https://archive.org
+Emergency Childbirth (US Civil Defense)	core	US-Gov public domain	https://www.usa.gov/government-works	https://www.gutenberg.org/
+MedlinePlus health topics	medlineplus	Public domain (US NLM)	https://medlineplus.gov/about/using/usingcontent/	https://medlineplus.gov/
+OsmAnd~ (Android offline maps)	core	GPL-3.0	https://www.gnu.org/licenses/gpl-3.0.html	https://f-droid.org/packages/net.osmand.plus/
+Kiwix Android (ZIM reader)	core	GPL-3.0	https://www.gnu.org/licenses/gpl-3.0.html	https://github.com/kiwix/kiwix-android
+Kolibri learning app	kolibri	MIT	https://github.com/learningequality/kolibri/blob/develop/LICENSE	https://github.com/learningequality/kolibri

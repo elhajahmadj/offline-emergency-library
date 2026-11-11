@@ -49,6 +49,7 @@ Look for issues labeled **`good first issue`** and **`help wanted`**.
   bash .github/scripts/check-consistency.sh   # manual downloads, link checks, guides agree
   bash .github/scripts/check-launchers.sh
   bash .github/scripts/check-catalog.sh
+  bash .github/scripts/check-components.sh
   bash .github/scripts/check-regions.sh
   bash .github/scripts/compile-changelog.sh > /dev/null
   node --test doc-qa/retrieval.test.mjs
