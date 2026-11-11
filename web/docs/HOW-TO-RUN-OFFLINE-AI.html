@@ -1,0 +1,295 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline AI — Emergency Kit (No Internet Required)</title><style>:root{--bg:#0f1420;--card:#171f2e;--ink:#e7ecf3;--muted:#9fb0c3;--accent:#4fd1c5;--accent2:#f6ad55;--line:#273246;--code:#0b0f17}@media(prefers-color-scheme:light){:root{--bg:#f4f6fb;--card:#fff;--ink:#15202b;--muted:#56657a;--accent:#0d9488;--accent2:#b45309;--line:#e2e8f0;--code:#f1f5f9}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Arial,sans-serif}.wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px}h1{font-size:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}h2{font-size:22px;border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:30px}h3{font-size:17px;color:var(--accent)}h4{font-size:15px;color:var(--accent2)}a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:14px}pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto}pre code{background:none;padding:0}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}th{background:rgba(127,127,127,.12)}blockquote{border-left:4px solid var(--accent);background:rgba(79,209,197,.08);padding:10px 16px;border-radius:0 10px 10px 0}hr{border:none;border-top:1px solid var(--line);margin:26px 0}ul,ol{padding-left:26px}</style></head><body><div class="wrap">
+<h1>Offline AI — Emergency Kit (No Internet Required)</h1>
+<p>This folder contains a complete, self-contained AI assistant that runs <strong>100% offline</strong></p>
+<p>on an ordinary computer — <strong>no internet connection is needed</strong>. It ships with **three</p>
+<p>different AI models** so it works on anything from a weak laptop to a gaming PC:</p>
+<ul>
+<li>Two models run on <strong>CPU + regular RAM only</strong> (no graphics card needed at all).</li>
+<li>One extra model is tuned to run <strong>GPU-accelerated on a ~6 GB graphics card</strong> for speed.</li>
+</ul>
+<p>Once this folder is on your drive, you never need the internet again to use it.</p>
+<blockquote><strong>How to use the AI well:</strong> think of it as a fast <strong>assistant</strong> over the kit - great for brainstorming, checklists and summarizing. For medical or survival questions, start with <strong>Ask the manuals</strong> (<code>AI-Offline\Manual-QA\</code>): it searches downloaded manual text, shows the passages it used, and links each one to the original PDF. No setup is needed - see HOW-TO-ASK-YOUR-DOCS.html. GPT4All LocalDocs can also index folders of your own documents. Plain chat is the tool for everything else.</blockquote>
+<blockquote><strong>Translator:</strong> if you added <code>-Translate</code> / <code>--translate</code>, <code>TRANSLATE.bat</code> / <code>translate.sh</code> is a two-way translator for talking with someone in another language - see <a href="HOW-TO-TRANSLATE.html">HOW-TO-TRANSLATE</a>.</blockquote>
+<blockquote><strong>Lite installs:</strong> <code>--lite</code> / <code>-Lite</code> does <strong>not</strong> include GPT4All, but it <strong>does</strong> include the <strong>Ask the manuals</strong> reader (<code>AI-Offline\Manual-QA\</code>), which cites the downloaded text and links the PDFs. To also get GPT4All LocalDocs for your own folders, re-run the installer into the same drive <strong>without</strong> the lite flag (or install GPT4All from gpt4all.io while you still have internet).</blockquote>
+<hr>
+<h2>1. What's in this folder</h2>
+<pre><code>
+E:\AI-Offline\
+├─ CHAT-3B-light.bat     &lt;- Double-click to chat (small, fast CPU model)
+├─ CHAT-8B-smart.bat     &lt;- Double-click to chat (bigger, smarter CPU model)
+├─ CHAT-GPU-Qwen7B.bat   &lt;- Double-click to chat (GPU-accelerated, ~6GB GPU)
+├─ WEB-UI.bat            &lt;- Chat in your web browser instead of a black window
+├─ chat-*.sh, web-ui.sh  &lt;- The same launchers for macOS / Linux
+├─ engine\               &lt;- The program that runs the AI (llama.cpp)
+│   ├─ x64\              &lt;- CPU engine for normal Intel/AMD computers
+│   ├─ arm64\           &lt;- CPU engine for ARM computers (Snapdragon / Surface Pro X)
+│   ├─ vulkan-x64\      &lt;- GPU engine (Vulkan) for graphics-card acceleration
+│   ├─ macos-arm64\ macos-x64\                  &lt;- engines for Macs (Apple Silicon / Intel)
+│   └─ linux-x64\ linux-arm64\ linux-vulkan-x64\ &lt;- engines for Linux (CPU / ARM / GPU)
+├─ models\               &lt;- The AI "brains" (the actual model files)
+│   ├─ Llama-3.2-3B-Instruct-Q4_K_M.gguf        (~1.9 GB)  CPU, light
+│   ├─ Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf   (~4.6 GB)  CPU, smarter
+│   └─ Qwen2.5-7B-Instruct-Q4_K_M.gguf          (~4.4 GB)  GPU (6GB card)
+└─ HOW-TO-RUN-OFFLINE-AI.(md/html/txt)   &lt;- The documentation
+</code></pre>
+<ul>
+<li><strong>engine</strong> = the software (called *llama.cpp*). It is tiny and needs no installation.</li>
+</ul>
+<p>  There is a <strong>CPU</strong> build (x64/arm64) and a <strong>GPU</strong> build (vulkan-x64).</p>
+<p>  Every drive has the engine for <strong>Windows, macOS and Linux</strong>, so the AI runs on any of</p>
+<p>  them, no matter which computer made the drive.</p>
+<ul>
+<li><strong>models</strong> = the AI itself. These <code>.gguf</code> files hold everything the AI "knows."</li>
+</ul>
+<p>  <strong>Three</strong> are included (see the table in section 3).</p>
+<ul>
+<li>The <code>.bat</code> files are one-click shortcuts that start everything for you.</li>
+</ul>
+<hr>
+<h2>2. Quick start (the easy way)</h2>
+<ol>
+<li>Open the <code>E:\AI-Offline</code> folder.</li>
+<li><strong>Double-click <code>CHAT-3B-light.bat</code></strong> (works on almost any computer).</li>
+<li>A black window opens. Wait a few seconds for the model to load.</li>
+<li>When it says it's ready, <strong>type a question and press Enter.</strong></li>
+<li>The AI answers. Keep chatting. Press <strong>Ctrl+C</strong> (or close the window) to quit.</li>
+</ol>
+<p>That's it. No setup, no accounts, no internet.</p>
+<p>If your computer is reasonably powerful (8 GB RAM or more), try</p>
+<p><strong><code>CHAT-8B-smart.bat</code></strong> instead — it's noticeably smarter but a bit slower.</p>
+<p>If your computer has a <strong>graphics card with about 6 GB of memory or more</strong>, use</p>
+<p><strong><code>CHAT-GPU-Qwen7B.bat</code></strong> — it runs on the GPU and is much faster. (If it errors with</p>
+<p>an out-of-memory message, your GPU is too small; just use the CPU launchers instead.)</p>
+<p>Prefer a nicer interface? <strong>Double-click <code>WEB-UI.bat</code></strong>, wait until it says</p>
+<p>"server listening," then open a web browser and go to <strong>http://127.0.0.1:8080</strong>.</p>
+<p>This works offline too — it's a local page served by your own computer.</p>
+<hr>
+<h2>2b. On macOS / Linux</h2>
+<p>On a Mac or Linux computer, use the <strong><code>.sh</code></strong> launchers (every drive has them). Each one</p>
+<p>picks the engine for the computer it runs on.</p>
+<p>Open a terminal in the <code>AI-Offline</code> folder and run:</p>
+<pre><code>
+./chat-3B-light.sh        # fast, light model
+./chat-8B-smart.sh        # smarter model
+./web-ui.sh               # browser chat at http://127.0.0.1:8080
+./chat-GPU-Qwen7B.sh      # GPU: Vulkan on Linux, Metal on a Mac
+</code></pre>
+<p>(If a script isn't executable: <code>chmod +x *.sh</code> first.) On macOS the AI automatically uses</p>
+<p>the Mac's GPU (Metal) — no separate GPU launcher needed.</p>
+<hr>
+<h2>3. Which model should I use?</h2>
+<p>There are <strong>three</strong> models included, one for each kind of computer:</p>
+<table><thead><tr>
+<th>Model (launcher)</th>
+<th>Size</th>
+<th>Runs on</th>
+<th>Needs</th>
+<th>Speed</th>
+<th>Smartness</th>
+</tr></thead><tbody>
+<tr>
+<td>Llama-3.2-3B  (<code>CHAT-3B-light.bat</code>)</td>
+<td>1.9 GB</td>
+<td>CPU</td>
+<td>~4 GB RAM</td>
+<td>Fast</td>
+<td>Good</td>
+</tr>
+<tr>
+<td>Llama-3.1-8B  (<code>CHAT-8B-smart.bat</code>)</td>
+<td>4.6 GB</td>
+<td>CPU</td>
+<td>~8 GB RAM</td>
+<td>Slower</td>
+<td>Better</td>
+</tr>
+<tr>
+<td>Qwen2.5-7B  (<code>CHAT-GPU-Qwen7B.bat</code>)</td>
+<td>4.4 GB</td>
+<td><strong>GPU</strong></td>
+<td>~6 GB VRAM</td>
+<td><strong>Fastest</strong>*</td>
+<td>Better</td>
+</tr>
+</tbody></table>
+<p>\* Fastest *when* it runs on a graphics card. On a 6 GB GPU the whole model fits in</p>
+<p>video memory, so answers come back much quicker than on CPU.</p>
+<p>Rule of thumb:</p>
+<ul>
+<li><strong>Old / low-spec / 4 GB RAM laptop, no decent GPU</strong> → use the <strong>3B</strong> model (CPU).</li>
+<li><strong>Modern laptop or desktop, 8 GB+ RAM, no decent GPU</strong> → use the <strong>8B</strong> model (CPU).</li>
+<li><strong>Has a graphics card with ~6 GB memory or more</strong> → use the <strong>Qwen 7B GPU</strong> model.</li>
+</ul>
+<p>The two CPU models need <strong>no</strong> graphics card at all. The GPU model needs a graphics</p>
+<p>card but is much faster. If a GPU model won't fit your card, nothing breaks — just fall</p>
+<p>back to a CPU launcher. A slow CPU only means slower answers; it will still work.</p>
+<hr>
+<h2>4. Running it manually (if the .bat files don't work)</h2>
+<p>You can run the AI by hand from a command prompt. This is useful if a shortcut</p>
+<p>fails or you copied the folder somewhere else.</p>
+<ol>
+<li>Press <code>Windows key</code>, type <code>cmd</code>, press Enter to open Command Prompt.</li>
+<li>Paste this (adjust the drive/path if the folder is somewhere else):</li>
+</ol>
+<pre><code>
+   "E:\AI-Offline\engine\x64\llama-cli.exe" -m "E:\AI-Offline\models\Llama-3.2-3B-Instruct-Q4_K_M.gguf" -c 4096
+</code></pre>
+<ol>
+<li>Press Enter, wait for it to load, then type your message.</li>
+</ol>
+<p><strong>On an ARM computer</strong> (e.g. Surface Pro X, Snapdragon laptop), use the <code>arm64</code></p>
+<p>folder instead of <code>x64</code>:</p>
+<pre><code>
+   "E:\AI-Offline\engine\arm64\llama-cli.exe" -m "E:\AI-Offline\models\Llama-3.2-3B-Instruct-Q4_K_M.gguf" -c 4096
+</code></pre>
+<p><strong>On a computer with a graphics card (GPU acceleration)</strong>, use the <code>vulkan-x64</code></p>
+<p>engine and add <code>-ngl 99</code> to push the model onto the GPU:</p>
+<pre><code>
+   "E:\AI-Offline\engine\vulkan-x64\llama-cli.exe" -m "E:\AI-Offline\models\Qwen2.5-7B-Instruct-Q4_K_M.gguf" -c 4096 -ngl 99
+</code></pre>
+<p>   If you get an out-of-memory / device error, your GPU can't fit all the layers:</p>
+<p>   lower the number (e.g. <code>-ngl 20</code>) to offload only part of the model, or use a CPU</p>
+<p>   engine instead. The Vulkan engine works on NVIDIA, AMD and Intel graphics cards.</p>
+<p>Current llama-cli builds enter chat mode automatically for these instruction-tuned models.</p>
+<h3>Long chats and the context limit</h3>
+<p>The chat and translation launchers use <code>-c 4096</code>. This is a limit on the conversation history in tokens (pieces of words), including your messages and the model's replies, not a limit of 4096 messages or words.</p>
+<p>In llama.cpp <strong>b12110</strong>, a long chat does <strong>not</strong> automatically drop old messages to keep going. Once the history fills the context, it stops answering and reports <code>exceeds the available context size (4096 tokens)</code>. Adding <code>--context-shift</code> does not fix this chat-mode limit: a Windows CPU test with Llama 3.2 3B still rejected a 4535-token request with that flag enabled.</p>
+<p>Type <code>/clear</code> and press Enter to start a new conversation. This discards the previous conversation history, so repeat any details the model still needs. For translation, name the two languages again after clearing. Alternatively, quit and edit the launcher's <code>-c 4096</code> to a larger context before restarting, if the model supports it and you have enough RAM. A larger context uses more memory and only postpones the limit.</p>
+<h3>What the options mean</h3>
+<ul>
+<li><code>-m "...gguf"</code>  = which model (brain) file to load.</li>
+<li><code>-c 4096</code>       = how much conversation it can remember at once (context size).</li>
+</ul>
+<p>                    Lower this to <code>2048</code> if you run low on memory; raise it if you</p>
+<p>                    have lots of RAM and want longer memory.</p>
+<ul>
+<li><code>-ngl 99</code>       = (GPU only) how many model layers to put on the graphics card.</li>
+</ul>
+<p>                    99 means "all of them." Lower it if the GPU runs out of memory.</p>
+<ul>
+<li><code>-t 4</code>          = (optional) use 4 CPU threads. If left out, it auto-picks.</li>
+</ul>
+<p>                    Set this to the number of CPU cores for best speed.</p>
+<h3>Web interface by hand</h3>
+<pre><code>
+   "E:\AI-Offline\engine\x64\llama-server.exe" -m "E:\AI-Offline\models\Llama-3.2-3B-Instruct-Q4_K_M.gguf" -c 4096 --host 127.0.0.1 --port 8080
+</code></pre>
+<p>   Then open <strong>http://127.0.0.1:8080</strong> in any browser.</p>
+<hr>
+<h2>5. Copying this to another computer</h2>
+<p>The whole thing is portable. To use it on a different PC with no internet:</p>
+<ol>
+<li>Copy the <strong>entire <code>AI-Offline</code> folder</strong> (engine + models + .bat files) to the</li>
+</ol>
+<p>   other computer — a USB stick or external drive works great.</p>
+<ol>
+<li>Double-click a <code>.bat</code> file, or run the manual command above.</li>
+</ol>
+<p>Because the model and the engine are both inside this folder, nothing else needs</p>
+<p>to be installed. This is why it works in an emergency with no internet.</p>
+<blockquote>Tip: Keep a copy on a USB flash drive (you'll need one that is at least 16 GB). The 3B model alone + engine fits on an 8 GB stick.</blockquote>
+<hr>
+<h2>6. Troubleshooting</h2>
+<p><strong>"Windows protected your PC" / SmartScreen warning</strong></p>
+<ul>
+<li>Click <strong>More info → Run anyway</strong>. This happens because the file came from the</li>
+</ul>
+<p>  internet. The llama.cpp engine is open-source and safe.</p>
+<p><strong>A .bat window flashes and closes instantly</strong></p>
+<ul>
+<li>The model file may still be downloading or missing. Check that the three <code>.gguf</code></li>
+</ul>
+<p>  files exist in the <code>models</code> folder and are the full size (see the table above).</p>
+<ul>
+<li>Run the manual command in section 4 from a Command Prompt so you can read the</li>
+</ul>
+<p>  error message (the window stays open).</p>
+<p><strong>The GPU launcher (<code>CHAT-GPU-Qwen7B.bat</code>) errors or says out of memory</strong></p>
+<ul>
+<li>Your graphics card is too small to hold the whole model. Edit the .bat file and</li>
+</ul>
+<p>  change <code>-ngl 99</code> to a smaller number (e.g. <code>-ngl 20</code>) to offload only part of it.</p>
+<ul>
+<li>Or just use a CPU launcher (<code>CHAT-3B-light.bat</code> / <code>CHAT-8B-smart.bat</code>) — they don't</li>
+</ul>
+<p>  use the GPU at all and always work.</p>
+<ul>
+<li>No compatible GPU at all? Ignore the GPU launcher; the CPU ones are all you need.</li>
+</ul>
+<p><strong>"not enough memory" / it crashes while loading</strong></p>
+<ul>
+<li>Use the smaller <strong>3B</strong> model.</li>
+<li>Lower the context: change <code>-c 4096</code> to <code>-c 2048</code>.</li>
+<li>Close other programs (browsers especially) to free RAM.</li>
+</ul>
+<p><strong>It's very slow</strong></p>
+<ul>
+<li>That's normal on older CPUs, especially with the 8B model. Use the 3B model.</li>
+<li>Add <code>-t N</code> where N is your number of CPU cores (e.g. <code>-t 8</code>).</li>
+</ul>
+<p><strong>The web UI page won't open</strong></p>
+<ul>
+<li>Make sure the <code>WEB-UI.bat</code> window is still open and says "server listening."</li>
+<li>Use exactly <strong>http://127.0.0.1:8080</strong> (not https).</li>
+</ul>
+<p><strong>Which CPU build runs?</strong></p>
+<ul>
+<li>The engine ships several <code>ggml-cpu-*.dll</code> files and automatically picks the</li>
+</ul>
+<p>  right one for your processor at startup. You don't need to choose.</p>
+<p><strong>Linux: <code>error while loading shared libraries: libgomp.so.1</code></strong></p>
+<ul>
+<li>The engine needs the GNU OpenMP library, which a minimal Linux may not have. Install it once, then run the launcher again: <code>sudo apt install libgomp1</code> (Debian/Ubuntu). On other systems, install the package that has <code>libgomp.so.1</code>.</li>
+<li>The installer's self-check at the end tells you about this. The drive itself is fine.</li>
+</ul>
+<p><strong>Linux: <code>version 'GLIBCXX_...' not found</code> or <code>version 'GLIBC_...' not found</code></strong></p>
+<ul>
+<li>This Linux is too old for this AI build. On a Raspberry Pi or other ARM board, the AI needs Debian 13 or Ubuntu 24.04 or newer. The drive still works on newer computers.</li>
+</ul>
+<hr>
+<h2>7. Important notes &amp; limitations</h2>
+<ul>
+<li><strong>This AI runs entirely on your machine.</strong> Nothing you type leaves the computer.</li>
+</ul>
+<p>  No internet is used or needed once the files are in place.</p>
+<ul>
+<li><strong>Its knowledge is frozen</strong> at the time the model was trained. It does not know</li>
+</ul>
+<p>  about events after its training cutoff and cannot look things up online.</p>
+<ul>
+<li><strong>It can be wrong or make things up</strong> ("hallucinate"). For an emergency, treat it as a knowledgeable helper, not an infallible authority - for anything safety-critical (medical, legal, survival), the manuals in this kit are the authority: read them and follow them. To search them and see the passages behind an answer, use Ask the manuals (<code>AI-Offline\Manual-QA\</code>) - see HOW-TO-ASK-YOUR-DOCS.html. GPT4All LocalDocs can also index your own document folders.</li>
+</ul>
+<ul>
+<li>These are open-weight models (Meta Llama, Alibaba Qwen) distributed for free. The</li>
+</ul>
+<p>  quantized <code>.gguf</code> files were produced by the community (bartowski) from the official</p>
+<p>  models.</p>
+<hr>
+<h2>8. Technical summary (for reference)</h2>
+<ul>
+<li><strong>Engine:</strong> llama.cpp, one build for every system (its number is in <code>engine/BUILD.txt</code>).</li>
+<li>CPU builds: <code>engine\x64</code> (Intel/AMD) and <code>engine\arm64</code> (ARM). No GPU needed.</li>
+<li>GPU build: <code>engine\vulkan-x64</code> (Vulkan) — accelerates on NVIDIA/AMD/Intel GPUs,</li>
+</ul>
+<p>    no CUDA install required.</p>
+<ul>
+<li>macOS builds: <code>engine/macos-arm64</code> (Apple Silicon) and <code>engine/macos-x64</code> (Intel). They</li>
+</ul>
+<p>    use the Mac's GPU (Metal) automatically.</p>
+<ul>
+<li>Linux builds: <code>engine/linux-x64</code>, <code>engine/linux-arm64</code>, and <code>engine/linux-vulkan-x64</code> (GPU).</li>
+</ul>
+<ul>
+<li><strong>Format:</strong> GGUF, Q4_K_M quantization (4-bit) — small size, good quality.</li>
+<li><strong>Models (3):</strong></li>
+<li>Meta Llama 3.2 3B Instruct — general assistant, very light (CPU).</li>
+<li>Meta Llama 3.1 8B Instruct — stronger general knowledge &amp; reasoning (CPU).</li>
+<li>Qwen 2.5 7B Instruct — strong all-rounder, sized to fit a ~6 GB GPU (GPU).</li>
+<li><strong>Source URLs (only needed if you ever want to re-download):</strong></li>
+<li>Engine: https://github.com/ggml-org/llama.cpp/releases (the build named in <code>engine/BUILD.txt</code>)</li>
+<li>3B:  https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF</li>
+<li>8B:  https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF</li>
+<li>7B:  https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF</li>
+</ul>
+<p>Stay safe. This kit is designed to keep working when nothing else does.</p>
+</div></body></html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Map and compass - navigation without a device</title><style>:root{--bg:#0f1420;--card:#171f2e;--ink:#e7ecf3;--muted:#9fb0c3;--accent:#4fd1c5;--accent2:#f6ad55;--line:#273246;--code:#0b0f17}@media(prefers-color-scheme:light){:root{--bg:#f4f6fb;--card:#fff;--ink:#15202b;--muted:#56657a;--accent:#0d9488;--accent2:#b45309;--line:#e2e8f0;--code:#f1f5f9}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Arial,sans-serif}.wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px}h1{font-size:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}h2{font-size:22px;border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:30px}h3{font-size:17px;color:var(--accent)}h4{font-size:15px;color:var(--accent2)}a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:14px}pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto}pre code{background:none;padding:0}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}th{background:rgba(127,127,127,.12)}blockquote{border-left:4px solid var(--accent);background:rgba(79,209,197,.08);padding:10px 16px;border-radius:0 10px 10px 0}hr{border:none;border-top:1px solid var(--line);margin:26px 0}ul,ol{padding-left:26px}</style><style>.table-scroll{overflow-x:auto}.table-scroll table{min-width:600px}.wrap{overflow-wrap:anywhere}@media print{body{background:#fff;color:#000}.wrap{max-width:none;padding:0}h1{background:none;color:#000}h2,h3,h4,a{color:#000}pre,code,blockquote{background:#fff}h1,h2,h3{break-after:avoid}tr{break-inside:avoid}}</style></head><body><div class="wrap">
+<h1>Map and compass - navigation without a device</h1>
+<p><strong>Keep a paper topographic map, a compass, and a printed copy of this guide.</strong>
+An offline map on a dead phone is no help. Print maps before an outage, including
+the legend, scale, contour interval and north/declination information. Carry a
+pencil, straightedge or baseplate compass, and a protractor. Protect paper from rain.
+Practice on familiar ground before depending on these skills.</p>
+<p>This guide works without electricity, GPS or internet once printed. For the
+library's digital maps, see <a href="HOW-TO-VIEW-MAPS.html">How to view maps</a>.</p>
+<h2>1. Read a topographic map</h2>
+<ul>
+<li><strong>Scale:</strong> at 1:25,000, 1 cm on paper represents 250 m on the ground.
+Measure a winding route in short segments with paper or string, then use the
+scale bar. Ground travel over slopes is longer than the horizontal map distance.
+If a printout was resized, use its printed scale bar, not a ruler conversion
+based on the original ratio.</li>
+<li><strong>Contours:</strong> each line joins points of equal elevation. Read the contour
+interval and elevation units in the margin. Closely spaced lines mean steep
+ground; widely spaced lines mean gentler slopes. Count intervals between labelled
+contours to estimate height change.</li>
+<li><strong>Terrain:</strong> closed contours with increasing heights indicate a hill; inward
+tick marks indicate a depression. Where contours cross a stream valley, their
+V shapes point uphill/upstream. Compare ridges, valleys, saddles and slopes with
+what you can actually see.</li>
+<li><strong>Symbols:</strong> read this map's legend for roads, trails, water and buildings.
+A mapped bridge or trail may have disappeared; a blue stream is not proof of
+drinkable water or a safe crossing.</li>
+</ul>
+<p>Mark your starting point and destination. Break the route into short legs with
+recognizable checkpoints. Prefer clear linear features such as a safe trail or
+ridge as <strong>handrails</strong>. Choose a distinct feature beyond the destination as a
+<strong>catching feature</strong> so you notice an overshoot. Record distances, turns, hazards
+and an escape route. A straight bearing through a cliff or river is not a route.</p>
+<h2>2. Match the map's north to the compass</h2>
+<p>A bearing (azimuth) is measured clockwise: north 0 or 360 degrees, east 90,
+south 180, west 270. Always label its reference:</p>
+<ul>
+<li><strong>True north:</strong> toward the geographic North Pole.</li>
+<li><strong>Grid north:</strong> along the map's north-south grid lines.</li>
+<li><strong>Magnetic north:</strong> the compass needle's north-seeking direction.</li>
+</ul>
+<p><strong>Magnetic declination</strong> is the angle between true and magnetic north. It changes
+with place and time. Before leaving, obtain the current local value and date,
+write them on the map, and read its north diagram and conversion notes. An old
+map's printed magnetic value may be stale. The angle between <strong>grid and magnetic
+north</strong> can differ from true-magnetic declination; use the angle for the north
+reference you actually measure from. Do not assume the page edge is grid north.</p>
+<p>For an <strong>unadjusted compass</strong>, let <code>D</code> be magnetic north's angle east of your
+chosen map north: east is positive, west is negative.</p>
+<ul>
+<li>Map bearing to magnetic bearing: <code>magnetic = map - D</code>.</li>
+<li>Magnetic bearing to map bearing: <code>map = magnetic + D</code>.</li>
+<li>Add or subtract 360 until the result is between 0 and 359 degrees.</li>
+</ul>
+<p>Worked examples (illustrative values, not your local declination):</p>
+<div class="table-scroll"><table>
+<thead>
+<tr><th>Map-to-magnetic angle</th><th>Map bearing</th><th>Set on unadjusted compass</th><th>Reverse check</th></tr>
+</thead>
+<tbody>
+<tr><td>10 degrees east (<code>D = +10</code>)</td><td>90</td><td>80</td><td><code>80 + 10 = 90</code></td></tr>
+<tr><td>10 degrees west (<code>D = -10</code>)</td><td>90</td><td>100</td><td><code>100 - 10 = 90</code></td></tr>
+<tr><td>10 degrees east (<code>D = +10</code>)</td><td>5</td><td>355</td><td><code>355 + 10 = 365</code>, or 5</td></tr>
+</tbody>
+</table></div>
+<p>If your compass has adjustable declination, follow its instructions for the
+chosen north reference and <strong>do not apply the correction twice</strong>. The remaining
+steps assume an unadjusted baseplate compass and manual conversion.</p>
+<p>To orient the map, identify a north-south line for your chosen map reference.
+Convert its north bearing (0 degrees) to magnetic using the rule above. Set that
+bearing at the compass's direction-of-travel index. Lay the compass edge along
+the line with the travel arrow toward map north. Rotate the map and compass
+together until the needle's north end lies in the bezel's north orienting arrow.
+Check that visible landmarks now lie in the same directions as on the map.</p>
+<h2>3. Take and follow a bearing</h2>
+<p><strong>To measure a visible landmark:</strong> stand clear of vehicles, steel fences, magnets
+and electrical equipment. Hold the compass level, point the travel arrow at the
+landmark, and turn the bezel until its orienting arrow matches the needle's
+north end. Read degrees at the travel index. That is a magnetic bearing; convert
+it before plotting it on the map. Move away and recheck if readings seem unstable.</p>
+<p><strong>To plan a leg on paper:</strong></p>
+<ol>
+<li>Put the compass's straight edge from your known position <strong>toward</strong> the next
+checkpoint, travel arrow pointing toward the checkpoint.</li>
+<li>Without rotating the baseplate, turn the bezel until its north-south lines
+parallel the chosen map north lines, with bezel north toward map north.
+Read the map bearing at the index. A protractor aligned to the same map north
+is another way to measure it.</li>
+<li>Convert to magnetic and set that number at the compass index.</li>
+<li>Lift the compass, keep it level, and turn your body until the north needle
+sits inside the orienting arrow. The travel arrow now points along the leg.
+Check the <strong>north</strong> end, not the south end, to avoid a 180-degree reversal.</li>
+<li>Pick a recognizable object on that line, lower the compass and walk safely
+to it. Stop and repeat. Do not walk while staring at the compass.</li>
+</ol>
+<p>Track elapsed time and distance, for example by a pace count calibrated over a
+known distance. Slopes, vegetation and fatigue change your pace. Confirm each
+checkpoint against terrain before starting the next leg. If an obstacle forces
+a detour, use a safe mapped route and re-establish your position and bearing;
+holding the original compass angle after a sideways detour does not put you back
+on the original line.</p>
+<p>A <strong>back bearing</strong> is the opposite direction: add 180 degrees if below 180,
+otherwise subtract 180. For example, 80 becomes 260; 260 becomes 80.
+This reverses a direction, not every turn or obstacle in your route.</p>
+<h2>4. Find your position: triangulation / resection</h2>
+<p>Finding yourself from bearings to known landmarks is commonly called
+triangulation; the Army calls this <strong>resection</strong>. You need at least two correctly
+identified, well-separated landmarks visible both on the ground and on the map.
+A third gives a useful error check. Avoid landmarks nearly in the same or
+opposite directions, where the plotted lines meet at a shallow angle.</p>
+<ol>
+<li>Remain at one observation point. Identify and mark the landmarks on the map.</li>
+<li>Measure the magnetic bearing <strong>from you to</strong> the first landmark.</li>
+<li>Convert it to the map's north reference, then calculate its back bearing.</li>
+<li>From that landmark's mapped position, use the protractor to draw the back
+bearing line toward your possible position.</li>
+<li>Repeat for the other landmarks. Where the lines cross is your estimated
+position. Three imperfect readings usually form a small triangle.</li>
+</ol>
+<p>Example with <code>D = +10</code>: a landmark seen at 80 magnetic is at 90 map; draw
+its 270-degree back bearing from the landmark toward you.</p>
+<p>The error triangle is an uncertainty area, not proof that its center is safe.
+Compare it with ridges, streams and your last known position. If it is large,
+recheck identification, north reference, conversions and compass interference.
+If you are definitely on a mapped trail, one landmark's back-bearing line can
+help locate you where it crosses that trail; multiple crossings remain ambiguous.</p>
+<h2>5. Natural navigation when the compass is unavailable</h2>
+<p>These methods estimate <strong>true</strong> directions, not magnetic or grid bearings.
+Use several clues together and compare them with terrain. They cannot locate
+you on their own and are not precise enough for a hazardous crossing.</p>
+<h3>Sun</h3>
+<p>The sun generally rises in the eastern part of the sky and sets in the western
+part; due east/west applies near the equinoxes, not year-round. At local solar
+noon it is generally south in northern temperate latitudes and north in southern
+temperate latitudes. Clock noon may differ from solar noon; within the tropics
+the noon sun can be on either side or overhead. Do not assume &quot;sun = south&quot;
+everywhere, or use this shortcut in polar conditions.</p>
+<h3>Shadow-stick</h3>
+<ol>
+<li>On level ground in sunlight, plant a straight stick upright. Mark its shadow
+tip with a stone.</li>
+<li>Wait about 10-15 minutes without moving the stick; mark the new shadow tip.</li>
+<li>Draw a line from the <strong>first</strong> mark toward the <strong>second</strong>. Treat this as a
+rough west-to-east line.</li>
+<li>With the first mark on your left and second on your right, face roughly
+north; south is behind you.</li>
+</ol>
+<p>This short-interval method is approximate: season, latitude and time of day
+affect it. It requires a distinct shadow and level ground; it is not suitable
+in polar regions (above about 60 degrees north or south in the Army guidance).
+Do not turn a rough shadow line into a precise travel bearing.</p>
+<h3>Stars</h3>
+<ul>
+<li><strong>Northern Hemisphere:</strong> locate the Big Dipper's two bowl stars opposite the
+handle. Follow the line from the outer bowl's bottom star through its rim star
+about five times their separation to Polaris, at the end of the Little
+Dipper's handle. A line down from Polaris to the horizon gives approximate
+true north. Polaris is not the brightest star; confirm the constellation.</li>
+<li><strong>Southern Hemisphere:</strong> identify the Southern Cross, not a look-alike.
+Extend its long axis from the top star through the foot about 4.5 times
+the cross's length beyond the foot. Drop a line from that estimated sky
+point to the horizon for approximate true south.</li>
+</ul>
+<p>Clouds, terrain, latitude and season can hide these patterns. Learn them before
+travel; do not guess from a single unfamiliar star. Moss or the shape of one
+tree is not a dependable compass.</p>
+<h2>6. When the observations disagree</h2>
+<p>Stop moving and keep the group together. Check the last confirmed location,
+map scale, landmark identity, compass interference and north conversion.
+Do not walk farther on a guess. If you cannot confidently recover your position,
+seek a safe nearby place, shelter and signal for help rather than wandering.
+Keep your paper map and route notes accessible even when electronics are working.</p>
+<h2>Sources and reuse</h2>
+<p>Adapted in original wording from U.S. government manuals, public domain in the
+United States under 17 USC 105. No third-party website text, diagrams or page
+design is reproduced. External links below are references for preparation and
+verification; the instructions above need no online lookup in the field.</p>
+<ul>
+<li>U.S. Army, <strong>FM 3-25.26, Map Reading and Land Navigation</strong> (20 July 2001):
+<a href="https://www.globalsecurity.org/military/library/policy/army/fm/3-25-26/ch6.htm">chapter 6</a>,
+sections 6-2 through 6-8 (north references, azimuths, conversion and resection);
+<a href="https://www.globalsecurity.org/military/library/policy/army/fm/3-25-26/ch9.htm">chapter 9</a>,
+sections 9-3 through 9-5 (compass use and natural direction finding);
+<a href="https://www.globalsecurity.org/military/library/policy/army/fm/3-25-26/ch10.htm">chapter 10</a>
+(contours, elevation and terrain features). These are mirrors of the Army text.</li>
+<li>U.S. Army, <strong>FM 21-76, Survival</strong> (June 1992), chapter 18, Field-Expedient
+Direction Finding (sun, shadow tips, Polaris and Southern Cross).
+The kit already downloads this manual into <code>Manuals/ArmyFieldManuals/</code>;
+see <a href="https://archive.org/details/fm-21-76-us-army-survival-manual">the manual online</a>.</li>
+</ul>
+<p>These older manuals teach techniques, not today's local magnetic declination.
+Prepare that value for your actual map and location before leaving.</p>
+</div></body></html>

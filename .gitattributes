@@ -10,4 +10,5 @@ doc-qa/text/*.txt -text
 
 # Static web assets: generated with LF; keep LF so the --check generators match on every OS.
 web/*.html text eol=lf
+web/docs/*.html text eol=lf
 web/*.js   text eol=lf

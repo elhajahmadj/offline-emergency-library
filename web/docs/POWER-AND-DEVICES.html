@@ -1,0 +1,172 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Power and devices - Offline Emergency Library</title><style>:root{--bg:#0f1420;--card:#171f2e;--ink:#e7ecf3;--muted:#9fb0c3;--accent:#4fd1c5;--accent2:#f6ad55;--line:#273246;--code:#0b0f17}@media(prefers-color-scheme:light){:root{--bg:#f4f6fb;--card:#fff;--ink:#15202b;--muted:#56657a;--accent:#0d9488;--accent2:#b45309;--line:#e2e8f0;--code:#f1f5f9}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Arial,sans-serif}.wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px}h1{font-size:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}h2{font-size:22px;border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:30px}h3{font-size:17px;color:var(--accent)}h4{font-size:15px;color:var(--accent2)}a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:14px}pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto}pre code{background:none;padding:0}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}th{background:rgba(127,127,127,.12)}blockquote{border-left:4px solid var(--accent);background:rgba(79,209,197,.08);padding:10px 16px;border-radius:0 10px 10px 0}hr{border:none;border-top:1px solid var(--line);margin:26px 0}ul,ol{padding-left:26px}</style><style>.wrap{max-width:65ch}h1{background:none;color:var(--ink);font-size:32px;line-height:1.3}h2{font-size:25px}h3{font-size:20px;margin-top:30px}a{text-decoration:underline;text-underline-offset:.2em}a:focus-visible{outline:2px solid currentColor;outline-offset:3px}p,li{overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}code{overflow-wrap:anywhere}@media(prefers-color-scheme:light){a{color:#0f766e}}@media print{body{background:#fff;color:#000}.wrap{max-width:none;padding:0}h1,h2,h3{color:#000;break-after:avoid}a{color:#000}pre,blockquote{background:#fff}}</style></head><body><main class="wrap">
+<h1>Power and devices: keep the library usable off-grid</h1>
+<p><strong>Start with reading, not AI.</strong> Keep a charged phone or tablet with the essential
+PDFs, HTML guides and local maps already copied onto it. Dim the screen, close
+unused apps, and use airplane mode when you do not need communications. Keep a
+paper map and printed essential instructions as the no-battery fallback.</p>
+<p>This guide works offline. The source links at the end are for checking details
+while you still have internet; none is needed to use the calculations below.</p>
+<h2>1. Budget energy for a day</h2>
+<p><strong>Watts (W) are power; watt-hours (Wh) are energy.</strong> A device drawing 5 W for
+4 hours uses 20 Wh. Add each task's energy to estimate a day [1]:</p>
+<ul>
+<li>Energy used: <code>Wh = average W x hours</code>.</li>
+<li>Battery energy: <code>Wh = (mAh / 1000) x rated battery V</code>.</li>
+<li>Runtime: <code>hours = usable Wh / average W</code>.</li>
+</ul>
+<p>Use the battery's printed <strong>Wh</strong> rating when available. A 20,000 mAh bank rated
+at a cell voltage of 3.7 V stores 74 Wh, <strong>not</strong> 100 Wh just because its USB output
+is 5 V. If you assume 80% reaches your device after conversion, it delivers
+about 59 Wh. That 80% is a planning assumption, not a guarantee; age, temperature,
+cable losses and converter efficiency change it. Do not apply the loss twice
+if the maker already specifies usable output energy.</p>
+<p><strong>Example reading day (illustrative inputs, not measured device benchmarks):</strong></p>
+<ul>
+<li>Phone reading PDFs, HTML or Kiwix: assume 3 W for 4 hours = <strong>12 Wh</strong>.</li>
+<li>Laptop reading local maps/manuals: assume 15 W for 2 hours = <strong>30 Wh</strong>.</li>
+<li>Brief laptop AI use: assume 45 W for 20 minutes = <strong>15 Wh</strong>.</li>
+<li>Total delivered to devices: <strong>57 Wh/day</strong>. At the assumed 80% delivery,
+allow about <strong>72 Wh of stored energy</strong>. With a separate 25% reserve, plan for
+about <strong>90 Wh/day</strong>. Two days with no recharge need about <strong>180 Wh</strong>.</li>
+</ul>
+<p>Replace these assumptions with a USB power meter, plug-in energy meter, or a
+timed battery-use test on <strong>your</strong> setup. Include the screen, external drive,
+fans, networking and converter losses at the measurement boundary. A charger's
+65 W rating is its maximum output, not a measurement of what the laptop uses.</p>
+<h3>Reading versus AI</h3>
+<p>Searching a local PDF or ZIM normally needs less sustained computation than
+generating AI text. The screen and the device's idle load still use energy.
+An 8B/7B model can keep the CPU/GPU busy; do not budget it as if it were reading.</p>
+<p>Prefer the <strong>3B model</strong> for brief questions; close the chat/server afterward.
+Use manuals directly for safety-critical decisions. Model size alone does not
+predict Wh per answer: hardware, response length and time taken also matter.
+Measure before depending on a runtime estimate.</p>
+<p>For a smaller initial download, use <strong><code>-Lite</code> / <code>--lite</code></strong>, paired with a small
+<strong><code>-Region</code> / <code>--region</code></strong> or <strong><code>-SkipMaps</code> / <code>--skip-maps</code></strong>. Lite keeps the 3B
+model but omits the larger models and several big archives. It reduces download
+and storage work, <strong>not</strong> the power draw automatically. Maps still default to
+the whole US; lite does not remove files already present.</p>
+<h2>2. Choose a charging route</h2>
+<h3>Power bank or battery station</h3>
+<p>Compare <strong>Wh capacity</strong> and <strong>output W</strong> separately. Enough energy for a day does
+not mean the output can run a laptop: the bank, port and cable must support the
+device's required USB-C Power Delivery voltage/current profile. A USB-C connector
+alone does not prove compatibility. Test charging while using the actual device.</p>
+<p>Prefer a compatible regulated DC/USB output over converting battery DC to mains
+AC and back again when practical. If an inverter is necessary, budget its idle
+draw and losses too. Follow the battery maker's charging-temperature limits;
+keep batteries dry and out of hot vehicles/direct sun. Stop using swollen,
+damaged or overheating batteries. Do not improvise battery packs or wiring.</p>
+<h3>Solar: collect energy into a battery, then use it</h3>
+<p>Use a panel with a compatible charge controller or regulated USB charger.
+<strong>Never connect an unregulated panel directly to a device or lithium battery.</strong>
+Keep the panel in sun but the battery shaded and within its temperature limits.
+Check whether simultaneous charging and output is supported; do not assume it.</p>
+<p>For a first estimate, multiply panel W by <strong>peak-sun-hours</strong> and an assumed
+overall collection efficiency. Peak-sun-hours mean equivalent hours at full
+rated irradiance, not the time between sunrise and sunset.</p>
+<ul>
+<li>Example: <strong>30 W x 4 peak-sun-hours x 0.6 = 72 Wh/day</strong> collected.</li>
+<li>Four hours and 60% are <strong>example assumptions</strong>, not a forecast for your area.
+Shade, clouds, winter, panel angle and charging losses can reduce output
+sharply; a storm day may provide almost nothing.</li>
+<li>That example would not replenish the 90 Wh/day reserve-inclusive budget above.
+Under those same assumptions, the arithmetic minimum is about <strong>38 W</strong> of
+panel; choose headroom and test rather than buying to that minimum.</li>
+<li>Check local seasonal solar resources before an outage (PVWatts is one planning
+tool [2]). It models PV systems, not your portable USB charger. Keep stored
+energy for days with no useful sun.</li>
+</ul>
+<h3>Vehicle / 12 V</h3>
+<p>Use a vehicle-rated, fused USB/DC adapter within the socket and device ratings;
+do not wire a computer straight to a starter battery. Check the vehicle manual:
+some sockets turn off with the ignition, others can drain the starter battery.
+Preserve enough charge to start the vehicle; there is no universal safe runtime.</p>
+<p>If the engine must run, use it <strong>outdoors, never in a garage or enclosed space,
+even with the door open</strong>. Keep exhaust clear, including snow, and away from
+people and openings. Carbon monoxide can kill [4]. Fuel is finite; do not
+depend on idling as your only charging plan.</p>
+<h3>Hand-crank</h3>
+<p>Treat a crank as a short top-up for a light, radio or phone, not a laptop power
+source. Ask what sustained <strong>electrical output W</strong> it actually delivers.
+Even <strong>5 W for 10 minutes</strong> is only <strong>0.83 Wh before losses</strong>. That is arithmetic
+for an assumed output, not a claim that a particular crank achieves it.</p>
+<h2>3. Pick the lowest-power setup that does the job</h2>
+<ul>
+<li><strong>Phone/tablet:</strong> often the practical first choice for reading, because screen,
+storage and battery are integrated. Download apps, import files and test
+airplane-mode use now. Copy only the regions/references you need; see the
+bundled <code>USE-ON-PHONE</code> guide.</li>
+<li><strong>E-reader:</strong> useful for supported PDFs/ebooks with long periods of static
+reading. Test layout and transfer first. Do not assume it can run Kiwix, maps
+or AI. Keep a print copy of essential pages.</li>
+<li><strong>Laptop:</strong> convenient for the complete library, but a gaming GPU, bright
+screen and background apps can dominate the budget. Use power-saving mode,
+an integrated GPU where available, and short reading sessions.</li>
+<li><strong>Raspberry Pi:</strong> can be a low-power reading/server option, <strong>not a ready-to-run
+appliance included with this kit</strong>. Budget the board plus drive, display or
+client phone, cooling and networking. Set up the OS and compatible readers
+while online. The bundled Linux Kiwix AppImage is x64, not a Pi ARM build;
+use <strong><code>kiwix-serve</code> in a browser</strong>, as below, rather than a desktop app. Test any AI engine and
+its RAM needs on your exact OS; do not assume desktop bundles work unchanged.</li>
+</ul>
+<p>For scale, official Raspberry Pi documentation lists roughly <strong>600 mA at 5.1 V</strong>
+for a typical active <strong>bare Pi 4 board</strong>: about <strong>3 W before peripherals</strong> [3].
+This is neither a complete workstation budget nor an AI benchmark. A Pi 5 needs
+a suitable <strong>5 V / 5 A</strong> supply for the higher USB peripheral power allowance;
+ordinary USB-C banks may not offer that profile. Undervoltage can cause storage
+corruption. Shut down cleanly before disconnecting the drive or power.</p>
+<h3>Read ZIMs on Raspberry Pi / Linux ARM</h3>
+<p>While online, install <strong>Kiwix tools for your Linux ARM OS/architecture</strong>
+(including <code>kiwix-serve</code>), mount the library drive, and locate its <code>.zim</code> files.
+The tools are a separate prerequisite, not installed by this kit. Then serve
+your local ZIMs and read them in the Pi's browser [5], for example:</p>
+<pre><code class="language-bash">kiwix-serve --address=127.0.0.1 --port=8080 \
+  &quot;/media/pi/LIBRARY/OfflineLibrary/Medical/WikiMed/&quot;*.zim
+</code></pre>
+<p>Replace the example mount path with your actual folder containing ZIM files.
+Open <strong><code>http://127.0.0.1:8080</code> on the Pi</strong> and select a book. Leave the terminal
+running; <strong>Ctrl+C</strong> stops the server. This works without internet once the
+tools and ZIMs are present. Test it before the outage.</p>
+<p>That address is <strong>local to the Pi</strong>: a phone cannot use its own <code>127.0.0.1</code> to
+reach it. Serving a phone on a trusted local network requires deliberately
+binding the server to the Pi's LAN address instead, and allowing that port in
+the local firewall. Use the Pi's address in the phone browser; do not forward
+the port on an internet router. Account for local network equipment's power.</p>
+<p>A preconfigured Pi + library drive + battery + suitably sized panel can serve
+light reading through a phone, without powering a laptop display. Count the
+client phone and local Wi-Fi too; local networking does not require internet.
+Browser maps are shipped (PR #38) and are available as an opt-in flag
+(<code>-BrowserMaps</code> on Windows / <code>--browser-maps</code> on Linux/macOS).
+Note that they are US-only and require about 16.5 GB of additional disk space
+on top of the OsmAnd maps. If using that opt-in version, prepare maps/viewer
+assets and test the whole setup offline first; do not assume it supports every
+region or Pi configuration.
+The bundled OffRoad desktop viewer reads the drive's OBF maps with no internet on
+Windows, macOS and Linux (issue #107). The older OsmAndMapCreator viewer is still
+included for Linux but needs internet on Windows and macOS (issue #15). A phone
+with the bundled Android app remains a tested fallback.</p>
+<h2>4. Rehearse before relying on it</h2>
+<ol>
+<li>Charge everything and copy essential references to a second device.</li>
+<li>Disconnect internet; open a PDF, a ZIM and your local map. Locate instructions
+without AI. Keep emergency communications available when you need them.</li>
+<li>Run your expected reading/AI session and measure energy used. Test the exact
+bank, charging cable, panel and adapters together, including low battery.</li>
+<li>Save enough stored energy for poor-weather days and communications. Print
+critical instructions and a local paper map. Recheck batteries periodically
+following the maker's storage guidance.</li>
+</ol>
+<h2>Sources and limits</h2>
+<p>Checked 2026-11-03. This is original guidance under the repository's MIT license,
+with references below, not copied equipment manuals or product endorsements.
+The worked power/solar examples are <strong>assumptions to replace with measurements</strong>.</p>
+<ol>
+<li><a href="https://www.eia.gov/energyexplained/electricity/measuring-electricity.php">US EIA: measuring electricity</a> - W, Wh and energy over time.</li>
+<li><a href="https://pvwatts.nlr.gov/">PVWatts</a> - location/weather-dependent solar estimates and model limitations.</li>
+<li><a href="https://github.com/raspberrypi/documentation/blob/master/documentation/asciidoc/computers/raspberry-pi/power-supplies.adoc">Raspberry Pi official power documentation</a> - board-only figures, power-supply profiles, USB budgets and undervoltage.</li>
+<li><a href="https://www.weather.gov/safety/winter-during">US National Weather Service: winter safety during a storm</a> - vehicle exhaust, ventilation and carbon-monoxide precautions.</li>
+<li><a href="https://kiwix-tools.readthedocs.io/en/latest/kiwix-serve.html">Kiwix tools: kiwix-serve</a> - local ZIM serving, browser access, listen address and port options.</li>
+</ol>
+
+</main></body></html>

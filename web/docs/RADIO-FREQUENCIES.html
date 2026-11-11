@@ -1,0 +1,278 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Radio Frequency Reference</title><style>:root{--bg:#0f1420;--card:#171f2e;--ink:#e7ecf3;--muted:#9fb0c3;--accent:#4fd1c5;--accent2:#f6ad55;--line:#273246;--code:#0b0f17}@media(prefers-color-scheme:light){:root{--bg:#f4f6fb;--card:#fff;--ink:#15202b;--muted:#56657a;--accent:#0a7168;--accent2:#b45309;--line:#e2e8f0;--code:#f1f5f9}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Arial,sans-serif}.wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px}h1{font-size:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}h2{font-size:22px;border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:30px}h3{font-size:17px;color:var(--accent)}h4{font-size:15px;color:var(--accent2)}a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:14px}pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto}pre code{background:none;padding:0}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}th{background:rgba(127,127,127,.12)}blockquote{border-left:4px solid var(--accent);background:rgba(79,209,197,.08);padding:10px 16px;border-radius:0 10px 10px 0}hr{border:none;border-top:1px solid var(--line);margin:26px 0}ul,ol{padding-left:26px}
+.wrap{max-width:69ch}h1{font-size:32px;background:none;color:var(--ink)}h2{font-size:25px;margin-top:36px;margin-bottom:16px}h3{font-size:20px;margin-top:28px;margin-bottom:12px}p,li{overflow-wrap:anywhere}a{overflow-wrap:anywhere;text-underline-offset:.18em}a:focus-visible{outline:2px solid currentColor;outline-offset:3px}table{width:100%;table-layout:fixed;font-size:14px;font-variant-numeric:tabular-nums}th,td{overflow-wrap:anywhere;vertical-align:top}pre{white-space:pre-wrap}::selection{background:#9fd9d2;color:#15202b}
+@page{size:auto;margin:14mm}@media print{:root{--bg:#fff;--card:#fff;--ink:#000;--muted:#222;--accent:#000;--accent2:#000;--line:#777;--code:#eee}body{background:#fff;color:#000;font-size:10pt;line-height:1.35}.wrap{max-width:none;padding:0}h1{font-size:20pt}h2{font-size:15pt;margin-top:16pt;margin-bottom:6pt}h3{font-size:12pt;margin-top:12pt;margin-bottom:5pt}h1,h2,h3{break-after:avoid}p,li{orphans:3;widows:3}ol{font-size:9pt;line-height:1.25}table{font-size:9pt;table-layout:auto}thead{display:table-header-group}tr{break-inside:avoid}th,td{padding:4pt;border:1px solid #777}a{color:#000;text-decoration:underline}a[href^="https://"]::after{content:" (" attr(href) ")";font-size:8pt;overflow-wrap:anywhere}blockquote{background:#fff;color:#000}}</style></head><body><main class="wrap">
+<h1>Radio Frequency Reference</h1>
+<p><strong>US baseline - checked 2026-11-03. All frequencies below are in MHz.</strong>
+Save this file with its HTML companion; open the HTML in a browser and use
+<strong>Print / Save as PDF</strong>. All tables and notes are included offline. Source links
+are for checking updates while online. See the <a href="RADIO-GUIDE.html">Radio Guide</a>
+(<a href="RADIO-GUIDE.md">Markdown</a>) for equipment and calling procedures.</p>
+<p><strong>Before transmitting:</strong> follow the rules for your country, radio service,
+license, equipment and location. Receiving public broadcasts generally needs no
+transmit license; local scanner, interception and disclosure restrictions may
+still apply. An amateur license does not authorize marine, aviation or GMRS
+transmissions. Emergency exceptions are service-specific, not blanket permission
+to transmit anywhere. FCC 97.403/97.405 concern amateur stations. [1]</p>
+<p><strong>Region matters:</strong> these personal-radio channel numbers and amateur privileges
+are US FCC references. They are not a worldwide allocation table. Marine radio
+US/International/Canada settings can change channel behavior. Check the national
+regulator and local channel/band plan before traveling or programming transmit
+memories. A calling frequency is not a promise that anyone is listening.</p>
+<h2>NOAA Weather Radio - receive only</h2>
+<p>Tune by <strong>frequency</strong>, not just a receiver's WX preset number: NOAA explicitly
+notes that manufacturers use different numbering schemes. Scan these FM weather
+broadcasts and save the strongest local station. They are not two-way help
+channels. SAME geographic alert codes are separate from frequency selection. [2]</p>
+<table>
+<thead>
+<tr><th>Frequency</th><th>Frequency</th></tr>
+</thead>
+<tbody>
+<tr><td>162.400</td><td>162.500</td></tr>
+<tr><td>162.425</td><td>162.525</td></tr>
+<tr><td>162.450</td><td>162.550</td></tr>
+<tr><td>162.475</td><td></td></tr>
+</tbody>
+</table>
+<h2>FRS and GMRS - US shared channels</h2>
+<p>FM voice. FRS is license-by-rule using compliant FRS equipment; GMRS normally
+requires an individual FCC license and compliant GMRS equipment. The channel
+number alone does not determine a radio's lawful power or service. [3]</p>
+<table>
+<thead>
+<tr><th>Channel</th><th>MHz</th><th>Channel</th><th>MHz</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>462.5625</td><td>12</td><td>467.6625</td></tr>
+<tr><td>2</td><td>462.5875</td><td>13</td><td>467.6875</td></tr>
+<tr><td>3</td><td>462.6125</td><td>14</td><td>467.7125</td></tr>
+<tr><td>4</td><td>462.6375</td><td>15</td><td>462.5500</td></tr>
+<tr><td>5</td><td>462.6625</td><td>16</td><td>462.5750</td></tr>
+<tr><td>6</td><td>462.6875</td><td>17</td><td>462.6000</td></tr>
+<tr><td>7</td><td>462.7125</td><td>18</td><td>462.6250</td></tr>
+<tr><td>8</td><td>467.5625</td><td>19</td><td>462.6500</td></tr>
+<tr><td>9</td><td>467.5875</td><td>20</td><td>462.6750</td></tr>
+<tr><td>10</td><td>467.6125</td><td>21</td><td>462.7000</td></tr>
+<tr><td>11</td><td>467.6375</td><td>22</td><td>462.7250</td></tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr><th>Channels</th><th>FRS maximum ERP</th><th>GMRS maximum</th></tr>
+</thead>
+<tbody>
+<tr><td>1-7</td><td>2 W</td><td>5 W ERP</td></tr>
+<tr><td>8-14</td><td>0.5 W</td><td>0.5 W ERP; handheld portable units only</td></tr>
+<tr><td>15-22</td><td>2 W</td><td>50 W transmitter output; fixed stations 15 W</td></tr>
+</tbody>
+</table>
+<p>ERP includes antenna effects; transmitter output is a different measurement.
+These are regulatory maxima, not recommended settings. FRS radios have
+non-removable antennas and cannot operate through GMRS repeaters. &quot;Privacy
+codes&quot; (CTCSS/DCS) only filter what your speaker hears; they do not make a
+channel private. No FRS/GMRS channel has a guaranteed emergency watch. [3]</p>
+<h3>GMRS repeaters - confirm the local configuration</h3>
+<p>Conventional <strong>+5 MHz</strong> input/output pairings are shown below. The FCC lists the
+authorized 462 and 467 MHz main frequencies; this table pairs them in the usual
+same-order repeater configuration. Confirm the repeater's actual input, output,
+access permission and tones locally. Equipment memory labels such as &quot;23-30&quot;
+are not universal channel identifiers. [3]</p>
+<table>
+<thead>
+<tr><th>Shared channel / output</th><th>Receive: repeater output</th><th>Transmit: repeater input</th></tr>
+</thead>
+<tbody>
+<tr><td>15</td><td>462.5500</td><td>467.5500</td></tr>
+<tr><td>16</td><td>462.5750</td><td>467.5750</td></tr>
+<tr><td>17</td><td>462.6000</td><td>467.6000</td></tr>
+<tr><td>18</td><td>462.6250</td><td>467.6250</td></tr>
+<tr><td>19</td><td>462.6500</td><td>467.6500</td></tr>
+<tr><td>20</td><td>462.6750</td><td>467.6750</td></tr>
+<tr><td>21</td><td>462.7000</td><td>467.7000</td></tr>
+<tr><td>22</td><td>462.7250</td><td>467.7250</td></tr>
+</tbody>
+</table>
+<p>Do not confuse the 467 MHz <strong>main</strong> repeater inputs above with shared channels
+8-14. Mobile/handheld/control transmissions on these main inputs are for repeater
+communications or permitted brief tests, not ordinary simplex conversation. [3]</p>
+<h2>MURS - US only</h2>
+<p>License-by-rule with compliant MURS equipment; maximum <strong>2 W transmitter output</strong>
+on every channel. For analog FM, use the radio's proper MURS setting; occupied
+bandwidth limits are listed rather than ambiguous &quot;wide/narrow&quot; menu names. [4]</p>
+<table>
+<thead>
+<tr><th>Channel</th><th>Frequency</th><th>Maximum occupied bandwidth</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>151.820</td><td>11.25 kHz</td></tr>
+<tr><td>2</td><td>151.880</td><td>11.25 kHz</td></tr>
+<tr><td>3</td><td>151.940</td><td>11.25 kHz</td></tr>
+<tr><td>4</td><td>154.570</td><td>20.0 kHz</td></tr>
+<tr><td>5</td><td>154.600</td><td>20.0 kHz</td></tr>
+</tbody>
+</table>
+<h2>Marine VHF - select the correct country channel group</h2>
+<p>Use a marine radio for marine service, not for casual land communications.
+The following is a <strong>selected US operational reference</strong>, not the complete
+international marine channel plan. Voice entries use FM simplex: ship transmit
+and receive frequencies are the same. Channel 70 is digital, not voice. [5]</p>
+<table>
+<thead>
+<tr><th>Channel</th><th>Frequency</th><th>Use</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>16</strong></td><td><strong>156.800</strong></td><td>International distress, urgency, safety and initial calling; move working traffic when directed</td></tr>
+<tr><td><strong>70</strong></td><td><strong>156.525</strong></td><td>DSC digital distress/safety/calling only; <strong>never voice</strong></td></tr>
+<tr><td>13</td><td>156.650</td><td>Bridge-to-bridge navigation safety; normally 1 W, with rule-specific exceptions</td></tr>
+<tr><td>6</td><td>156.300</td><td>Intership safety and coordinated ship-aircraft search and rescue</td></tr>
+<tr><td>9</td><td>156.450</td><td>US noncommercial vessel calling; not the initial distress channel</td></tr>
+<tr><td>22A / 1022</td><td>157.100</td><td>US Coast Guard liaison/working channel after initial contact or instructions</td></tr>
+</tbody>
+</table>
+<p><strong>22A / 1022 is the simplex ship-frequency channel</strong>, not international duplex
+channel 22. ITU's four-digit convention prefixes &quot;10&quot; to identify use of the
+ship frequency alone; older US radios commonly show the &quot;A&quot; suffix. [5, 6]</p>
+<p>Local Vessel Traffic Service and bridge-to-bridge rules can override a generic
+list. In specified lower Mississippi waterways, covered vessels use <strong>67,
+156.375</strong> for bridge-to-bridge service rather than 13; consult the exact
+geographic limits in 33 CFR 26.03(e). Do not improvise a DSC distress test:
+learn the radio's test procedure and program its correct MMSI beforehand. [5]</p>
+<h2>Aviation and distress beacons - different equipment and modes</h2>
+<table>
+<thead>
+<tr><th>Frequency</th><th>Equipment / mode</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>121.500</strong></td><td>Aviation AM voice</td><td>Civil aviation emergency/guard; if already communicating with ATC, use that frequency first</td></tr>
+<tr><td>243.000</td><td>Aviation UHF AM voice</td><td>Emergency/guard, particularly military; ordinary VHF airband radios cannot tune it</td></tr>
+<tr><td><strong>406 MHz band</strong></td><td>Approved EPIRB / ELT / PLB; digital beacon</td><td>Satellite distress alert, <strong>not a voice calling channel</strong></td></tr>
+<tr><td>121.5 beacon signal</td><td>Beacon homing transmitter</td><td>Local search-team homing; separate from 406 MHz satellite alerting</td></tr>
+</tbody>
+</table>
+<p>EPIRB = maritime beacon; ELT = aircraft beacon; PLB = personal locator beacon.
+Register a 406 MHz beacon, keep the registration current, and use its approved
+self-test procedure. Activate for genuine distress according to its instructions;
+do not try to send beacon messages using a programmable voice radio. [7, 8]</p>
+<p>Cospas-Sarsat stopped satellite detection of <strong>121.5/243 MHz analog beacon
+alerts in 2009</strong>. This did <strong>not</strong> discontinue aviation emergency voice on those
+frequencies, or local homing. A scanner hearing 121.5 is not a satellite alert
+receiver. Marine rules prohibit voice telephony on 243 MHz. [5, 7, 8]</p>
+<h2>Amateur radio - calling frequencies and band-plan summary</h2>
+<p><strong>US stations / ITU Region 2 baseline.</strong> A license, permitted mode and suitable
+equipment are required. ARRL/IARU band plans guide coordination; FCC rules set
+the legal limits. Local repeater coordinators and emergency nets may use
+different channels. Listen first; give priority to existing emergency traffic.
+<strong>There is no universal amateur distress channel or guaranteed rescue watch.</strong></p>
+<table>
+<thead>
+<tr><th>Frequency</th><th>Mode</th><th>Role / region</th></tr>
+</thead>
+<tbody>
+<tr><td>29.600</td><td>FM simplex</td><td>10 m calling; US General or higher for FM here</td></tr>
+<tr><td>52.525</td><td>FM simplex</td><td>US 6 m primary simplex</td></tr>
+<tr><td>146.520</td><td>FM simplex</td><td>US 2 m national simplex calling</td></tr>
+<tr><td>446.000</td><td>FM simplex</td><td>US 70 cm national simplex</td></tr>
+<tr><td>7.240 / 7.275</td><td>LSB voice</td><td>IARU Region 2 emergency centers of activity</td></tr>
+<tr><td>14.300</td><td>USB voice</td><td>IARU global emergency center of activity</td></tr>
+<tr><td>18.160</td><td>USB voice</td><td>IARU global emergency center of activity</td></tr>
+<tr><td>21.360</td><td>USB voice</td><td>IARU global emergency center of activity</td></tr>
+</tbody>
+</table>
+<p>Emergency centers of activity are <strong>places to look for traffic</strong>, not exclusive
+channels, mandatory nets or dispatch services. HF entries require US General
+or higher voice privileges. &quot;Global&quot; describes IARU coordination, not permission
+to transmit outside your national allocation or license. [9, 10, 11]</p>
+<h3>Selected US bands and General-class voice segments</h3>
+<p>This compact plan covers common HF/VHF/UHF emergency equipment, not every
+amateur allocation. Limits below are <strong>band edges</strong>, not safe dial settings:
+keep the entire transmitted signal within your authorized segment. [9]</p>
+<table>
+<thead>
+<tr><th>Band</th><th>US band limits</th><th>General-class voice segment</th></tr>
+</thead>
+<tbody>
+<tr><td>160 m</td><td>1.800-2.000</td><td>1.800-2.000</td></tr>
+<tr><td>80/75 m</td><td>3.500-4.000</td><td>3.800-4.000</td></tr>
+<tr><td>40 m</td><td>7.000-7.300</td><td>7.175-7.300</td></tr>
+<tr><td>30 m</td><td>10.100-10.150</td><td>No voice; CW/data</td></tr>
+<tr><td>20 m</td><td>14.000-14.350</td><td>14.225-14.350</td></tr>
+<tr><td>17 m</td><td>18.068-18.168</td><td>18.110-18.168</td></tr>
+<tr><td>15 m</td><td>21.000-21.450</td><td>21.275-21.450</td></tr>
+<tr><td>12 m</td><td>24.890-24.990</td><td>24.930-24.990</td></tr>
+<tr><td>10 m</td><td>28.000-29.700</td><td>28.300-29.700; follow mode/bandwidth subbands</td></tr>
+<tr><td>6 m</td><td>50.000-54.000</td><td>50.100-54.000; local band plan</td></tr>
+<tr><td>2 m</td><td>144.000-148.000</td><td>144.100-148.000; local band plan</td></tr>
+<tr><td>1.25 m</td><td>222.000-225.000</td><td>222.000-225.000; local band plan</td></tr>
+<tr><td>70 cm</td><td>420.000-450.000</td><td>420.000-450.000; geographic/sharing limits</td></tr>
+</tbody>
+</table>
+<p>Technicians have voice privileges on the listed VHF/UHF bands, subject to the
+same mode and local restrictions. Their HF voice privilege is <strong>28.300-28.500
+SSB, 200 W PEP maximum</strong>; it does not include 29.600 FM or the HF emergency
+activity centers above. Extra/Advanced privileges differ from the General
+segments. <strong>60 m has special channel/segment, power and emission rules</strong> that
+changed in 2026; consult current 97.303(h), 97.305 and 97.313 rather than an old
+five-channel card. The separate 219-220 MHz amateur allocation is data-only,
+not included as a voice band here. [9]</p>
+<p>Before relying on a repeater, record its output, input/offset, tone, owner
+permission and fallback simplex channel. Do not assume every 2 m or 70 cm
+repeater uses the same offset or that it has backup power.</p>
+<h2>Fill in your local plan before an outage</h2>
+<table>
+<thead>
+<tr><th>Item</th><th>Your local information</th></tr>
+</thead>
+<tbody>
+<tr><td>Country / region and date checked</td><td>__________________________________</td></tr>
+<tr><td>NOAA station frequency / SAME areas</td><td>__________________________________</td></tr>
+<tr><td>Family channel / frequency / mode</td><td>__________________________________</td></tr>
+<tr><td>Backup channel / check-in times</td><td>__________________________________</td></tr>
+<tr><td>Repeater RX / TX / tone / permission</td><td>__________________________________</td></tr>
+<tr><td>Local emergency net / schedule / mode</td><td>__________________________________</td></tr>
+<tr><td>Marine channel group / local VTS</td><td>__________________________________</td></tr>
+<tr><td>Call sign / beacon registration reminder</td><td>__________________________________</td></tr>
+</tbody>
+</table>
+<h2>Sources and update checks</h2>
+<p>Checked <strong>2026-11-03</strong>. Numeric regulatory data is US federal-government material;
+the explanatory text and compact tables here are an original summary. ARRL and
+IARU are cited for operating conventions; their charts are not reproduced.
+Regulations and local assignments can change. Recheck these references before
+programming transmitters and print your local plan while online.</p>
+<ol>
+<li>FCC, amateur emergency provisions: <a href="https://www.ecfr.gov/current/title-47/section-97.403">47 CFR 97.403</a>
+and <a href="https://www.ecfr.gov/current/title-47/section-97.405">97.405</a>.</li>
+<li>NOAA/NWS, <a href="https://www.weather.gov/marine/wxradio">Weather Radio frequencies and channel-number warning</a>.</li>
+<li>FCC, <a href="https://www.ecfr.gov/current/title-47/section-95.563">FRS channels, 95.563</a>;
+<a href="https://www.ecfr.gov/current/title-47/section-95.567">power, 95.567</a>;
+<a href="https://www.ecfr.gov/current/title-47/section-95.587">antenna, 95.587</a>;
+<a href="https://www.ecfr.gov/current/title-47/section-95.1763">GMRS channels, 95.1763</a>;
+<a href="https://www.ecfr.gov/current/title-47/section-95.1767">power, 95.1767</a>;
+licensing: <a href="https://www.ecfr.gov/current/title-47/section-95.305">95.305</a>,
+<a href="https://www.ecfr.gov/current/title-47/section-95.1705">95.1705</a>.</li>
+<li>FCC, MURS <a href="https://www.ecfr.gov/current/title-47/section-95.2763">channels, 95.2763</a>,
+<a href="https://www.ecfr.gov/current/title-47/section-95.2767">power, 95.2767</a>,
+<a href="https://www.ecfr.gov/current/title-47/section-95.2773">bandwidth, 95.2773</a>.</li>
+<li>FCC, marine <a href="https://www.ecfr.gov/current/title-47/section-80.369">80.369(e)</a>,
+<a href="https://www.ecfr.gov/current/title-47/section-80.373">80.373(f) and table footnotes</a>,
+<a href="https://www.ecfr.gov/current/title-47/section-80.215">power, 80.215(g)</a>,
+<a href="https://www.ecfr.gov/current/title-47/section-80.89">prohibited transmissions, 80.89</a>;
+USCG, <a href="https://www.ecfr.gov/current/title-33/section-26.03">bridge-to-bridge rules, 33 CFR 26.03(e)</a>.</li>
+<li>ITU-R, <a href="https://www.itu.int/dms_pubrec/itu-r/rec/m/R-REC-M.1084-5-201203-I!!PDF-E.pdf">M.1084-5</a>,
+Annex 4 section 3 (printed page 12): four-digit simplex numbering;
+Annex 3 section 2.9.2: channel 70 DSC.</li>
+<li>FAA AIM, <a href="https://www.faa.gov/air_traffic/publications/atpubs/aim_html/chap6_section_3.html">6-3-1(h), emergency frequencies</a>
+and <a href="https://www.faa.gov/air_traffic/publications/atpubs/aim_html/chap6_section_2.html">6-2-4, ELTs</a>.</li>
+<li>NOAA SARSAT, <a href="https://www.sarsat.noaa.gov/emergency-406-beacons/">406 MHz emergency distress beacons</a>.</li>
+<li>FCC, amateur <a href="https://www.ecfr.gov/current/title-47/section-97.301">bands, 97.301</a>,
+<a href="https://www.ecfr.gov/current/title-47/section-97.303">sharing, 97.303</a>,
+<a href="https://www.ecfr.gov/current/title-47/section-97.305">emissions, 97.305</a>,
+<a href="https://www.ecfr.gov/current/title-47/section-97.307">standards, 97.307</a>,
+<a href="https://www.ecfr.gov/current/title-47/section-97.313">power, 97.313</a>.</li>
+<li>ARRL, <a href="https://www.arrl.org/band-plan">voluntary band plans</a>:
+10 m, 6 m, 2 m and 70 cm calling/simplex entries.</li>
+<li>IARU Region 2, <a href="https://www.iaru-r2.org/wp-content/uploads/2020/02/IARU-Region-2-Band-plan.pdf">September 2020 band plan</a>,
+40 m, 20 m, 17 m and 15 m emergency centers of activity. These are
+coordination conventions, not frequency reservations or legal privileges.</li>
+</ol>
+</main></body></html>
