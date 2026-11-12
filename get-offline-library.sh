@@ -838,6 +838,11 @@ get_pdf "hunting-with-the-bow-and-arrow" "Hunting with the Bow and Arrow (Pope 1
 get_pdf "bookofcampingwoo01keph"                     "The Book of Camping and Woodcraft (Kephart 1910).pdf" "$SP"
 get_pdf "deadfalls-and-snares-by-a.-r.-harding-1907" "Deadfalls and Snares (Harding 1907).pdf" "$SP"
 get_pdf "baitanglingforco00rhearich"                 "Bait Angling for Common Fishes (Rhead 1907).pdf" "$SP"
+# Finding wild food: Useful Wild Plants of the United States and Canada, Charles Francis Saunders
+# (1920; public domain). Dedicated wild-edible/useful-plant guide. Pin the exact .pdf by direct
+# link: this item also carries a larger _bw.pdf the PowerShell installer (largest file) would
+# otherwise pick, differing from bash (#184). IDENTIFY WITH CERTAINTY BEFORE EATING -- see Manuals/READ-ME-FIRST.
+get_pdf_url "https://archive.org/download/cu31924001786965/cu31924001786965.pdf" "Useful Wild Plants of the United States and Canada (Saunders 1920).pdf" "$SP"
 # Household do-it-yourself from common materials (public domain):
 DIY="$ROOT/Manuals/Household-DIY"
 # The Boy Mechanic, Volume 1: 700 Things for Boys to Do (1913; public domain). Dated; some projects are unsafe by modern standards -- see Manuals/READ-ME-FIRST.
