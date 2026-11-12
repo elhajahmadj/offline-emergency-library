@@ -4,9 +4,9 @@ Portable installers assemble an offline reference library. Read
 `.github/CONTRIBUTING.md` and the PR template before changing files.
 
 ## Current state
-_Last verified: 2026-11-09_
+_Last verified: 2026-11-12_
 
-- Status: issue 72 documents the tested chat context limit; issue 102 corrects state
+- Status: issue 72 documents the tested chat context limit; issue 102 corrects
   browser-map estimates and uses a conservative space budget; browser-only additions
   preserve existing OsmAnd region metadata (issue 125); issue 75 adds opt-in browser
   translator launchers alongside the terminal translator; issue 63 adds a ready-to-use
@@ -21,7 +21,20 @@ _Last verified: 2026-11-09_
   Issue 79 adds the phone docs pack: `.github/workflows/phone-pack.yml` builds the
   `sources.tsv` manuals plus phone-useful guides into a zip on the fixed `phone-pack`
   release, linked by a QR code (`web/phone-pack-qr.svg`) and documented in `USE-ON-PHONE`.
-  The release does not exist until that workflow first runs on `main`.
+  The `phone-pack` release is live: `Offline-Emergency-Phone-Pack.zip` (253,656,128 bytes,
+  ~254 MB) was last rebuilt by the workflow on 2026-11-12. The builder routes each
+  archive.org PDF through the item's own data nodes first, with the download redirect
+  last, so GitHub runners stop timing out on European nodes (#247, #250).
+- Front end (issue 66, milestone #139): a static HTML picker site is built and lives under
+  `web/` — the picker (`index.html`), landing, About, Documentation, Data Sources and
+  Privacy pages. Generated files are rebuilt from their sources and checked in CI:
+  `build-catalog-js.sh` (catalog.js from catalog.json), `build-about.sh` (about.html from
+  CONTRIBUTORS.md) and `build-web-docs.sh` (the `web/docs/` guide mirror). One component
+  table (`components.tsv`) is the single source of each download's size, flag, presets,
+  license and source link, with a CI license gate, and `SOURCES.md` is generated from it
+  (#239, #244, issue 67). Both installers run a guided install when given no flags (#221).
+  The live site is the Fly deployment (`sine-nexu.fly.dev`, #218); the GitHub Pages workflow
+  is a known gap below.
 - Works: aria2 fallback, cancellation and partial-file protection have offline regression checks;
   large-model chat launchers follow the model selection in both installers (issue 168);
   changelog compilation rejects invalid bullet starts and missing numeric PR references,
@@ -36,9 +49,19 @@ _Last verified: 2026-11-09_
   start-up mistakes (a flag with no value, an unknown flag, a region with no maps, an early stop)
   exit 1 with a plain message, and both installers fetch their repo files from the commit main
   was on when the run started (issues 192, 193); `--only` re-hashes only what its pieces wrote,
-  with byte parity between the installers checked in CI (issue 195).
-- In progress: maintainer review of the context-limit documentation, the estimator correction, the browser-only metadata fix, issue 75 (per-OS CI) and the manual reader.
-- Known gaps: native macOS double-click testing and independent Swahili and Somali language review.
+  with byte parity between the installers checked in CI (issue 195);
+  the space estimate is correct under a decimal-comma locale (issue 104, #245).
+- In progress: the front-end direction beyond the HTML picker — desktop app, then phone
+  (issues 66, 84, 139); more public-domain manuals, licenses first (issues 130, 78); and the
+  outstanding test rounds for the OffRoad viewer and reader on Linux x64/arm64 and the wider
+  CI matrix (issues 108, 159, 117).
+- Known gaps: the `Publish picker site` GitHub Pages workflow fails on every run because Pages
+  was never enabled and its workflow token cannot create the site, so the live host is Fly, not
+  Pages (issue 252); the Documentation page has dead drive-relative links and external links
+  that open inside the iframe (issue 253); the self-check has no browser-maps line and Windows
+  `Expand-Archive` does not verify a zip's CRCs (issues 256, 255); nine `docs/*.html` guides
+  render literal `**` and split sentences (issue 254); native macOS double-click testing and
+  independent Swahili and Somali language review are still outstanding.
 - Deep docs: `evaluations/issue-73/README.md` describes the interpreter protocol;
   `evaluations/issue-76/README.md` describes the CPU model comparison;
   `docs/HOW-TO-TRANSLATE.md` describes browser requirements and local chat storage.
