@@ -37,7 +37,7 @@ This drive is a self-contained **offline survival library + AI**. Everything wor
 | Folder | What it is | How to open | Guide |
 |---|---|---|---|
 | `AI-Offline\` | Offline AI chat - your helper for brainstorming, checklists and summaries (3 models, CPU + GPU) | Double-click a `CHAT-*.bat` | `AI-Offline\HOW-TO-RUN-OFFLINE-AI.html` |
-| `AI-Offline\Manual-QA\` | Ask the **bundled manuals** questions (shows the passages it used and links the PDFs) - works with no setup | `START-DOCS.bat` / `start-docs.command` / `start-docs.sh`, then the local page | `AI-Offline\DocReader-GPT4All\HOW-TO-ASK-YOUR-DOCS.html` |
+| `AI-Offline\Manual-QA\` | Ask the **bundled manuals** questions (shows the passages it used and links the PDFs) - works with no setup | `START-DOCS.bat` / `start-docs.command` / `start-docs.sh`, then the local page | [`AI-Offline\DocReader-GPT4All\HOW-TO-ASK-YOUR-DOCS.html`](AI-Offline/DocReader-GPT4All/HOW-TO-ASK-YOUR-DOCS.html) |
 | `AI-Offline\DocReader-GPT4All\` | Optional: index **your own** PDFs and notes with LocalDocs | Install once, then offline | `...\HOW-TO-ASK-YOUR-DOCS.html` |
 | `Manuals\` | Survival & repair manuals (Army FMs, iFixit, Appropedia, FEMA/EPA/knots/bow-hunting, household DIY) | PDF→browser, ZIM→Kiwix | `Manuals\READ-ME-FIRST.html` |
 | `Manuals\Radio-Communications\` | How ham/CB/shortwave radio works + emergency comms | Browser | `RADIO-GUIDE.html` |
@@ -108,7 +108,7 @@ are opt-in).
   with `-Education` / `--education`; see `Education\READ-ME-FIRST.html`).
 - **Talk with someone who speaks another language:** run `AI-Offline\TRANSLATE.bat` (Windows)
   or `translate.sh` (macOS/Linux), if you added it with `-Translate` / `--translate`; see
-  `AI-Offline\HOW-TO-TRANSLATE.html` first.
+  [HOW-TO-TRANSLATE](AI-Offline/HOW-TO-TRANSLATE.html) first.
 - **What is this illness, symptom or test?** open
   `Medical\MedlinePlus\MedlinePlus-Health-Topics.html` in a browser (if you added it with
   `-MedlinePlus` / `--medlineplus`).
@@ -126,7 +126,7 @@ are opt-in).
 | PDFs & `.html` guides | A web browser (Edge is on Windows) | n/a — already on Windows |
 | `.zim` archives | **Kiwix** (portable, no install) | ✅ `E:\Kiwix-Reader\app` |
 | Offline AI chat | Nothing extra (self-contained engine) | ✅ `E:\AI-Offline\engine` |
-| AI doc-Q&A | **GPT4All** (one-time install; self-contained, CPU) | ✅ installer in `DocReader-GPT4All` |
+| AI doc-Q&A | **Ask the manuals** (no setup, CPU) + optional **GPT4All** for your own folders | ✅ installer in `DocReader-GPT4All` |
 | Maps on a computer | Bundled OffRoad viewer + portable Java (offline, any region; Windows runtime-tested) | ✅ `OsmAnd\MapViewer-Desktop` |
 | Maps on Android | Bundled **OsmAnd~ APK** (sideload offline) | ✅ `OsmAnd\PhoneApp-Android` |
 | Maps on iPhone/iPad | OsmAnd from the App Store | app store (get while online) |
