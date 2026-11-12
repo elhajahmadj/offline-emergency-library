@@ -1,159 +1,181 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ask Your Documents - Offline AI Q&amp;A</title><style>:root{--bg:#0f1420;--card:#171f2e;--ink:#e7ecf3;--muted:#9fb0c3;--accent:#4fd1c5;--accent2:#f6ad55;--line:#273246;--code:#0b0f17}@media(prefers-color-scheme:light){:root{--bg:#f4f6fb;--card:#fff;--ink:#15202b;--muted:#56657a;--accent:#0d9488;--accent2:#b45309;--line:#e2e8f0;--code:#f1f5f9}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Arial,sans-serif}.wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px}h1{font-size:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}h2{font-size:22px;border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:30px}h3{font-size:17px;color:var(--accent)}h4{font-size:15px;color:var(--accent2)}a{color:var(--accent)}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:14px}pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto}pre code{background:none;padding:0}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}th{background:rgba(127,127,127,.12)}blockquote{border-left:4px solid var(--accent);background:rgba(79,209,197,.08);padding:10px 16px;border-radius:0 10px 10px 0}hr{border:none;border-top:1px solid var(--line);margin:26px 0}ul,ol{padding-left:26px}</style></head><body><div class="wrap">
 <h1>Ask Your Documents - Offline AI Q&amp;A</h1>
-<p>Two tools answer questions from documents on this drive, both <strong>entirely offline on your CPU</strong> (no internet, no graphics card required):</p>
+<p>Two tools answer questions from documents on this drive, both <strong>entirely offline on your
+CPU</strong> (no internet, no graphics card required):</p>
 <ul>
-<li><strong>Ask the manuals</strong> reads downloaded manual text, shows the passages behind its answer, and links each passage to the PDF. It is already set up, including on lite drives.</li>
-<li><strong>GPT4All LocalDocs</strong> indexes folders of your own PDFs and text files after a one-time setup. That part of this guide starts at section 0.</li>
+<li><strong>Ask the manuals</strong> reads downloaded manual text, shows the passages behind its answer,
+and links each passage to the PDF. It is already set up, including on lite drives.</li>
+<li><strong>GPT4All LocalDocs</strong> indexes folders of your own PDFs and text files after a one-time
+setup. That part of this guide starts at section 0.</li>
 </ul>
-<p>Example: <em>"According to the Army survival manual, how do I purify water?"</em> - either tool finds the relevant text and shows which document it used.</p>
+<p>Example: <em>&quot;According to the Army survival manual, how do I purify water?&quot;</em> - either tool
+finds the relevant text and shows which document it used.</p>
 <h2>Start here: Ask the manuals (already set up)</h2>
-<p>Every install, including <code>--lite</code> / <code>-Lite</code>, now has a reader that is ready on the drive. It needs no collection setup and no internet:</p>
+<p>Every install, including <code>--lite</code> / <code>-Lite</code>, now has a reader that is ready on the
+drive. It needs no collection setup and no internet:</p>
 <ol>
-<li><strong>Windows:</strong> open <code>AI-Offline\Manual-QA\START-DOCS.bat</code>. <strong>macOS:</strong> double-click <code>AI-Offline/Manual-QA/start-docs.command</code>. <strong>Linux:</strong> run <code>AI-Offline/Manual-QA/start-docs.sh</code> in a terminal.</li>
-<li>When it says it is ready, open <strong>http://127.0.0.1:8081/AI-Offline/Manual-QA/</strong> in a browser on the same computer.</li>
-<li>Ask a question, for example <em>"How do I control bleeding?"</em>. The page shows the passages it found and links that open the matching PDF.</li>
+<li><strong>Windows:</strong> open <code>AI-Offline\Manual-QA\START-DOCS.bat</code>.
+<strong>macOS:</strong> double-click <code>AI-Offline/Manual-QA/start-docs.command</code>. <strong>Linux:</strong> run <code>AI-Offline/Manual-QA/start-docs.sh</code> in a terminal.</li>
+<li>When it says it is ready, open
+<strong>http://127.0.0.1:8081/AI-Offline/Manual-QA/</strong> in a browser on the same computer.</li>
+<li>Ask a question, for example <em>&quot;How do I control bleeding?&quot;</em>. The page shows the
+passages it found and links that open the matching PDF.</li>
 </ol>
-<p>It uses keyword search over downloaded text, then the bundled 3B model explains the passages it was given. Keep the launcher window open; press Ctrl+C to stop. The reader works from any folder, including a different drive letter, because its paths are relative.</p>
-<p>A manual whose text cannot be downloaded, or whose PDF changes after its text was published, is left out rather than guessed at. Its name appears under "Unavailable sources" in the reader, and the installer self-check reports the gap.</p>
-<blockquote><strong>What the citations mean.</strong> A numbered citation points to one of the passages shown under the answer, and each passage links to a PDF. It does not prove the AI understood the passage. Read the PDF before acting on anything safety-critical. Keyword search can also miss relevant wording.</blockquote>
-<blockquote><strong>Not included in a <code>--lite</code> install: GPT4All.</strong> If you built this drive with <code>--lite</code> / <code>-Lite</code>, the GPT4All installer below is not here. The Ask the manuals reader still works. To also add GPT4All's LocalDocs workflow, re-run the installer into the same drive <strong>without</strong> the lite flag, or download GPT4All from <strong>gpt4all.io</strong> while you still have internet.</blockquote>
-<p>The rest of this guide covers GPT4All LocalDocs, which can index extra folders of your own PDFs and text files.</p>
-<hr>
+<p>It uses keyword search over downloaded text, then the bundled 3B model explains the
+passages it was given. Keep the launcher window open; press Ctrl+C to stop. The reader
+works from any folder, including a different drive letter, because its paths are relative.</p>
+<p>A manual whose text cannot be downloaded, or whose PDF changes after its text was
+published, is left out rather than guessed at. Its name appears under &quot;Unavailable
+sources&quot; in the reader, and the installer self-check reports the gap.</p>
+<blockquote>
+<p><strong>What the citations mean.</strong> A numbered citation points to one of the passages shown
+under the answer, and each passage links to a PDF. It does not prove the AI understood
+the passage. Read the PDF before acting on anything safety-critical. Keyword search can
+also miss relevant wording.</p>
+</blockquote>
+<blockquote>
+<p><strong>Not included in a <code>--lite</code> install: GPT4All.</strong> If you built this drive with <code>--lite</code> /
+<code>-Lite</code>, the GPT4All installer below is not here. The Ask the manuals reader still works.
+To also add GPT4All's LocalDocs workflow, re-run the installer into the same drive
+<strong>without</strong> the lite flag, or download GPT4All from <strong>gpt4all.io</strong> while you still have
+internet.</p>
+</blockquote>
+<p>The rest of this guide covers GPT4All LocalDocs, which can index extra folders of your own
+PDFs and text files.</p>
+<hr />
 <h2>0. Dependencies — there are (almost) none</h2>
-<p><strong>GPT4All is completely self-contained.</strong> The installer bundles its own AI engine. You</p>
-<p>do <strong>NOT</strong> need to install Python, CUDA, Visual C++ runtimes, or anything else. It runs</p>
-<p>on the <strong>CPU</strong> of any ordinary Windows 10/11 (64-bit) computer.</p>
-<p>The <strong>one and only</strong> thing that needs the internet is a <strong>one-time setup</strong> (downloading</p>
-<p>a chat model and the small "embedding" model that reads your documents). **Do this now,</p>
-<p>while you still have internet** (see Section 2). After that, it works forever offline</p>
-<p>with zero dependencies.</p>
-<blockquote>We will <strong>reuse the AI models already in <code>E:\AI-Offline\models</code></strong>, so you don't have to download big models again.</blockquote>
-<hr>
+<p><strong>GPT4All is completely self-contained.</strong> The installer bundles its own AI engine. You
+do <strong>NOT</strong> need to install Python, CUDA, Visual C++ runtimes, or anything else. It runs
+on the <strong>CPU</strong> of any ordinary Windows 10/11 (64-bit) computer.</p>
+<p>The <strong>one and only</strong> thing that needs the internet is a <strong>one-time setup</strong> (downloading
+a chat model and the small &quot;embedding&quot; model that reads your documents). <strong>Do this now,
+while you still have internet</strong> (see Section 2). After that, it works forever offline
+with zero dependencies.</p>
+<blockquote>
+<p>We will <strong>reuse the AI models already in <code>E:\AI-Offline\models</code></strong>, so you don't have
+to download big models again.</p>
+</blockquote>
+<hr />
 <h2>1. Install (one time, ~2 minutes)</h2>
 <ol>
 <li>Open <code>E:\AI-Offline\DocReader-GPT4All\</code>.</li>
 <li>Double-click <strong><code>gpt4all-installer-win64-v3.10.0.exe</code></strong>.</li>
-<li>If Windows shows "Windows protected your PC," click <strong>More info → Run anyway</strong>.</li>
+<li>If Windows shows &quot;Windows protected your PC,&quot; click <strong>More info → Run anyway</strong>.</li>
 <li>Click through the installer (default options are fine). Launch GPT4All when done.</li>
 </ol>
 <p>That's the only installation. Everything below is inside the app.</p>
-<hr>
+<hr />
 <h2>2. First-run setup — DO THIS WHILE YOU STILL HAVE INTERNET</h2>
-<p>GPT4All needs (a) a <strong>chat model</strong> (the "brain") and (b) an <strong>embedding model</strong> (reads</p>
-<p>your docs for search). We'll reuse our models for (a) and let it fetch the tiny (b).</p>
+<p>GPT4All needs (a) a <strong>chat model</strong> (the &quot;brain&quot;) and (b) an <strong>embedding model</strong> (reads
+your docs for search). We'll reuse our models for (a) and let it fetch the tiny (b).</p>
 <h3>2a. Point GPT4All at the models we already downloaded</h3>
 <ol>
-<li>In GPT4All, click the <strong>gear / Settings</strong> (top-right) → <strong>Application</strong> tab.</li>
-<li>Find <strong>"Model Folder"</strong> (or "Download path"). Set it to:</li>
+<li>
+<p>In GPT4All, click the <strong>gear / Settings</strong> (top-right) → <strong>Application</strong> tab.</p>
+</li>
+<li>
+<p>Find <strong>&quot;Model Folder&quot;</strong> (or &quot;Download path&quot;). Set it to:
+<strong><code>E:\AI-Offline\models</code></strong></p>
+</li>
+<li>
+<p>Go to the <strong>Chats</strong> screen and open the model picker (top). You should now see our
+models, e.g. <strong>Llama 3.2 3B Instruct</strong> and <strong>Meta Llama 3.1 8B Instruct</strong>. Select
+one (3B = fast, 8B = smarter). If asked, let it load.</p>
+<p><em>If the models don't appear:</em> use the <strong>&quot;Add Model&quot; / &quot;Download Models&quot;</strong> screen and
+download any small model it offers (e.g. Llama 3.2 3B) — this needs internet and is
+a one-time step.</p>
+</li>
 </ol>
-<p>   <strong><code>E:\AI-Offline\models</code></strong></p>
-<ol>
-<li>Go to the <strong>Chats</strong> screen and open the model picker (top). You should now see our</li>
-</ol>
-<p>   models, e.g. <strong>Llama 3.2 3B Instruct</strong> and <strong>Meta Llama 3.1 8B Instruct</strong>. Select</p>
-<p>   one (3B = fast, 8B = smarter). If asked, let it load.</p>
-<p>   *If the models don't appear:* use the <strong>"Add Model" / "Download Models"</strong> screen and</p>
-<p>   download any small model it offers (e.g. Llama 3.2 3B) — this needs internet and is</p>
-<p>   a one-time step.</p>
 <h3>2b. Enable the document reader (LocalDocs)</h3>
 <ol>
 <li>Click <strong>LocalDocs</strong> (left sidebar).</li>
-<li>Click <strong>"+ Add Collection"</strong> / <strong>"Add Docs"</strong>.</li>
-<li>If GPT4All says its local embedding model is missing, keep the release's <code>nomic-embed-text-v1.5.f16.gguf</code> resource next to the installed application and restart it. The v3.10.0 release loads this file from its own resources folder; do not assume it is downloaded when a collection is created.</li>
+<li>Click <strong>&quot;+ Add Collection&quot;</strong> / <strong>&quot;Add Docs&quot;</strong>.</li>
+<li>If GPT4All says its local embedding model is missing, keep the release's
+<code>nomic-embed-text-v1.5.f16.gguf</code> resource next to the installed application and
+restart it. The v3.10.0 release loads this file from its own resources folder;
+do not assume it is downloaded when a collection is created.</li>
 </ol>
 <p>Once 2a and 2b are done, <strong>everything works offline from now on.</strong></p>
-<hr>
+<hr />
 <h2>3. Point it at your manuals (create collections)</h2>
-<p>A "collection" is just a folder of documents GPT4All will read. Add the kit's folders:</p>
+<p>A &quot;collection&quot; is just a folder of documents GPT4All will read. Add the kit's folders:</p>
 <ol>
 <li><strong>LocalDocs → + Add Collection.</strong></li>
-<li>Give it a name (e.g. <code>Army Manuals</code>) and choose the folder:</li>
-</ol>
+<li>Give it a name (e.g. <code>Army Manuals</code>) and choose the folder:
 <ul>
 <li><code>E:\Manuals\ArmyFieldManuals</code></li>
 </ul>
-<ol>
-<li>Click <strong>Create / Add</strong>. GPT4All <strong>indexes</strong> the files (progress bar). Big folders</li>
-</ol>
-<p>   take a few minutes the first time; after that it's instant.</p>
-<ol>
-<li>Repeat to add more collections, e.g.:</li>
-</ol>
+</li>
+<li>Click <strong>Create / Add</strong>. GPT4All <strong>indexes</strong> the files (progress bar). Big folders
+take a few minutes the first time; after that it's instant.</li>
+<li>Repeat to add more collections, e.g.:
 <ul>
 <li><code>Medical</code> → <code>E:\Medical\Manuals-PDF</code></li>
 <li>You can also add your own folders of PDFs/notes anytime.</li>
 </ul>
-<p><strong>Supported file types:</strong> PDF, plain text (<code>.txt</code>), Markdown (<code>.md</code>), Word (<code>.docx</code>),</p>
-<p>and several code/office formats. (See Section 6 for ZIM and the Wikipedia XML.)</p>
-<hr>
+</li>
+</ol>
+<p><strong>Supported file types:</strong> PDF, plain text (<code>.txt</code>), Markdown (<code>.md</code>), Word (<code>.docx</code>),
+and several code/office formats. (See Section 6 for ZIM and the Wikipedia XML.)</p>
+<hr />
 <h2>4. Ask questions about your documents</h2>
 <ol>
 <li>Go to <strong>Chats</strong> and start a new chat.</li>
-<li>Make sure a <strong>model is selected</strong> (top) and your desired **LocalDocs collection(s)</li>
-</ol>
-<p>   are toggled ON** for the chat (there's a LocalDocs button/checkbox in the chat).</p>
-<ol>
-<li>Type your question, e.g.:</li>
-</ol>
+<li>Make sure a <strong>model is selected</strong> (top) and your desired <strong>LocalDocs collection(s)
+are toggled ON</strong> for the chat (there's a LocalDocs button/checkbox in the chat).</li>
+<li>Type your question, e.g.:
 <ul>
-<li>*"How do I treat a deep cut and stop bleeding?"*</li>
-<li>*"Steps to purify water if I have no filter?"*</li>
-<li>*"How do I check and replace brake pads?"* (uses the auto manual)</li>
-<li>*"What knots should I know and how do I tie a bowline?"*</li>
+<li><em>&quot;How do I treat a deep cut and stop bleeding?&quot;</em></li>
+<li><em>&quot;Steps to purify water if I have no filter?&quot;</em></li>
+<li><em>&quot;How do I check and replace brake pads?&quot;</em> (uses the auto manual)</li>
+<li><em>&quot;What knots should I know and how do I tie a bowline?&quot;</em></li>
 </ul>
-<ol>
-<li>The AI answers <strong>from your documents</strong> and shows <strong>sources</strong> (which file/section it</li>
+</li>
+<li>The AI answers <strong>from your documents</strong> and shows <strong>sources</strong> (which file/section it
+used) so you can open the original PDF to verify.</li>
 </ol>
-<p>   used) so you can open the original PDF to verify.</p>
-<blockquote>Tip: Ask one clear question at a time. If an answer seems off, open the cited PDF and read the source — the AI can make mistakes, so verify anything safety-critical.</blockquote>
-<hr>
+<blockquote>
+<p>Tip: Ask one clear question at a time. If an answer seems off, open the cited PDF and
+read the source — the AI can make mistakes, so verify anything safety-critical.</p>
+</blockquote>
+<hr />
 <h2>5. Everyday use (fully offline)</h2>
 <ul>
 <li>Open GPT4All → pick a model → turn on the collection(s) you want → ask.</li>
 <li><strong>3B model</strong> = fast on any PC. <strong>8B model</strong> = slower but smarter (needs ~8 GB RAM).</li>
 <li>No internet is used. You can be completely disconnected.</li>
 </ul>
-<hr>
+<hr />
 <h2>6. What about ZIM files and the Wikipedia XML?</h2>
 <ul>
-<li><strong>ZIM files</strong> (iFixit, Appropedia, WikiMed — in <code>E:\Manuals</code> and</li>
+<li><strong>ZIM files</strong> (iFixit, Appropedia, WikiMed — in <code>E:\Manuals</code> and
+<code>E:\Medical</code>) are <strong>not</strong> read by GPT4All. Open those in the <strong>Kiwix</strong> reader
+instead (see <code>E:\Kiwix-Reader\HOW-TO-USE-KIWIX</code>). Kiwix has its own fast full-text
+search across all articles.</li>
+<li><strong>Wikipedia</strong> (<code>E:\Wikipedia\...zim</code>) is a Kiwix archive, not a document file — read it in
+<strong>Kiwix</strong>, not GPT4All.</li>
+<li><strong>For AI Q&amp;A, point GPT4All at the PDF/text folders</strong> (<code>ArmyFieldManuals</code>,
+<code>Medical\Manuals-PDF</code>, <code>Radio-Communications</code>, and any notes you add).</li>
 </ul>
-<p>  <code>E:\Medical</code>) are <strong>not</strong> read by GPT4All. Open those in the <strong>Kiwix</strong> reader</p>
-<p>  instead (see <code>E:\Kiwix-Reader\HOW-TO-USE-KIWIX</code>). Kiwix has its own fast full-text</p>
-<p>  search across all articles.</p>
-<ul>
-<li><strong>Wikipedia</strong> (<code>E:\Wikipedia\...zim</code>) is a Kiwix archive, not a document file — read it in</li>
-</ul>
-<p>  <strong>Kiwix</strong>, not GPT4All.</p>
-<ul>
-<li><strong>For AI Q&amp;A, point GPT4All at the PDF/text folders</strong> (<code>ArmyFieldManuals</code>,</li>
-</ul>
-<p>  <code>Medical\Manuals-PDF</code>, <code>Radio-Communications</code>, and any notes you add).</p>
 <p>So you have <strong>two complementary tools</strong>:</p>
 <ul>
 <li><strong>Kiwix</strong> = browse &amp; search the big wiki/repair archives (ZIM).</li>
 <li><strong>GPT4All</strong> = ask an AI questions and get answers drawn from your PDFs.</li>
 </ul>
-<hr>
+<hr />
 <h2>7. Troubleshooting</h2>
 <ul>
 <li><strong>Installer blocked by SmartScreen:</strong> More info → Run anyway.</li>
-<li><strong>No models listed:</strong> set Model Folder to <code>E:\AI-Offline\models</code> (Settings →</li>
+<li><strong>No models listed:</strong> set Model Folder to <code>E:\AI-Offline\models</code> (Settings →
+Application), or download one small model once while online.</li>
+<li><strong>LocalDocs won't index / &quot;embedding model&quot; error:</strong> this needs the one-time
+embedding-model download — do it once while online (Section 2b).</li>
+<li><strong>Slow answers:</strong> use the <strong>3B</strong> model; close other programs; answers are slower on
+older CPUs but still work.</li>
+<li><strong>Answer ignores my docs:</strong> confirm the collection is <strong>toggled ON</strong> in the chat and
+that indexing finished.</li>
 </ul>
-<p>  Application), or download one small model once while online.</p>
-<ul>
-<li><strong>LocalDocs won't index / "embedding model" error:</strong> this needs the one-time</li>
-</ul>
-<p>  embedding-model download — do it once while online (Section 2b).</p>
-<ul>
-<li><strong>Slow answers:</strong> use the <strong>3B</strong> model; close other programs; answers are slower on</li>
-</ul>
-<p>  older CPUs but still work.</p>
-<ul>
-<li><strong>Answer ignores my docs:</strong> confirm the collection is <strong>toggled ON</strong> in the chat and</li>
-</ul>
-<p>  that indexing finished.</p>
-<hr>
+<hr />
 <h2>8. Summary</h2>
 <ul>
 <li><strong>One install</strong>, self-contained, <strong>no extra dependencies</strong>, CPU-only.</li>
@@ -162,4 +184,5 @@
 <li>Point it at your <strong>PDF/text folders</strong>, then <strong>ask questions offline</strong> with citations.</li>
 <li>Use <strong>Kiwix</strong> for the ZIM archives and Wikipedia.</li>
 </ul>
+
 </div></body></html>

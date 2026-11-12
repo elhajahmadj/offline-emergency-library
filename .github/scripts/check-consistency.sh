@@ -34,6 +34,11 @@ for f in docs/*.md docs/*.html; do
   b="${f%.*}"
   [ -f "$b.md" ] && [ -f "$b.html" ] || bad "$f has no matching .md/.html twin"
 done
+# A literal ** in a guide's HTML means the .md was converted line by line (#254): regenerate it
+# with a CommonMark converter that joins wrapped lines, keeping the file's <head>.
+for f in docs/*.html; do
+  ! grep -q '\*\*' "$f" || bad "$f shows literal ** (bold not converted):"$'\n'"$(grep -n -m3 '\*\*' "$f" | cut -c1-160)"
+done
 
 echo "== Guides placed by both installers =="
 sh_docs="$(sed -nE 's/^ *place_doc +"([^"]+)".*/\1/p' get-offline-library.sh | LC_ALL=C sort -u)"

@@ -13,7 +13,7 @@ Offline medical reference for emergencies. **Two kinds of files:**
 | Folder | Read with | Contents |
 |---|---|---|
 | `WikiMed\` | Kiwix (.zim) | **Offline medical Wikipedia** (with images) — ~50,000 health articles |
-| `Manuals-PDF\` | Browser (PDF) | *Where There Is No Doctor*, *Where There Is No Dentist* (Hesperian); *A Practical Guide to Prolonged Casualty Care* (Uniformed Services University + Henry M. Jackson Foundation, 2025; © 2025 Henry M. Jackson Foundation, CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/), included unchanged). **Advanced reference** for when medical help is delayed for hours or days — **not a substitute for a clinician.** WHO childbirth and maternal-health references are in the section below. |
+| `Manuals-PDF\` | Browser (PDF) | *Where There Is No Doctor*, *Where There Is No Dentist* (Hesperian); *A Practical Guide to Prolonged Casualty Care* (Uniformed Services University + Henry M. Jackson Foundation, 2025; © 2025 Henry M. Jackson Foundation, [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), included unchanged). **Advanced reference** for when medical help is delayed for hours or days — **not a substitute for a clinician.** WHO childbirth and maternal-health references are in the section below. |
 | `PSYCHOLOGICAL-FIRST-AID.html` | Browser (html) | **Psychological first aid** — plain-language guide to helping people (and yourself) cope with fear, panic, grief and stress during a crisis. Mental health matters as much as physical injury. |
 | `Natural-Medicine\` | Browser (PDF) | **Historical** herbal/medicinal-plant references (public domain): *King's American Dispensatory* (Felter & Lloyd) and Culpeper's *Complete Herbal*. **Not current medical advice** — see the caution below. |
 | `Emergency-Childbirth\` | Browser (HTML) | *Emergency Childbirth* (US Office of Civil Defense / Public Health Service, public domain) — a plain-language guide, written for anyone, to delivering a baby when skilled help is delayed. See the childbirth section below. |
@@ -43,10 +43,10 @@ supplement pages (American Society of Health-System Pharmacists) are copyrighted
 to NLM only, so they are not on this drive. Links to them in a summary need internet.
 
 **Source and license:** the health topic summaries come from the official MedlinePlus XML
-file published by the US National Library of Medicine (https://medlineplus.gov/xml.html),
+file published by the US National Library of Medicine (<https://medlineplus.gov/xml.html>),
 downloaded when the drive was made (the page shows the date). NLM states that health topic
 summaries are not copyrighted (public domain) and asks for this credit: *Source: MedlinePlus,
-National Library of Medicine* (https://medlineplus.gov/about/using/usingcontent/). Images
+National Library of Medicine* (<https://medlineplus.gov/about/using/usingcontent/>). Images
 are not included.
 
 ---

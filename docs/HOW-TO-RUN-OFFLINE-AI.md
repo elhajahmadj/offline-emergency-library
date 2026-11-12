@@ -18,7 +18,7 @@ Once this folder is on your drive, you never need the internet again to use it.
 >
 > **Translator:** if you added `-Translate` / `--translate`, `TRANSLATE.bat` / `translate.sh`
 > is a two-way translator for talking with someone in another language - see
-> HOW-TO-TRANSLATE.html.
+> [HOW-TO-TRANSLATE](HOW-TO-TRANSLATE.html).
 >
 > **Lite installs:** `--lite` / `-Lite` does **not** include GPT4All, but it **does** include
 > the **Ask the manuals** reader (`AI-Offline\Manual-QA\`), which cites the downloaded text
