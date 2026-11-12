@@ -106,7 +106,7 @@ Smaller drive, another country's maps, or extra content? See
 | **Repair archive** | iFixit — cars, appliances, electronics, phones | ~3.4 GB | Kiwix |
 | **DIY archive** | Appropedia — plumbing, electrical, construction, energy, water, food | ~0.6 GB | Kiwix |
 | **Medical** | Offline medical Wikipedia (WikiMed) | ~1.8 GB | Kiwix |
-| **Survival & preparedness** | FEMA *Are You Ready?*, EPA water disinfection, knots guide, *Hunting with the Bow & Arrow* (Pope, 1923), Kephart's *Book of Camping and Woodcraft* (1910), *Deadfalls and Snares* (1907), *Bait Angling for Common Fishes* (1907) (public domain) | ~90 MB | Browser (PDF) |
+| **Survival & preparedness** | FEMA *Are You Ready?*, EPA water disinfection, knots guide, *Hunting with the Bow & Arrow* (Pope, 1923), Kephart's *Book of Camping and Woodcraft* (1910), *Deadfalls and Snares* (1907), *Bait Angling for Common Fishes* (1907), *Useful Wild Plants of the US and Canada* (Saunders, 1920 — foraging; identify with certainty before eating) (public domain) | ~100 MB | Browser (PDF) |
 | **Household DIY** | *The Boy Mechanic, Vol. 1: 700 Things to Do* (1913, public domain) — make-it-yourself projects from common materials; dated, some projects unsafe by modern standards (see manuals README) | ~50 MB | Browser (PDF) |
 | **Metalworking** | Army TM 9-237 *Welding Theory and Application*, *Practical Blacksmithing* (1888), *Elements of Machine Work* (1910) (public domain) | ~70 MB | Browser (PDF) |
 | **Food growing** | *Productive Vegetable Growing* (Lloyd, 1918), *Productive Poultry Husbandry* (Lewis, 1913), *Langstroth on the Hive and the Honey-Bee* (1904) (public domain) | ~55 MB | Browser (PDF) |
@@ -598,6 +598,7 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 | Kephart, *The Book of Camping and Woodcraft* (1910) | Public domain in the US (published 1910) | Yes |
 | Harding, *Deadfalls and Snares* (1907) | Public domain in the US (published 1907) | Yes |
 | Rhead, *Bait Angling for Common Fishes* (1907) | Public domain in the US (published 1907) | Yes |
+| Saunders, *Useful Wild Plants of the United States and Canada* (1920) | Public domain in the US (published 1920) | Yes |
 | *Emergency Childbirth* (US Office of Civil Defense / PHS; Project Gutenberg #26923 e-text) | US government work (public domain) | Yes |
 | MedlinePlus health topics (opt-in) | Public domain (US NLM) — **summaries only** | Yes |
 | iFixit repair archive | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) | **No — non-commercial** |
