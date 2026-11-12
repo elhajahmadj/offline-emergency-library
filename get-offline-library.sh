@@ -798,6 +798,9 @@ get_pdf "FM3-25x26"                                          "FM 3-25.26 Map Rea
 get_pdf "fm-31-70-basic-cold-weather-manual-1968"           "FM 31-70 Basic Cold Weather Manual (1968).pdf" "$AFM"
 get_pdf "where-there-is-no-doctor"                           "Where There Is No Doctor.pdf" "$MPDF"
 get_pdf "where-there-is-no-dentist-web-full-book"            "Where There Is No Dentist.pdf" "$MPDF"
+# Caring for the sick at home over days or weeks when help is delayed (public domain; #130):
+# general home-care and hygiene skills. Historical -- NOT current medical advice; see Medical/READ-ME-FIRST.
+get_pdf "personalhygiene01lippgoog"                          "Personal Hygiene and Home Nursing (Lippitt 1919).pdf" "$MPDF"
 # Advanced care when help is delayed: USUHS + Henry M. Jackson Foundation, 2025, CC BY-NC-SA 4.0 (not public domain).
 get_pdf_url "https://www.usuhs.edu/sites/default/files/2025-09/Layperson%27s_Guide_to_Prolonged_Casualty_Care_090825_ACC.pdf" "A Practical Guide to Prolonged Casualty Care (USUHS-HJF 2025).pdf" "$MPDF"
 # WHO childbirth references (CC BY-NC-SA 3.0 IGO); citations, audience and update cautions in Medical/READ-ME-FIRST.
@@ -816,6 +819,11 @@ get_pdf_url "https://nchfp.uga.edu/papers/guide/GUIDE06_HomeCan_rev0715.pdf" "6 
 get_pdf_url "https://nchfp.uga.edu/papers/guide/GUIDE07_HomeCan_rev0715.pdf" "7 Jams and Jellies.pdf" "$CAN"
 # Canning, Freezing, Storing Garden Produce (USDA Agriculture Information Bulletin 410; US-government work, public domain).
 get_pdf "canningfreezings00unit" "USDA Canning, Freezing, Storing Garden Produce (AIB 410).pdf" "$ROOT/Manuals/Food-Preservation"
+# Preserving meat without refrigeration and making dairy (public domain; #130): home butchering,
+# salting/smoking/curing meat, and farmhouse cheese making.
+get_pdf "CAT87202084" "Meat on the Farm - Butchering, Curing and Keeping (USDA Farmers Bulletin 183, 1903).pdf" "$ROOT/Manuals/Food-Preservation"
+# Cheese Making pinned by direct link (item also has a _bw.pdf the PowerShell installer would pick; #184).
+get_pdf_url "https://archive.org/download/cu31924001396047/cu31924001396047.pdf" "Cheese Making (Decker 1913).pdf" "$ROOT/Manuals/Food-Preservation"
 # Survival & preparedness (public domain):
 SP="$ROOT/Manuals/Survival-Preparedness"
 # FEMA Are You Ready? An In-Depth Guide to Citizen Preparedness (IS-22; US-government work, public domain).
@@ -830,6 +838,11 @@ get_pdf "hunting-with-the-bow-and-arrow" "Hunting with the Bow and Arrow (Pope 1
 get_pdf "bookofcampingwoo01keph"                     "The Book of Camping and Woodcraft (Kephart 1910).pdf" "$SP"
 get_pdf "deadfalls-and-snares-by-a.-r.-harding-1907" "Deadfalls and Snares (Harding 1907).pdf" "$SP"
 get_pdf "baitanglingforco00rhearich"                 "Bait Angling for Common Fishes (Rhead 1907).pdf" "$SP"
+# Finding wild food: Useful Wild Plants of the United States and Canada, Charles Francis Saunders
+# (1920; public domain). Dedicated wild-edible/useful-plant guide. Pin the exact .pdf by direct
+# link: this item also carries a larger _bw.pdf the PowerShell installer (largest file) would
+# otherwise pick, differing from bash (#184). IDENTIFY WITH CERTAINTY BEFORE EATING -- see Manuals/READ-ME-FIRST.
+get_pdf_url "https://archive.org/download/cu31924001786965/cu31924001786965.pdf" "Useful Wild Plants of the United States and Canada (Saunders 1920).pdf" "$SP"
 # Household do-it-yourself from common materials (public domain):
 DIY="$ROOT/Manuals/Household-DIY"
 # The Boy Mechanic, Volume 1: 700 Things for Boys to Do (1913; public domain). Dated; some projects are unsafe by modern standards -- see Manuals/READ-ME-FIRST.
@@ -837,10 +850,15 @@ get_pdf "boymechanicthing01unse" "The Boy Mechanic Vol 1 - 700 Things to Do (191
 # Old household self-reliance skills from common materials (public-domain classics; #130):
 # a practical-recipes encyclopedia, farm/home devices, soap making and home leather tanning.
 get_pdf "cu31924089480218"                                             "Household Discoveries - Encyclopaedia of Practical Recipes (Morse 1909).pdf" "$DIY"
-get_pdf "handy-farm-devices-and-how-to-make-them-1909"                 "Handy Farm Devices and How to Make Them (Cobleigh 1909).pdf" "$DIY"
+# Handy Farm Devices: Library of Congress colour scan, pinned by direct link (item also has a _bw.pdf; #184).
+get_pdf_url "https://archive.org/download/handyfarmdevices00cobl/handyfarmdevices00cobl.pdf" "Handy Farm Devices and How to Make Them (Cobleigh 1910).pdf" "$DIY"
 get_pdf "soap-making-manual-a-practical-handbook-edgar-george-thomssen" "Soap-Making Manual (Thomssen 1922).pdf" "$DIY"
 # Home Tanning of Leather and Small Fur Skins (USDA Farmers Bulletin 1334, Frey 1923; US-government work, public domain).
 get_pdf "CAT87202829"                                                  "Home Tanning of Leather and Small Fur Skins (USDA Farmers Bulletin 1334, 1923).pdf" "$DIY"
+# Household food and clothing skills (public domain; #130): baking bread at home, and sewing/mending.
+get_pdf "CAT87202530" "Bread and Bread Making in the Home (USDA Farmers Bulletin 807, 1917).pdf" "$DIY"
+# Goodwin's Course in Sewing pinned by direct link (item also has a _bw.pdf; #184).
+get_pdf_url "https://archive.org/download/goodwinscoursein00good/goodwinscoursein00good.pdf" "Goodwins Course in Sewing - Practical Instruction in Needlework (1910).pdf" "$DIY"
 # Metalworking trades (public domain; #130): welding, forging and machine-shop work for repairing
 # and making metal parts and tools. Core skills are timeless; use modern safety gear and ventilation.
 MW="$ROOT/Manuals/Metalworking"
@@ -862,6 +880,12 @@ FG="$ROOT/Manuals/Food-Growing"
 get_pdf_url "https://archive.org/download/productiveveget00lloy/productiveveget00lloy.pdf" "Productive Vegetable Growing (Lloyd 1918).pdf" "$FG"
 get_pdf "productivepoult02lewigoog"  "Productive Poultry Husbandry (Lewis 1913).pdf" "$FG"
 get_pdf_url "https://archive.org/download/cu31924003227729/cu31924003227729.pdf" "Langstroth on the Hive and the Honey-Bee (1904).pdf" "$FG"
+# Keeping animals healthy (public domain; #130): recognising and treating common livestock and
+# poultry diseases -- for a remote setting without a vet. Historical references; call a vet when you can.
+get_pdf "specialreporton00unit" "Special Report on Diseases of Cattle (USDA 1923).pdf" "$FG"
+# Diseases of the Horse pinned by direct link (item also has a _bw.pdf; #184).
+get_pdf_url "https://archive.org/download/specialreportond00pear/specialreportond00pear.pdf" "Special Report on Diseases of the Horse (USDA 1907).pdf" "$FG"
+get_pdf "cu31924003709270" "Poultry Diseases - Causes, Symptoms and Treatment (Wortley 1919).pdf" "$FG"
 # Emergency Childbirth (US Office of Civil Defense + Public Health Service; US-government work, public domain).
 # Project Gutenberg #26923 e-text (HTML + figures), header kept. Emergency-delivery reference for when help is delayed.
 EC="$ROOT/Medical/Emergency-Childbirth"

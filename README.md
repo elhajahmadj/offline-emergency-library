@@ -106,21 +106,21 @@ Smaller drive, another country's maps, or extra content? See
 | **Repair archive** | iFixit — cars, appliances, electronics, phones | ~3.4 GB | Kiwix |
 | **DIY archive** | Appropedia — plumbing, electrical, construction, energy, water, food | ~0.6 GB | Kiwix |
 | **Medical** | Offline medical Wikipedia (WikiMed) | ~1.8 GB | Kiwix |
-| **Survival & preparedness** | FEMA *Are You Ready?*, EPA water disinfection, knots guide, *Hunting with the Bow & Arrow* (Pope, 1923), Kephart's *Book of Camping and Woodcraft* (1910), *Deadfalls and Snares* (1907), *Bait Angling for Common Fishes* (1907) (public domain) | ~90 MB | Browser (PDF) |
-| **Household DIY** | *The Boy Mechanic, Vol. 1: 700 Things to Do* (1913) plus old self-reliance skills: *Household Discoveries* (Morse 1909, practical-recipes encyclopedia), *Handy Farm Devices and How to Make Them* (Cobleigh 1909), *Soap-Making Manual* (Thomssen 1922) and USDA *Home Tanning of Leather and Small Fur Skins* (1923) — all public domain; dated, some projects unsafe by modern standards (see manuals README) | ~110 MB | Browser (PDF) |
+| **Survival & preparedness** | FEMA *Are You Ready?*, EPA water disinfection, knots guide, *Hunting with the Bow & Arrow* (Pope, 1923), Kephart's *Book of Camping and Woodcraft* (1910), *Deadfalls and Snares* (1907), *Bait Angling for Common Fishes* (1907), *Useful Wild Plants of the US and Canada* (Saunders, 1920 — foraging; identify with certainty before eating) (public domain) | ~100 MB | Browser (PDF) |
+| **Household DIY** | *The Boy Mechanic, Vol. 1: 700 Things to Do* (1913) plus old self-reliance skills: *Household Discoveries* (Morse 1909, practical-recipes encyclopedia), *Handy Farm Devices and How to Make Them* (Cobleigh 1910), *Soap-Making Manual* (Thomssen 1922), USDA *Home Tanning of Leather and Small Fur Skins* (1923), *Bread and Bread Making in the Home* (USDA, 1917) and *Goodwin's Course in Sewing* (1910) — all public domain; dated, some projects unsafe by modern standards (see manuals README) | ~125 MB | Browser (PDF) |
 | **Metalworking** | Army TM 9-237 *Welding Theory and Application*, *Practical Blacksmithing* (1888), *Elements of Machine Work* (1910) (public domain) | ~70 MB | Browser (PDF) |
-| **Food growing** | *Productive Vegetable Growing* (Lloyd, 1918), *Productive Poultry Husbandry* (Lewis, 1913), *Langstroth on the Hive and the Honey-Bee* (1904) (public domain) | ~55 MB | Browser (PDF) |
+| **Food growing** | *Productive Vegetable Growing* (Lloyd, 1918), *Productive Poultry Husbandry* (Lewis, 1913), *Langstroth on the Hive and the Honey-Bee* (1904), plus livestock-health references *Special Report on Diseases of Cattle* (USDA, 1923), *Special Report on Diseases of the Horse* (USDA, 1907) and *Poultry Diseases* (Wortley, 1919) (public domain) | ~150 MB | Browser (PDF) |
 | **Natural medicine** | *King's American Dispensatory* (Felter & Lloyd) + Culpeper's *Complete Herbal* (public domain) — historical herbal/medicinal-plant references, **not** current medical advice (see [medical guide](docs/Medical-READ-ME-FIRST.md)) | ~175 MB | Browser (PDF) |
 | **Education** *(opt-in)* | Khan Academy archive (one file, all videos) **or** Kolibri app (pick subjects/low-res) | KA ZIM ~168 GB; Kolibri = your choice | Kiwix / Kolibri app |
 | **Offline translator** *(opt-in)* | Two-way text translator for talking with someone who speaks another language; a small multilingual AI model (Qwen3 4B, Apache 2.0) on the bundled llama.cpp engine, `-Translate` / `--translate`. Good for widely spoken languages, weak or unusable for some others ([guide](docs/HOW-TO-TRANSLATE.md)) | ~2.5 GB | CPU, ~6 GB RAM |
 | **Extra archives** *(opt-in)* | Wikivoyage travel guide + Wikibooks open textbooks (English, with images), `-ExtraZims` / `--extra-zims` | ~5.8 GB | Kiwix |
 | **Health topics** *(opt-in)* | MedlinePlus plain-language health topic summaries (US National Library of Medicine, public domain), English + Spanish, one searchable page for any browser, `-MedlinePlus` / `--medlineplus`; see the [medical guide](docs/Medical-READ-ME-FIRST.md) | ~30 MB | Any browser |
 | **Army manuals** | US Army field/technical manuals, public domain except two ⸸ (survival, first aid, field hygiene & sanitation, hand tools, carpentry, concrete & masonry, water supply & purification, auto mechanics, rigging, field cooking, desert operations, map reading & land navigation, cold weather) | ~0.3 GB | Any browser (PDF) |
-| **Medical books** | *Where There Is No Doctor / No Dentist* (Hesperian) | ~60 MB | Any browser (PDF) |
+| **Medical books** | *Where There Is No Doctor / No Dentist* (Hesperian); *Personal Hygiene and Home Nursing* (Lippitt, 1919, public domain — historical home-care basics, not current medical advice) | ~65 MB | Any browser (PDF) |
 | **Delayed-care guide** | *A Practical Guide to Prolonged Casualty Care* (USUHS + Henry M. Jackson Foundation, 2025; CC BY-NC-SA 4.0) — advanced care when help is hours or days away; not a substitute for a clinician | ~15 MB | Any browser (PDF) |
 | **Childbirth references** | WHO *Managing complications in pregnancy and childbirth* (2017) + *Recommendations on maternal health* (2025); trained-worker references with update cautions and CC BY-NC-SA 3.0 IGO terms in the [medical guide](docs/Medical-READ-ME-FIRST.md) | ~9 MB | Any browser (PDF) |
 | **Emergency childbirth** | *Emergency Childbirth* (US Office of Civil Defense / Public Health Service, public domain) — plain-language guide to delivering a baby when skilled help is delayed | <1 MB | Any browser (HTML) |
-| **Home canning** | *USDA Complete Guide to Home Canning* (2015 revision; US-government work) — safe canning of fruit, tomatoes, vegetables, meat, pickles, jams; plus USDA *Canning, Freezing, Storing Garden Produce* (1977) | ~18 MB | Any browser (PDF) |
+| **Home canning** | *USDA Complete Guide to Home Canning* (2015 revision; US-government work) — safe canning of fruit, tomatoes, vegetables, meat, pickles, jams; plus USDA *Canning, Freezing, Storing Garden Produce* (1977), *Meat on the Farm — Butchering, Curing and Keeping* (USDA, 1903) and *Cheese Making* (Decker, 1913) | ~30 MB | Any browser (PDF) |
 | **Radio guide** | How ham/CB/shortwave/GMRS radio works + emergency comms | tiny | Any browser |
 | **Kiwix reader** | Portable app to read all `.zim` archives (no install) | ~0.15 GB | — |
 | **Phone apps** | Bundled Android APKs (Kiwix + OsmAnd) to port the library to a phone offline | ~0.4 GB | sideload on Android |
@@ -585,11 +585,19 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 | FEMA *Are You Ready?* (IS-22) | US government work (public domain) | Yes |
 | EPA *Emergency Disinfection of Drinking Water* | US government work (public domain) | Yes |
 | USDA *Canning, Freezing, Storing Garden Produce* (AIB 410, 1977) | US government work (public domain) | Yes |
+| *Meat on the Farm — Butchering, Curing and Keeping* (USDA Farmers' Bulletin 183, 1903) | US government work (public domain) | Yes |
+| Decker, *Cheese Making* (1913) | Public domain in the US (published 1913) | Yes |
+| USDA *Special Report on Diseases of Cattle* (1923) | US government work (public domain) | Yes |
+| USDA *Special Report on Diseases of the Horse* (1907) | US government work (public domain) | Yes |
+| Wortley, *Poultry Diseases* (1919) | Public domain in the US (published 1919) | Yes |
+| *Bread and Bread Making in the Home* (USDA Farmers' Bulletin 807, 1917) | US government work (public domain) | Yes |
+| Goodwin, *Goodwin's Course in Sewing* (1910) | Public domain in the US (published 1910) | Yes |
+| Lippitt, *Personal Hygiene and Home Nursing* (1919) | Public domain in the US (published 1919) | Yes |
 | Verrill, *Knots, Splices and Rope Work* (1912) | Public domain in the US (published 1912) | Yes |
 | Pope, *Hunting with the Bow and Arrow* (1923) | Public domain in the US (published 1923) | Yes |
 | *The Boy Mechanic, Vol. 1* (1913) | Public domain in the US (published 1913) | Yes |
 | Morse, *Household Discoveries* (1909) | Public domain in the US (published 1909) | Yes |
-| Cobleigh, *Handy Farm Devices and How to Make Them* (1909) | Public domain in the US (published 1909) | Yes |
+| Cobleigh, *Handy Farm Devices and How to Make Them* (1910) | Public domain in the US (published 1910; Library of Congress is unaware of any copyright restrictions) | Yes |
 | Thomssen, *Soap-Making Manual* (1922) | Public domain in the US (published 1922) | Yes |
 | USDA *Home Tanning of Leather and Small Fur Skins* (Farmers' Bulletin 1334, 1923) | US government work (public domain) | Yes |
 | *King's American Dispensatory* (Felter & Lloyd, 1898/1905) | Public domain in the US (pre-1929) | Yes |
@@ -602,6 +610,7 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 | Kephart, *The Book of Camping and Woodcraft* (1910) | Public domain in the US (published 1910) | Yes |
 | Harding, *Deadfalls and Snares* (1907) | Public domain in the US (published 1907) | Yes |
 | Rhead, *Bait Angling for Common Fishes* (1907) | Public domain in the US (published 1907) | Yes |
+| Saunders, *Useful Wild Plants of the United States and Canada* (1920) | Public domain in the US (published 1920) | Yes |
 | *Emergency Childbirth* (US Office of Civil Defense / PHS; Project Gutenberg #26923 e-text) | US government work (public domain) | Yes |
 | MedlinePlus health topics (opt-in) | Public domain (US NLM) — **summaries only** | Yes |
 | iFixit repair archive | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) | **No — non-commercial** |

@@ -108,12 +108,22 @@ are marked ⸸ below — see the [README License note](README.md#license).
 | The Book of Camping and Woodcraft (Kephart 1910) | `https://archive.org/metadata/bookofcampingwoo01keph` |
 | Deadfalls and Snares (Harding 1907) | `https://archive.org/metadata/deadfalls-and-snares-by-a.-r.-harding-1907` |
 | Bait Angling for Common Fishes (Rhead 1907) | `https://archive.org/metadata/baitanglingforco00rhearich` |
+| Useful Wild Plants of the United States and Canada (Saunders 1920) | `https://archive.org/metadata/cu31924001786965` · PDF `https://archive.org/download/cu31924001786965/cu31924001786965.pdf` |
 | The Boy Mechanic | `https://archive.org/metadata/boymechanicthing01unse` |
+| Household Discoveries — Encyclopaedia of Practical Recipes (Morse 1909) | `https://archive.org/metadata/cu31924089480218` |
+| Handy Farm Devices and How to Make Them (Cobleigh 1910; Library of Congress scan) | `https://archive.org/metadata/handyfarmdevices00cobl` · PDF `https://archive.org/download/handyfarmdevices00cobl/handyfarmdevices00cobl.pdf` |
+| Soap-Making Manual (Thomssen 1922; Public Domain Mark 1.0) | `https://archive.org/metadata/soap-making-manual-a-practical-handbook-edgar-george-thomssen` |
+| Home Tanning of Leather and Small Fur Skins (USDA Farmers' Bulletin 1334, 1923) | `https://archive.org/metadata/CAT87202829` |
+| Bread and Bread Making in the Home (USDA Farmers' Bulletin 807, 1917) | `https://archive.org/metadata/CAT87202530` |
+| Goodwin's Course in Sewing (1910) | `https://archive.org/metadata/goodwinscoursein00good` · PDF `https://archive.org/download/goodwinscoursein00good/goodwinscoursein00good.pdf` |
 | Practical Blacksmithing (1888) | `https://archive.org/metadata/practicalblacksm00rich` |
 | Elements of Machine Work (1910) | `https://archive.org/metadata/textbookofelemen00smitrich` |
 | Productive Vegetable Growing (Lloyd 1918) | `https://archive.org/metadata/productiveveget00lloy` · PDF `https://archive.org/download/productiveveget00lloy/productiveveget00lloy.pdf` |
 | Productive Poultry Husbandry (Lewis 1913) | `https://archive.org/metadata/productivepoult02lewigoog` |
 | Langstroth on the Hive and the Honey-Bee (1904) | `https://archive.org/metadata/cu31924003227729` · PDF `https://archive.org/download/cu31924003227729/cu31924003227729.pdf` |
+| Special Report on Diseases of Cattle (USDA 1923) | `https://archive.org/metadata/specialreporton00unit` |
+| Special Report on Diseases of the Horse (USDA 1907) | `https://archive.org/metadata/specialreportond00pear` · PDF `https://archive.org/download/specialreportond00pear/specialreportond00pear.pdf` |
+| Poultry Diseases — Causes, Symptoms and Treatment (Wortley 1919) | `https://archive.org/metadata/cu31924003709270` |
 | King's American Dispensatory, vol. 1 | `https://archive.org/metadata/kingsamericandis01kinguoft` |
 | King's American Dispensatory, vol. 2 | `https://archive.org/metadata/kingsamericandis02kinguoft` |
 | Culpeper's Complete Herbal (public domain; historical reference only) | `https://archive.org/metadata/53357467.6000.emory.edu` |
@@ -138,6 +148,14 @@ domain), hosted by the USDA-funded National Center for Home Food Preservation at
 - `https://nchfp.uga.edu/papers/guide/GUIDE06_HomeCan_rev0715.pdf`
 - `https://nchfp.uga.edu/papers/guide/GUIDE07_HomeCan_rev0715.pdf`
 
+**Meat curing and cheese making** (archive.org; *Meat on the Farm* is a USDA Farmers' Bulletin /
+US-government work, *Cheese Making* is a public-domain 1913 imprint):
+
+| What | Source |
+|---|---|
+| Meat on the Farm — Butchering, Curing and Keeping (USDA Farmers' Bulletin 183, 1903) | `https://archive.org/metadata/CAT87202084` |
+| Cheese Making (Decker 1913) | `https://archive.org/metadata/cu31924001396047` · PDF `https://archive.org/download/cu31924001396047/cu31924001396047.pdf` |
+
 ---
 
 ## 6. Medical & health references
@@ -150,6 +168,7 @@ domain), hosted by the USDA-funded National Center for Home Food Preservation at
 | **EPA — Emergency Disinfection of Drinking Water (2017)** | `https://www.epa.gov/sites/default/files/2017-09/documents/emergency_disinfection_of_drinking_water_sept2017.pdf` | US-government work (public domain) |
 | **Where There Is No Doctor** (Hesperian) | `https://archive.org/metadata/where-there-is-no-doctor` | Hesperian — non-commercial (copies free or at cost, not for profit); see the original permissions page |
 | **Where There Is No Dentist** (Hesperian) | `https://archive.org/metadata/where-there-is-no-dentist-web-full-book` | Hesperian — non-commercial (copies free or at cost, not for profit); see the original permissions page |
+| **Personal Hygiene and Home Nursing** (Lippitt 1919) | `https://archive.org/metadata/personalhygiene01lippgoog` | Public domain (published 1919); historical home-care reference, not current medical advice |
 | **Emergency Childbirth** (US Office of Civil Defense / Public Health Service) | `https://www.gutenberg.org/cache/epub/26923/pg26923-images.html` | US-government work (public domain); Project Gutenberg e-text |
 | **MedlinePlus** health topics *(opt-in: `--medlineplus`)* | `https://medlineplus.gov/xml.html` → `https://medlineplus.gov/xml/<file>` | Public domain (US National Library of Medicine) |
 
