@@ -6,15 +6,12 @@ name: Publish picker site
 # handoff only makes sense locally (the page detects this and says so).
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "web/**"
-      - "catalog.json"
-      - ".github/scripts/build-catalog-js.sh"
-      - ".github/scripts/build-about.sh"
-      - "CONTRIBUTORS.md"
-      - ".github/workflows/pages.yml"
+  # GitHub Pages was never enabled on this repository, and this workflow's token cannot create
+  # the site (that needs admin), so an automatic push-triggered run fails on every web change
+  # (issue #252: 14 of 14 red). The site that is actually live is the Fly deployment
+  # (sine-nexu.fly.dev, #218), published outside Actions, and web/privacy.html names Fly as the
+  # host. So this workflow is manual-only: if a maintainer later turns Pages on
+  # (Settings > Pages > Source: "GitHub Actions"), run it by hand to publish a GitHub copy.
   workflow_dispatch:
 
 permissions:
