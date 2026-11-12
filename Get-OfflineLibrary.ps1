@@ -737,6 +737,8 @@ $pdfs = @(
  @{id='fm-31-70-basic-cold-weather-manual-1968';             n='FM 31-70 Basic Cold Weather Manual (1968).pdf';   d='Manuals\ArmyFieldManuals'}
  @{id='where-there-is-no-doctor';                            n='Where There Is No Doctor.pdf';                    d='Medical\Manuals-PDF'}
  @{id='where-there-is-no-dentist-web-full-book';             n='Where There Is No Dentist.pdf';                   d='Medical\Manuals-PDF'}
+ # Caring for the sick at home when help is delayed (public domain; #130). Historical -- NOT current medical advice; see Medical\READ-ME-FIRST
+ @{id='personalhygiene01lippgoog';                           n='Personal Hygiene and Home Nursing (Lippitt 1919).pdf'; d='Medical\Manuals-PDF'}
  # Advanced care when help is delayed: USUHS + Henry M. Jackson Foundation, 2025, CC BY-NC-SA 4.0 (not public domain)
  @{u='https://www.usuhs.edu/sites/default/files/2025-09/Layperson%27s_Guide_to_Prolonged_Casualty_Care_090825_ACC.pdf'; n='A Practical Guide to Prolonged Casualty Care (USUHS-HJF 2025).pdf'; d='Medical\Manuals-PDF'}
  # WHO childbirth references (CC BY-NC-SA 3.0 IGO); citations, audience and update cautions in Medical/READ-ME-FIRST.
@@ -753,6 +755,9 @@ $pdfs = @(
  @{u='https://nchfp.uga.edu/papers/guide/GUIDE07_HomeCan_rev0715.pdf'; n='7 Jams and Jellies.pdf'; d='Manuals\Food-Preservation\USDA-Complete-Guide-to-Home-Canning-2015'}
  # Canning, Freezing, Storing Garden Produce (USDA Agriculture Information Bulletin 410; US-government work, public domain)
  @{id='canningfreezings00unit';                              n='USDA Canning, Freezing, Storing Garden Produce (AIB 410).pdf'; d='Manuals\Food-Preservation'}
+ # Preserving meat without refrigeration and making dairy (public domain; #130)
+ @{id='CAT87202084';                                         n='Meat on the Farm - Butchering, Curing and Keeping (USDA Farmers Bulletin 183, 1903).pdf'; d='Manuals\Food-Preservation'}
+ @{u='https://archive.org/download/cu31924001396047/cu31924001396047.pdf'; n='Cheese Making (Decker 1913).pdf'; d='Manuals\Food-Preservation'}
  # Survival & preparedness (public domain)
  @{id='FemaEmergencyHandbook-areYouReady';                   n='FEMA Are You Ready - Citizen Preparedness.pdf';    d='Manuals\Survival-Preparedness'}
  @{id='knotssplicesrope00verr';                              n='Knots, Splices and Rope Work (Verrill).pdf';       d='Manuals\Survival-Preparedness'}
@@ -765,6 +770,9 @@ $pdfs = @(
  @{id='baitanglingforco00rhearich';                          n='Bait Angling for Common Fishes (Rhead 1907).pdf';  d='Manuals\Survival-Preparedness'}
  # Household do-it-yourself from common materials (public domain). Dated; some projects unsafe by modern standards -- see Manuals\READ-ME-FIRST
  @{id='boymechanicthing01unse';                              n='The Boy Mechanic Vol 1 - 700 Things to Do (1913).pdf'; d='Manuals\Household-DIY'}
+ # Household food and clothing skills (public domain; #130): baking bread at home, and sewing/mending
+ @{id='CAT87202530';                                         n='Bread and Bread Making in the Home (USDA Farmers Bulletin 807, 1917).pdf'; d='Manuals\Household-DIY'}
+ @{u='https://archive.org/download/goodwinscoursein00good/goodwinscoursein00good.pdf'; n='Goodwins Course in Sewing - Practical Instruction in Needlework (1910).pdf'; d='Manuals\Household-DIY'}
  # Metalworking trades (public domain; #130): welding, forging and machine-shop work.
  @{id='TM9-237';                                             n='TM 9-237 Welding Theory and Application.pdf';      d='Manuals\Metalworking'}
  @{id='practicalblacksm00rich';                              n='Practical Blacksmithing (1888).pdf';               d='Manuals\Metalworking'}
@@ -777,6 +785,10 @@ $pdfs = @(
  @{u='https://archive.org/download/productiveveget00lloy/productiveveget00lloy.pdf'; n='Productive Vegetable Growing (Lloyd 1918).pdf'; d='Manuals\Food-Growing'}
  @{id='productivepoult02lewigoog';                           n='Productive Poultry Husbandry (Lewis 1913).pdf';    d='Manuals\Food-Growing'}
  @{u='https://archive.org/download/cu31924003227729/cu31924003227729.pdf'; n='Langstroth on the Hive and the Honey-Bee (1904).pdf'; d='Manuals\Food-Growing'}
+ # Keeping animals healthy (public domain; #130): common livestock and poultry diseases, for a remote setting without a vet
+ @{id='specialreporton00unit';                              n='Special Report on Diseases of Cattle (USDA 1923).pdf'; d='Manuals\Food-Growing'}
+ @{u='https://archive.org/download/specialreportond00pear/specialreportond00pear.pdf'; n='Special Report on Diseases of the Horse (USDA 1907).pdf'; d='Manuals\Food-Growing'}
+ @{id='cu31924003709270';                                   n='Poultry Diseases - Causes, Symptoms and Treatment (Wortley 1919).pdf'; d='Manuals\Food-Growing'}
 )
 foreach($p in $pdfs){
   if($Only){ Log 'pdf: manuals not touched (-Only)'; break }
