@@ -765,6 +765,11 @@ $pdfs = @(
  @{id='baitanglingforco00rhearich';                          n='Bait Angling for Common Fishes (Rhead 1907).pdf';  d='Manuals\Survival-Preparedness'}
  # Household do-it-yourself from common materials (public domain). Dated; some projects unsafe by modern standards -- see Manuals\READ-ME-FIRST
  @{id='boymechanicthing01unse';                              n='The Boy Mechanic Vol 1 - 700 Things to Do (1913).pdf'; d='Manuals\Household-DIY'}
+ # Old household self-reliance skills from common materials (public-domain classics; #130): a practical-recipes encyclopedia, farm/home devices, soap making and home leather tanning
+ @{id='cu31924089480218';                                     n='Household Discoveries - Encyclopaedia of Practical Recipes (Morse 1909).pdf'; d='Manuals\Household-DIY'}
+ @{id='handy-farm-devices-and-how-to-make-them-1909';         n='Handy Farm Devices and How to Make Them (Cobleigh 1909).pdf'; d='Manuals\Household-DIY'}
+ @{id='soap-making-manual-a-practical-handbook-edgar-george-thomssen'; n='Soap-Making Manual (Thomssen 1922).pdf'; d='Manuals\Household-DIY'}
+ @{id='CAT87202829';                                          n='Home Tanning of Leather and Small Fur Skins (USDA Farmers Bulletin 1334, 1923).pdf'; d='Manuals\Household-DIY'}
  # Metalworking trades (public domain; #130): welding, forging and machine-shop work.
  @{id='TM9-237';                                             n='TM 9-237 Welding Theory and Application.pdf';      d='Manuals\Metalworking'}
  @{id='practicalblacksm00rich';                              n='Practical Blacksmithing (1888).pdf';               d='Manuals\Metalworking'}

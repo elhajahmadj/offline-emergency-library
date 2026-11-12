@@ -107,7 +107,7 @@ Smaller drive, another country's maps, or extra content? See
 | **DIY archive** | Appropedia — plumbing, electrical, construction, energy, water, food | ~0.6 GB | Kiwix |
 | **Medical** | Offline medical Wikipedia (WikiMed) | ~1.8 GB | Kiwix |
 | **Survival & preparedness** | FEMA *Are You Ready?*, EPA water disinfection, knots guide, *Hunting with the Bow & Arrow* (Pope, 1923), Kephart's *Book of Camping and Woodcraft* (1910), *Deadfalls and Snares* (1907), *Bait Angling for Common Fishes* (1907) (public domain) | ~90 MB | Browser (PDF) |
-| **Household DIY** | *The Boy Mechanic, Vol. 1: 700 Things to Do* (1913, public domain) — make-it-yourself projects from common materials; dated, some projects unsafe by modern standards (see manuals README) | ~50 MB | Browser (PDF) |
+| **Household DIY** | *The Boy Mechanic, Vol. 1: 700 Things to Do* (1913) plus old self-reliance skills: *Household Discoveries* (Morse 1909, practical-recipes encyclopedia), *Handy Farm Devices and How to Make Them* (Cobleigh 1909), *Soap-Making Manual* (Thomssen 1922) and USDA *Home Tanning of Leather and Small Fur Skins* (1923) — all public domain; dated, some projects unsafe by modern standards (see manuals README) | ~110 MB | Browser (PDF) |
 | **Metalworking** | Army TM 9-237 *Welding Theory and Application*, *Practical Blacksmithing* (1888), *Elements of Machine Work* (1910) (public domain) | ~70 MB | Browser (PDF) |
 | **Food growing** | *Productive Vegetable Growing* (Lloyd, 1918), *Productive Poultry Husbandry* (Lewis, 1913), *Langstroth on the Hive and the Honey-Bee* (1904) (public domain) | ~55 MB | Browser (PDF) |
 | **Natural medicine** | *King's American Dispensatory* (Felter & Lloyd) + Culpeper's *Complete Herbal* (public domain) — historical herbal/medicinal-plant references, **not** current medical advice (see [medical guide](docs/Medical-READ-ME-FIRST.md)) | ~175 MB | Browser (PDF) |
@@ -588,6 +588,10 @@ each source is downloaded from is in [Trust & verification](#-trust--verificatio
 | Verrill, *Knots, Splices and Rope Work* (1912) | Public domain in the US (published 1912) | Yes |
 | Pope, *Hunting with the Bow and Arrow* (1923) | Public domain in the US (published 1923) | Yes |
 | *The Boy Mechanic, Vol. 1* (1913) | Public domain in the US (published 1913) | Yes |
+| Morse, *Household Discoveries* (1909) | Public domain in the US (published 1909) | Yes |
+| Cobleigh, *Handy Farm Devices and How to Make Them* (1909) | Public domain in the US (published 1909) | Yes |
+| Thomssen, *Soap-Making Manual* (1922) | Public domain in the US (published 1922) | Yes |
+| USDA *Home Tanning of Leather and Small Fur Skins* (Farmers' Bulletin 1334, 1923) | US government work (public domain) | Yes |
 | *King's American Dispensatory* (Felter & Lloyd, 1898/1905) | Public domain in the US (pre-1929) | Yes |
 | Culpeper, *The Complete Herbal* (1653; this ed. pre-1929) | Public domain | Yes |
 | Lloyd, *Productive Vegetable Growing* (1918) | Public domain in the US (published 1918) | Yes |

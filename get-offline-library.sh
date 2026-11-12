@@ -834,6 +834,13 @@ get_pdf "baitanglingforco00rhearich"                 "Bait Angling for Common Fi
 DIY="$ROOT/Manuals/Household-DIY"
 # The Boy Mechanic, Volume 1: 700 Things for Boys to Do (1913; public domain). Dated; some projects are unsafe by modern standards -- see Manuals/READ-ME-FIRST.
 get_pdf "boymechanicthing01unse" "The Boy Mechanic Vol 1 - 700 Things to Do (1913).pdf" "$DIY"
+# Old household self-reliance skills from common materials (public-domain classics; #130):
+# a practical-recipes encyclopedia, farm/home devices, soap making and home leather tanning.
+get_pdf "cu31924089480218"                                             "Household Discoveries - Encyclopaedia of Practical Recipes (Morse 1909).pdf" "$DIY"
+get_pdf "handy-farm-devices-and-how-to-make-them-1909"                 "Handy Farm Devices and How to Make Them (Cobleigh 1909).pdf" "$DIY"
+get_pdf "soap-making-manual-a-practical-handbook-edgar-george-thomssen" "Soap-Making Manual (Thomssen 1922).pdf" "$DIY"
+# Home Tanning of Leather and Small Fur Skins (USDA Farmers Bulletin 1334, Frey 1923; US-government work, public domain).
+get_pdf "CAT87202829"                                                  "Home Tanning of Leather and Small Fur Skins (USDA Farmers Bulletin 1334, 1923).pdf" "$DIY"
 # Metalworking trades (public domain; #130): welding, forging and machine-shop work for repairing
 # and making metal parts and tools. Core skills are timeless; use modern safety gear and ventilation.
 MW="$ROOT/Manuals/Metalworking"
