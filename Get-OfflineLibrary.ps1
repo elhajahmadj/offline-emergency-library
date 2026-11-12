@@ -1641,6 +1641,22 @@ if(-not $SkipMaps){
     ScWarn 'desktop map viewer skipped (-SkipMaps)'
   }
 }
+# 7. Browser maps: viewer libraries, style and fonts, and at least one map (#256). A damaged
+#    base-assets.tar.gz of the right size is kept by re-runs, so name it.
+$mb = Join-Path $Root 'Maps-Browser'
+if(Test-Path $mb){
+  $bmMiss = ''
+  foreach($x in 'viewer\lib\maplibre-gl.js','viewer\lib\maplibre-gl.css','viewer\lib\pmtiles.js','assets\nomad-base-styles.json'){
+    if(-not (Test-Path -LiteralPath (Join-Path $mb $x) -PathType Leaf)){ $bmMiss += " $x" }
+  }
+  if(-not (Get-ChildItem -LiteralPath (Join-Path $mb 'pmtiles') -Filter '*.pmtiles' -File -ErrorAction SilentlyContinue | Select-Object -First 1)){ $bmMiss += ' pmtiles\*.pmtiles' }
+  $bmMsg = ''
+  if($bmMiss -like '*assets\*'){ $bmMsg = "browser maps not complete - missing:$bmMiss - delete Maps-Browser\base-assets.tar.gz and re-run the installer with browser maps" }
+  elseif($bmMiss){ $bmMsg = "browser maps not complete - missing:$bmMiss - re-run the installer with browser maps" }
+  if(-not $bmMsg){ ScPass 'browser maps (viewer, style and fonts, maps) ready' }
+  elseif(((-not $SkipMaps) -or $BmOnly) -and $BrowserMaps){ ScFail $bmMsg }
+  else { ScWarn $bmMsg }
+}
 
 if($Guided){ Write-Host ''; Write-Host "  The same install as one command: $GuidedCmd" }
 if($scFail -eq 0){

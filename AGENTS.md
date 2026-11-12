@@ -80,6 +80,9 @@ differs between the installers or is missing from `check-links.sh`, a guide lack
 (full run and `--only`) and requires identical `CHECKSUMS-SHA256.txt` lists; on Windows Git Bash
 `sha256sum` writes `*` before each path, so run it on Linux or macOS. A new `--only` piece needs
 its paths added to `RH` / `$rh` in both installers.
+`.github/scripts/check-selfcheck-browser-maps.sh` runs both installers' browser-maps self-check
+block (`# 7. Browser maps`, ending before the guided-command line) on fixture drives and requires
+the same PASS/FAIL/WARN line; keep that marker if the self-check is reordered.
 `node --test doc-qa/retrieval.test.mjs` checks ranking without inference; the CI
 lint job runs it on PRs and the existing weekly schedule.
 `.github/scripts/build-phone-pack.py OUT.zip [--from DRIVE]` builds the phone pack and

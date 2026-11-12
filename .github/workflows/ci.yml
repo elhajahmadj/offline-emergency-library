@@ -54,6 +54,8 @@ jobs:
         run: bash .github/scripts/check-doc-allowlist.sh
       - name: Checksum list parity, full run and --only (#195)
         run: bash .github/scripts/check-checksums.sh
+      - name: Browser maps self-check line, both installers (#256)
+        run: bash .github/scripts/check-selfcheck-browser-maps.sh
       - name: MedlinePlus page CSP hash (inline script allowed by hash)
         run: bash .github/scripts/check-csp-hash.sh
       - name: PowerShell parse + analyze

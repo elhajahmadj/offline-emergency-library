@@ -1608,6 +1608,24 @@ elif [ -d "$MVD" ]; then
     sc_warn "desktop map viewer skipped (--skip-maps)"
   fi
 fi
+# 7. Browser maps: viewer libraries, style and fonts, and at least one map (#256). A damaged
+#    base-assets.tar.gz of the right size is kept by re-runs, so name it.
+MB="$ROOT/Maps-Browser"
+if [ -d "$MB" ]; then
+  bm_miss=""
+  for x in viewer/lib/maplibre-gl.js viewer/lib/maplibre-gl.css viewer/lib/pmtiles.js assets/nomad-base-styles.json; do
+    [ -f "$MB/$x" ] || bm_miss="$bm_miss $x"
+  done
+  [ -n "$(find "$MB/pmtiles" -name '*.pmtiles' -type f 2>/dev/null | head -n1)" ] || bm_miss="$bm_miss pmtiles/*.pmtiles"
+  case "$bm_miss" in
+    "") bm_msg="" ;;
+    *assets/*) bm_msg="browser maps not complete - missing:$bm_miss - delete Maps-Browser/base-assets.tar.gz and re-run the installer with browser maps" ;;
+    *) bm_msg="browser maps not complete - missing:$bm_miss - re-run the installer with browser maps" ;;
+  esac
+  if [ -z "$bm_msg" ]; then sc_pass "browser maps (viewer, style and fonts, maps) ready"
+  elif { [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; } && [ "$BROWSER_MAPS" = 1 ]; then sc_fail "$bm_msg"
+  else sc_warn "$bm_msg"; fi
+fi
 
 if [ "$GUIDED" = 1 ]; then echo ""; echo "  The same install as one command: $GUIDED_CMD"; fi
 if [ "$SC_FAIL" = 0 ]; then
