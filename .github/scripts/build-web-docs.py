@@ -22,6 +22,7 @@ PLACE = dict(re.findall(r'place_doc +"([^"]+)" +"\$ROOT/([^"]+)"',
 GUIDE_AT = {v: k for k, v in PLACE.items()}
 LINK = re.compile(r'<a\b([^>]*?)\bhref="([^"]*)"([^>]*)>(.*?)</a>', re.S)
 EXTERNAL = re.compile(r'^[a-z][a-z0-9+.-]*:', re.I)
+TARGET = re.compile(r'\s+target="[^"]*"', re.I)
 
 
 def transform(name, text):
@@ -29,6 +30,7 @@ def transform(name, text):
 
     def fix(m):
         pre, href, post, inner = m.groups()
+        pre, post = (TARGET.sub('', s) for s in (pre, post))  # never emit a second target=
         if EXTERNAL.match(href):
             return m.group(0)
         if href.startswith('#'):
@@ -62,6 +64,8 @@ def main():
             (DST / n).write_text(t, encoding='utf-8', newline='\n')
         print(f'Wrote {len(out)} guides to web/docs/.')
         return
+    for src in ('<a href="#x" target="_blank">a</a>', '<a target="_top" href="I-NEED-TO.html">a</a>'):
+        assert transform('START-HERE', src).count('target=') == 1, f'duplicate target= from {src}'
     bad = []
     for n, t in out.items():
         p = DST / n
