@@ -29,7 +29,8 @@ _Last verified: 2026-11-12_
   `web/` — the picker (`index.html`), landing, About, Documentation, Data Sources and
   Privacy pages. Generated files are rebuilt from their sources and checked in CI:
   `build-catalog-js.sh` (catalog.js from catalog.json), `build-about.sh` (about.html from
-  CONTRIBUTORS.md) and `build-web-docs.sh` (the `web/docs/` guide mirror). One component
+  CONTRIBUTORS.md) and `build-web-docs.sh` (the `web/docs/` guide mirror; `build-web-docs.py`, Python 3, maps
+  guide links by the installer's `place_doc` lines and turns drive-only links into text). One component
   table (`components.tsv`) is the single source of each download's size, flag, presets,
   license and source link, with a CI license gate, and `SOURCES.md` is generated from it
   (#239, #244, issue 67). Both installers run a guided install when given no flags (#221).
