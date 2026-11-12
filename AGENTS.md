@@ -51,17 +51,18 @@ _Last verified: 2026-11-12_
   exit 1 with a plain message, and both installers fetch their repo files from the commit main
   was on when the run started (issues 192, 193); `--only` re-hashes only what its pieces wrote,
   with byte parity between the installers checked in CI (issue 195);
-  the space estimate is correct under a decimal-comma locale (#245; issue 104 stays open for the Linux and Education/Kolibri paths).
+  the space estimate is correct under a decimal-comma locale (#245; issue 104 stays open for the Linux and Education/Kolibri paths);
+  the self-check has a browser-maps line (issue 256); the Windows installer unpacks zips with
+  `System32\tar.exe`, which rejects a bad CRC (issue 255); guide HTML is generated from its `.md`
+  and the website mirror rewrites drive-relative links (issues 254, 253).
 - In progress: the front-end direction beyond the HTML picker — desktop app, then phone
   (issues 66, 84, 139); more public-domain manuals, licenses first (issues 130, 78); and the
   outstanding test rounds for the OffRoad viewer and reader on Linux x64/arm64 and the wider
   CI matrix (issues 108, 159, 117).
 - Known gaps: the `Publish picker site` GitHub Pages workflow is manual-dispatch only — Pages
   was never enabled and its workflow token cannot create the site, so the live host is Fly, not
-  Pages (issue 252, #259); the Documentation page has dead drive-relative links and external links
-  that open inside the iframe (issue 253); the self-check has no browser-maps line and Windows
-  `Expand-Archive` does not verify a zip's CRCs (issues 256, 255); nine `docs/*.html` guides
-  render literal `**` and split sentences (issue 254); native macOS double-click testing and
+  Pages (issue 252, #259); on Windows 10 before 1803 (no `tar.exe`) zips still unpack with
+  `Expand-Archive`, without a CRC check; native macOS double-click testing and
   independent Swahili and Somali language review are still outstanding.
 - Deep docs: `evaluations/issue-73/README.md` describes the interpreter protocol;
   `evaluations/issue-76/README.md` describes the CPU model comparison;
