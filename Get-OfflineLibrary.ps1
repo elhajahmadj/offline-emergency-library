@@ -513,6 +513,22 @@ function Expand-Tgz($file,$dest){
     Copy-Item (Join-Path $t '*') $dest -Recurse -Force
   } finally { Remove-Item $t -Recurse -Force -ErrorAction SilentlyContinue }
 }
+# Expand-Zip: unpack a .zip with Windows' own tar.exe (bsdtar), which checks every file's CRC.
+# PowerShell 5.1 Expand-Archive does not, so a damaged zip of the right size unpacked silently
+# (#255). A damaged zip is deleted (a re-run downloads it again) and the caller's catch logs it.
+# The full path: from Git Bash, plain 'tar.exe' finds Git's GNU tar, which cannot read zips.
+function Expand-Zip($file,$dest){
+  $ErrorActionPreference = 'Continue'   # native stderr must not throw before the exit code is read
+  $tarExe = Join-Path $env:SystemRoot 'System32\tar.exe'
+  # shortcut: Windows 10 before 1803 has no tar.exe, so no CRC check there; it unpacks as before.
+  if(-not (Test-Path -LiteralPath $tarExe)){ Expand-Archive -LiteralPath $file -DestinationPath $dest -Force; return }
+  New-Item -ItemType Directory -Force $dest | Out-Null
+  $msg = @(& $tarExe -xf $file -C $dest 2>&1)
+  if($LASTEXITCODE -ne 0){
+    Remove-Item -LiteralPath $file -Force -ErrorAction SilentlyContinue
+    throw "$(Split-Path -Leaf $file) is damaged and was deleted ($($msg | Select-Object -First 1)); re-run the installer to download it again"
+  }
+}
 if($Only){ Log 'engine: not touched (-Only)' } else {   # -Only adds pieces to a finished drive: no engine download (#74)
 try{
   $rels = Invoke-RestMethod 'https://api.github.com/repos/ggml-org/llama.cpp/releases?per_page=20' -Headers @{'User-Agent'='ps'}
@@ -532,7 +548,7 @@ try{
       $out = Join-Path $e "$lt-$x"; $dest = Join-Path $e $LlamaAssets[$x]
       Log "engine: $x"; Fetch "https://github.com/ggml-org/llama.cpp/releases/download/$lt/llama-$lt-bin-$x" $out
       if(Test-Path $dest){ Remove-Item $dest -Recurse -Force }   # fresh unpack: no files left from an older build
-      try{ if($x -like '*.zip'){ Expand-Archive $out -DestinationPath $dest -Force } else { Expand-Tgz $out $dest } }
+      try{ if($x -like '*.zip'){ Expand-Zip $out $dest } else { Expand-Tgz $out $dest } }
       catch{ Log "ERROR: could not unpack ${x} ($out): $($_.Exception.Message). Delete it and re-run."; exit 1 }
       # A damaged zip can unpack to nothing with no error on PowerShell 5.1 (#35): check the program is there.
       if(-not (Get-ChildItem -LiteralPath $dest -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq 'llama-cli' -or $_.Name -eq 'llama-cli.exe' } | Select-Object -First 1)){ Log "ERROR: unpacked ${x} ($out), but llama-cli is not in it. Delete it and re-run."; exit 1 }
@@ -600,7 +616,7 @@ try{
   if($zip){
     $out = Join-Path $Root "Kiwix-Reader\$zip"
     Log "kiwix: $zip"; Fetch ($kdir+$zip) $out
-    try{ Expand-Archive $out -DestinationPath (Join-Path $Root 'Kiwix-Reader\app') -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
+    try{ Expand-Zip $out (Join-Path $Root 'Kiwix-Reader\app') }catch{ Log "  extract failed: $($_.Exception.Message)" }
   }
 }catch{ Log "kiwix ERROR: $($_.Exception.Message)" }
 }
@@ -858,10 +874,10 @@ if(-not $SkipMaps){
     try{ Fetch-Sized $mcu $mc (Remote-Size $mcu) -Soft }catch{ Log "  note: $($_.Exception.Message)"; $gotViewer = $false }
     if($gotViewer){
       # unpack to a new folder; replace the working viewer only if the unpack worked.
-      # (PowerShell 5.1 Expand-Archive can "succeed" on a damaged zip with 0 files, so check the file.)
+      # (An unpack can "succeed" on a damaged zip with 0 files, so check the file.)
       $appNew = Join-Path $mvd 'app.new'
       if(Test-Path $appNew){ Remove-Item $appNew -Recurse -Force }
-      try{ Expand-Archive $mc -DestinationPath $appNew -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
+      try{ Expand-Zip $mc $appNew }catch{ Log "  extract failed: $($_.Exception.Message)" }
       # if the zip nested everything in a single subfolder, pull it up to \app.new
       if((Test-Path $appNew) -and -not (Test-Path (Join-Path $appNew 'OsmAndMapCreator.bat'))){
         $inner = Get-ChildItem $appNew -Directory | Select-Object -First 1
@@ -885,7 +901,7 @@ if(-not $SkipMaps){
     if($gotJava){
       $tmp = Join-Path $mvd '_jre_tmp'
       if(Test-Path $tmp){ Remove-Item $tmp -Recurse -Force }
-      try{ Expand-Archive $jz -DestinationPath $tmp -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
+      try{ Expand-Zip $jz $tmp }catch{ Log "  extract failed: $($_.Exception.Message)" }
       $jreSrc = Get-ChildItem $tmp -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
       if($jreSrc -and (Test-Path (Join-Path $jreSrc.FullName 'bin\java.exe'))){
         $jreDst = Join-Path $mvd 'jre'
@@ -904,7 +920,7 @@ if(-not $SkipMaps){
     if($gotOffroad){
       $offNew = Join-Path $mvd 'offroad.new'
       if(Test-Path $offNew){ Remove-Item $offNew -Recurse -Force }
-      try{ Expand-Archive $orc -DestinationPath $offNew -Force }catch{ Log "  extract failed: $($_.Exception.Message)" }
+      try{ Expand-Zip $orc $offNew }catch{ Log "  extract failed: $($_.Exception.Message)" }
       if(Test-Path (Join-Path $offNew 'OffRoad.jar')){
         $offDst = Join-Path $mvd 'offroad'
         if(Test-Path $offDst){ Remove-Item $offDst -Recurse -Force }
@@ -936,7 +952,12 @@ foreach($z in $zips){
     $stage = Join-Path $obf ('.prepare-' + [guid]::NewGuid().ToString('N'))
     try{
       New-Item -ItemType Directory $stage | Out-Null
-      Expand-Archive -LiteralPath $z.FullName -DestinationPath $stage -Force
+      # Windows' tar.exe checks every file's CRC; PowerShell 5.1 Expand-Archive does not (#255)
+      $tar = Join-Path $env:SystemRoot 'System32\tar.exe'
+      if(Test-Path -LiteralPath $tar){
+        $err = & { $ErrorActionPreference = 'Continue'; & $tar -xf $z.FullName -C $stage 2>&1 }
+        if($LASTEXITCODE -ne 0){ throw "$($z.Name) is damaged ($(@($err)[0])). Delete it and run the installer again." }
+      } else { Expand-Archive -LiteralPath $z.FullName -DestinationPath $stage -Force }
       $unpacked = Join-Path $stage (Split-Path -Leaf $target)
       if(-not (Test-Path -LiteralPath $unpacked -PathType Leaf)){ throw 'Archive does not contain the expected map.' }
       Move-Item -LiteralPath $unpacked -Destination $target -Force
@@ -1081,7 +1102,7 @@ if(((-not $SkipMaps) -or $BmOnly) -and $BrowserMaps){
       $out = Join-Path $mb "server\$($a.name)"; $dest = Join-Path $mb "server\$dir"
       Log "caddy: $($a.name)"; Fetch $a.browser_download_url $out
       if(Test-Path $dest){ Remove-Item $dest -Recurse -Force }; New-Item -ItemType Directory -Force $dest | Out-Null   # keeps Caddy's LICENSE (Apache-2.0)
-      try{ if($ck -like '*.zip'){ Expand-Archive $out -DestinationPath $dest -Force } else { & $tarExe -xzf $out -C $dest } }catch{ Log "  WARN: could not unpack ${ck}: $($_.Exception.Message)" }
+      try{ if($ck -like '*.zip'){ Expand-Zip $out $dest } else { & $tarExe -xzf $out -C $dest } }catch{ Log "  WARN: could not unpack ${ck}: $($_.Exception.Message)" }
     }
     # viewer page + OPEN-MAPS launchers: from the repo (local clone, else GitHub). The .bat gets
     # Windows line ends and the .sh Unix line ends, whatever the source had.

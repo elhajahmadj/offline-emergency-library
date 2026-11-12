@@ -97,6 +97,25 @@ exit 0
     }
     Write-Host "PASS: $($case.Name)"
   }
+  # Expand-Zip (#255): a zip whose data is damaged but still decodes must be refused and
+  # deleted, not unpacked (PowerShell 5.1 Expand-Archive writes the damaged bytes).
+  $ez = $ast.Find({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Expand-Zip' }, $true)
+  if(-not $ez){ throw 'Expand-Zip function not found' }
+  Invoke-Expression $ez.Extent.Text
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  function MakeStoredZip($path){
+    $zip = [IO.Compression.ZipFile]::Open($path, 'Create')
+    try { $w = New-Object IO.StreamWriter($zip.CreateEntry('a.txt', [IO.Compression.CompressionLevel]::NoCompression).Open()); $w.Write('A' * 1000); $w.Dispose() } finally { $zip.Dispose() }
+  }
+  $good = Join-Path $tmp 'good.zip'; MakeStoredZip $good
+  Expand-Zip $good (Join-Path $tmp 'good')
+  if([IO.File]::ReadAllText((Join-Path $tmp 'good\a.txt')) -cne ('A' * 1000) -or -not (Test-Path $good)){ throw 'Expand-Zip: good zip not unpacked or not kept' }
+  Write-Host 'PASS: Expand-Zip unpacks a good zip'
+  $bad = Join-Path $tmp 'bad.zip'; MakeStoredZip $bad
+  $b = [IO.File]::ReadAllBytes($bad); $b[[Array]::IndexOf($b, [byte]65) + 10] = 66; [IO.File]::WriteAllBytes($bad, $b)
+  $threw = $null; try { Expand-Zip $bad (Join-Path $tmp 'bad') } catch { $threw = $_.Exception.Message }
+  if($threw -notmatch 'damaged' -or (Test-Path $bad)){ throw "Expand-Zip: damaged zip accepted or kept ($threw)" }
+  Write-Host "PASS: Expand-Zip refuses and deletes a damaged zip: $threw"
   $global:LASTEXITCODE = 0 # expected child failures must not fail the calling CI shell
   Write-Host 'Fetch regression checks: OK'
 }

@@ -87,6 +87,13 @@ try {
     [IO.File]::WriteAllText($archive, 'not a zip')
     RunHelper
     Assert ($helperExit -ne 0 -and [IO.File]::ReadAllText($target) -eq 'NEW') "$kind corrupt archive preserves previous map and reports failure"
+    # #255: damaged data that still decodes (stored entry, one byte changed): CRC must catch it.
+    Remove-Item -LiteralPath $archive -Force
+    $zip = [IO.Compression.ZipFile]::Open($archive, 'Create')
+    try { $w = New-Object IO.StreamWriter($zip.CreateEntry('Test region.obf', [IO.Compression.CompressionLevel]::NoCompression).Open()); $w.Write('BAD' * 100); $w.Dispose() } finally { $zip.Dispose() }
+    $bytes = [IO.File]::ReadAllBytes($archive); $bytes[[Array]::IndexOf($bytes, [byte][char]'B') + 30] = [byte][char]'X'; [IO.File]::WriteAllBytes($archive, $bytes)
+    RunHelper
+    Assert ($helperExit -ne 0 -and [IO.File]::ReadAllText($target) -eq 'NEW') "$kind bad-CRC archive preserves previous map and reports failure"
     MakeZip $archive 'END'
     RunHelper
     Assert ($helperExit -eq 0 -and [IO.File]::ReadAllText($target) -eq 'END') "$kind recovers after invalid archive"
