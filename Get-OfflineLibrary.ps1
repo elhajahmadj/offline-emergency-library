@@ -436,16 +436,17 @@ $mapGB = 0
 if((-not $SkipMaps) -or $BmOnly){ $mapGB = [double](($sel | ForEach-Object { [double]$_.containerSize } | Measure-Object -Sum).Sum) / 1GB }
 $est = Get-SpaceEstimate $mapGB
 $estGB = [math]::Round(($est.Values | Measure-Object -Sum).Sum, 1)
-try {
-  $drive = (Get-Item $Root).PSDrive
-  $freeGB = [math]::Round((Get-PSDrive $drive.Name).Free/1GB,1)
-  # Folder bytes do not prove this selection's downloads are complete: they can be
-  # unrelated files, old editions, unpacked maps or preallocated partial files (#102).
-  $needGB = $estGB
-  Log "Destination: $Root   (free space: $(Gb $freeGB) GB)"
-  Log "Space estimate for this selection: about $(Gb $estGB) GB"
-  foreach($k in $est.Keys){ Log ("  {0,6} GB  {1}" -f (Gb $est[$k]), $k) }
-  if($Kolibri){ Log '     (Kolibri content is not counted: you pick it in the app)' }
+# Folder bytes do not prove this selection's downloads are complete: they can be
+# unrelated files, old editions, unpacked maps or preallocated partial files (#102).
+$needGB = $estGB
+# A network share (\\server\share) has no PSDrive, so the free space can be unknown (#276).
+$freeGB = $null
+try { $freeGB = [math]::Round((Get-PSDrive (Get-Item $Root).PSDrive.Name).Free/1GB,1) } catch {}
+Log "Destination: $Root   (free space: $(if($null -ne $freeGB){ "$(Gb $freeGB) GB" } else { 'unknown' }))"
+Log "Space estimate for this selection: about $(Gb $estGB) GB"
+foreach($k in $est.Keys){ Log ("  {0,6} GB  {1}" -f (Gb $est[$k]), $k) }
+if($Kolibri){ Log '     (Kolibri content is not counted: you pick it in the app)' }
+if($null -ne $freeGB){
   Log "Conservative space budget: $(Gb $needGB) GB. Free: $(Gb $freeGB) GB."
   Log "Existing files are not subtracted; a re-run may need less space."
   if($needGB -gt $freeGB){
@@ -459,7 +460,7 @@ try {
       Log "  Continuing at the user's request."
     }
   }
-} catch {}
+}
 
 # ---------------------------------------------------------------- folder tree
 $dirs = @(
