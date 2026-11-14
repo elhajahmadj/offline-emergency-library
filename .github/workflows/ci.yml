@@ -36,6 +36,8 @@ jobs:
         run: bash .github/scripts/check-changelog.sh
       - name: Launcher parity (bash vs PowerShell installer)
         run: bash .github/scripts/check-launchers.sh
+      - name: README.html index links survive odd file names (#278)
+        run: bash .github/scripts/check-readme-index.sh
       - name: Launchers tell a failed self-check from a failed install (#271)
         run: bash .github/scripts/check-install-exit.sh
       - name: Catalog ids and sizes match both installers (#139)

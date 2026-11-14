@@ -97,6 +97,10 @@ against stale junctions and relocation with a fake Java, without network access.
 `.github/scripts/check-launchers.sh` runs model placement with local download fixtures
 and checks generated launcher model references across full, Lite, skipped-model and
 translator selections. It runs in the existing lint job on PRs and the weekly schedule.
+`.github/scripts/check-readme-index.sh` builds README.html with both installers' index code and
+`build-readme-index.ps1` on a fixture drive whose names hold `' # % &`, and requires every link
+to open its file; it extracts each installer's block by its `README index` start and
+`index written` / `README index ERROR` end lines.
 Installer exit codes the launchers read: 0 done, 4 finished but a self-check failed (a re-run will
 not fix it), anything else failed or stopped (a re-run resumes); `install.sh` / `install.command`
 already use 2 (no picker selection) and 3 (cancelled) for their own paths.
