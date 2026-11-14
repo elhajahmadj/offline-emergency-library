@@ -24,9 +24,12 @@ is best). The download is about 85 GB and can take several hours.
 1. [Download this project as a ZIP](https://github.com/elhajahmadj/offline-emergency-library/archive/refs/heads/main.zip),
    right-click it and choose **Extract All**.
 2. In the extracted folder, double-click **`install.bat`**. If Windows says "Windows
-   protected your PC", click **More info**, then **Run anyway**.
-3. Press Enter to install everything (or see [Pick what to install](#pick-what-to-install)).
-   Then type where to save the files, for example `E:\`, and press Enter.
+   protected your PC", click **More info**, then **Run anyway**. If Smart App Control blocks
+   it and there is no **Run anyway** button, right-click **`install.bat`**, choose
+   **Properties**, tick **Unblock**, click **OK** and double-click it again.
+3. Press Enter for the guided install (or see [Pick what to install](#pick-what-to-install)).
+   Type where to save the files, for example `E:\`, and press Enter. Then answer a few
+   questions: how much to install, which maps and which extras. Enter takes the suggested answer.
 
 **Mac**
 1. [Download this project as a ZIP](https://github.com/elhajahmadj/offline-emergency-library/archive/refs/heads/main.zip).
@@ -34,8 +37,9 @@ is best). The download is about 85 GB and can take several hours.
 2. In the folder, double-click **`install.command`**. The first time, the Mac says
    *"install.command" Not Opened*: click **Done**, open **System Settings > Privacy & Security**,
    click **Open Anyway** (twice), and type your password.
-3. Press Return to install everything (or see [Pick what to install](#pick-what-to-install)).
-   Then type where to save the files, for example `/Volumes/MyDrive`, and press Return.
+3. Press Return for the guided install (or see [Pick what to install](#pick-what-to-install)).
+   Type where to save the files, for example `/Volumes/MyDrive`, and press Return. Then answer a
+   few questions: how much to install, which maps and which extras. Return takes the suggested answer.
 
 **Linux**
 1. Open a terminal.
@@ -43,7 +47,8 @@ is best). The download is about 85 GB and can take several hours.
    ```bash
    curl -fsSL https://raw.githubusercontent.com/elhajahmadj/offline-emergency-library/main/get-offline-library.sh | bash
    ```
-3. Type where to save the files, for example `/media/you/MyDrive`, and press Enter.
+3. Type where to save the files, for example `/media/you/MyDrive`, and press Enter. Then answer
+   a few questions: how much to install, which maps and which extras.
 
 Or use the ZIP, like Windows and Mac: extract it, open a terminal in the folder and run
 `bash install.sh`. The file is not marked as executable, so start it with `bash` (or run
@@ -74,7 +79,8 @@ The [release page](https://github.com/elhajahmadj/offline-emergency-library/rele
 `install.bat`, `install.command` and `install.sh` first ask **How would you like to install?**
 and offer two choices:
 
-- **A**, or just Enter: install everything. The installer then asks only where to save the files.
+- **A**, or just Enter: the [guided install](#guided-install-no-flags). The installer asks where
+  to save the files, how much to install (Small, Standard or Everything), which maps and which extras.
 - **P**: pick what to install. The launcher opens the picker page, `web/index.html`, in your
   browser. Tick what you want, then use the button near the bottom of the page to save your
   selection. It saves a `selection.json` file to your Downloads folder. Go back to the launcher
