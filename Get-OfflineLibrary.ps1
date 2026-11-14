@@ -809,11 +809,9 @@ foreach($p in $pdfs){
     if($url){
       $out = Join-Path $Root "$($p.d)\$($p.n)"
       Log "pdf: $($p.n)"
-      Fetch $url $out
-      if(Test-Path $out){
-        $fs = New-Object IO.FileStream($out,'Open'); $b = New-Object byte[] 4; [void]$fs.Read($b,0,4); $fs.Close()
-        if(-not ([System.Text.Encoding]::ASCII.GetString($b) -eq '%PDF')){ Log "  ERROR: $($p.n) not a valid PDF (removed)"; Remove-Item $out -Force; exit 1 }
-      } else { Log "  WARN: $($p.n) failed to download" }
+      Fetch $url $out   # exits on a missing or empty file
+      $fs = New-Object IO.FileStream($out,'Open'); $b = New-Object byte[] 4; [void]$fs.Read($b,0,4); $fs.Close()
+      if(-not ([System.Text.Encoding]::ASCII.GetString($b) -eq '%PDF')){ Log "  ERROR: $($p.n) not a valid PDF (removed)"; Remove-Item $out -Force; exit 1 }
     } else { Log "pdf: NO PDF for $($p.id)" }
   }catch{ Log "pdf ERROR $($p.n): $($_.Exception.Message)" }
 }
@@ -826,14 +824,12 @@ if(-not $Only){
     $ecDir  = Join-Path $Root 'Medical\Emergency-Childbirth'
     $ecHtml = Join-Path $ecDir 'Emergency Childbirth (US Civil Defense).html'
     Log 'html: Emergency Childbirth (US Civil Defense).html'
-    Fetch "$ecBase/pg26923-images.html" $ecHtml
-    if(Test-Path $ecHtml){
-      $body = Get-Content -LiteralPath $ecHtml -Raw
-      if($body -notmatch '(?i)<html|<!doctype'){ Log '  ERROR: Emergency Childbirth was not HTML (removed)'; Remove-Item $ecHtml -Force; exit 1 }
-      $imgs = [regex]::Matches($body,'src="images/([^"]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
-      if($imgs){ New-Item -ItemType Directory -Force (Join-Path $ecDir 'images') | Out-Null }
-      foreach($im in $imgs){ Fetch "$ecBase/images/$im" (Join-Path $ecDir "images\$im") }
-    } else { Log '  WARN: Emergency Childbirth failed to download' }
+    Fetch "$ecBase/pg26923-images.html" $ecHtml   # exits on a missing or empty file
+    $body = Get-Content -LiteralPath $ecHtml -Raw
+    if($body -notmatch '(?i)<html|<!doctype'){ Log '  ERROR: Emergency Childbirth was not HTML (removed)'; Remove-Item $ecHtml -Force; exit 1 }
+    $imgs = [regex]::Matches($body,'src="images/([^"]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
+    if($imgs){ New-Item -ItemType Directory -Force (Join-Path $ecDir 'images') | Out-Null }
+    foreach($im in $imgs){ Fetch "$ecBase/images/$im" (Join-Path $ecDir "images\$im") }
   }catch{ Log "html ERROR Emergency Childbirth: $($_.Exception.Message)" }
 }
 
