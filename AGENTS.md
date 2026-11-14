@@ -100,6 +100,9 @@ against stale junctions and relocation with a fake Java, without network access.
 `.github/scripts/check-launchers.sh` runs model placement with local download fixtures
 and checks generated launcher model references across full, Lite, skipped-model and
 translator selections. It runs in the existing lint job on PRs and the weekly schedule.
+PDFs and models download through `fetch_remote` / `Fetch-Remote` (size-named part file, never a
+resume onto a replaced file); `.github/scripts/check-changed-source.sh` runs both installers'
+real helpers against a `file://` source that changes size between runs.
 `.github/scripts/check-readme-index.sh` builds README.html with both installers' index code and
 `build-readme-index.ps1` on a fixture drive whose names hold `' # % &`, and requires every link
 to open its file; it extracts each installer's block by its `README index` start and

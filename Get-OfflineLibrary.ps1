@@ -388,6 +388,9 @@ function Fetch-Sized($url,$out,$bytes,[switch]$Soft){
   Remove-Item -LiteralPath "$out.aria2" -Force -ErrorAction SilentlyContinue
   Move-Item -LiteralPath $part -Destination $out -Force
 }
+# A file a publisher can replace under the same URL (PDFs, models): never resume one
+# version into another (#274). One HEAD request; with no size known, a plain Fetch.
+function Fetch-Remote($url,$out){ Fetch-Sized $url $out (Remote-Size $url) }
 if($UseAria){ Log 'Downloader: aria2 (fast, multi-connection)' } else { Log "Downloader: curl (tip: install 'aria2' for much faster downloads)" }
 if($Lite -and -not $PSBoundParameters.ContainsKey('Selection') -and -not $Guided){ Log "Lite preset: 3B AI, medical/survival references and maps for '$Region' (unless skipped). Size depends on region; use -Region for a small area or -SkipMaps. Re-run without -Lite to add the full library." }
 if($SelList -and -not $Guided){ Log "Selection from ${Selection}: $SelList (same as: $SelSame)" }
@@ -583,13 +586,13 @@ $models = @(
 foreach($m in $models){
   if($Only){ continue }   # -Only adds pieces: the core models are not touched (#74)
   if($SkipModels -and $m.big){ Log "model (skipped): $($m.n)"; continue }
-  Log "model: $($m.n)"; Fetch $m.u (Join-Path $Root "AI-Offline\models\$($m.n)")
+  Log "model: $($m.n)"; Fetch-Remote $m.u (Join-Path $Root "AI-Offline\models\$($m.n)")
 }
 # Translator (opt-in): one small multilingual model run by the same engine, so no new runtime.
 $TrModel = 'Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf'
 if($Translate){
   Log "model (translator): $TrModel"
-  Fetch "https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TrModel" (Join-Path $Root "AI-Offline\models\$TrModel")
+  Fetch-Remote "https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TrModel" (Join-Path $Root "AI-Offline\models\$TrModel")
 } else { Log '=== Translator not selected - add -Translate to include (~2.5 GB) ===' }
 # Every model the installer can download, for the self-check (only files on the drive are checked).
 $GgufUrls = @($models | ForEach-Object { $_.u }) + "https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TrModel"
@@ -822,7 +825,7 @@ foreach($p in $pdfs){
     if($url){
       $out = Join-Path $Root "$($p.d)\$($p.n)"
       Log "pdf: $($p.n)"
-      Fetch $url $out   # exits on a missing or empty file
+      Fetch-Remote $url $out   # exits on a missing or empty file
       $fs = New-Object IO.FileStream($out,'Open'); $b = New-Object byte[] 4; [void]$fs.Read($b,0,4); $fs.Close()
       if(-not ([System.Text.Encoding]::ASCII.GetString($b) -eq '%PDF')){ Log "  ERROR: $($p.n) not a valid PDF (removed)"; Remove-Item $out -Force; exit 1 }
     } else { Log "pdf: NO PDF for $($p.id)" }
