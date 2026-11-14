@@ -435,6 +435,9 @@ fetch_sized(){ # url out bytes [soft]
   fi
   rm -f "$2.aria2"; mv -f "$part" "$2"
 }
+# A file a publisher can replace under the same URL (PDFs, models): never resume one
+# version into another (#274). One HEAD request; with no size known, a plain fetch.
+fetch_remote(){ fetch_sized "$1" "$2" "$(remote_size "$1")"; }
 if [ "$USE_ARIA" = 1 ]; then log "Downloader: aria2 (fast, multi-connection)"; else log "Downloader: curl (tip: install 'aria2' for much faster downloads)"; fi
 [ "$SELECT_SET" = 1 ] && log "Selection from $SELECT:$SEL_LIST (same as:$SAME)"
 [ "$GUIDED" = 1 ] && log "Guided install:$SEL_LIST (same as: $GUIDED_CMD)"
@@ -607,16 +610,16 @@ MQ7="$HF/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q4_K_M.gguf"
 TR_MODEL="Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
 MTR="$HF/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TR_MODEL"
 GGUF_URLS="$M3B $M8B $MQ7 $MTR"   # for the self-check (only files on the drive are checked)
-if [ -z "$ONLY" ]; then fetch "$M3B" "$ROOT/AI-Offline/models/${M3B##*/}"; log "model: Llama-3.2-3B done"; fi
+if [ -z "$ONLY" ]; then fetch_remote "$M3B" "$ROOT/AI-Offline/models/${M3B##*/}"; log "model: Llama-3.2-3B done"; fi
 if [ "$SKIP_MODELS" = 0 ]; then
-  fetch "$M8B" "$ROOT/AI-Offline/models/${M8B##*/}"; log "model: Llama-3.1-8B done"
-  fetch "$MQ7" "$ROOT/AI-Offline/models/${MQ7##*/}"; log "model: Qwen2.5-7B done"
+  fetch_remote "$M8B" "$ROOT/AI-Offline/models/${M8B##*/}"; log "model: Llama-3.1-8B done"
+  fetch_remote "$MQ7" "$ROOT/AI-Offline/models/${MQ7##*/}"; log "model: Qwen2.5-7B done"
 else
   log "models: large models skipped"
 fi
 # Translator (opt-in): one small multilingual model run by the same engine, so no new runtime.
 if [ "$TRANSLATE" = 1 ]; then
-  fetch "$MTR" "$ROOT/AI-Offline/models/$TR_MODEL"; log "model (translator): $TR_MODEL done"
+  fetch_remote "$MTR" "$ROOT/AI-Offline/models/$TR_MODEL"; log "model (translator): $TR_MODEL done"
 else
   log "=== Translator not selected - add --translate to include (~2.5 GB) ==="
 fi
@@ -759,7 +762,7 @@ get_pdf(){ # id  localname  destdir   (archive.org item)
 get_pdf_url(){ # url  localname  destdir   (direct link)
   out="$3/$2"
   log "pdf: $2"
-  fetch "$1" "$out"
+  fetch_remote "$1" "$out"
   # validate it's really a PDF; drop error pages / empties
   if [ -f "$out" ]; then
     if [ "$(head -c 4 "$out" 2>/dev/null)" != "%PDF" ]; then log "  ERROR: $2 was not a valid PDF (removed)"; rm -f "$out"; exit 1; fi
