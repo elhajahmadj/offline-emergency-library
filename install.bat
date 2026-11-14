@@ -31,7 +31,9 @@ goto :full
 :full
 powershell -NoProfile -ExecutionPolicy Bypass -File "%PS1%"
 rem errorlevel 9009 = PowerShell could not be started (blocked / not found), not an install error.
+rem errorlevel 4 = the download finished but a self-check failed (#271).
 if errorlevel 9009 goto :notstarted
+if errorlevel 4 if not errorlevel 5 goto :checkfailed
 if errorlevel 1 goto :failed
 goto :done
 
@@ -105,6 +107,7 @@ goto :cancelled
 :doinstall
 powershell -NoProfile -ExecutionPolicy Bypass -File "%PS1%" -Selection "%SEL%"
 if errorlevel 9009 goto :notstarted
+if errorlevel 4 if not errorlevel 5 goto :checkfailed
 if errorlevel 1 goto :failed
 goto :done
 
@@ -135,6 +138,14 @@ echo.
 echo PowerShell did not start. Windows may have blocked it (Smart App Control / SmartScreen).
 echo Right-click Get-OfflineLibrary.ps1 ^> Properties ^> Unblock, or run it from an elevated
 echo PowerShell window, then try again.
+pause
+exit /b 1
+
+:checkfailed
+echo.
+echo The download finished, but the self-check found a problem: see the FAIL lines above.
+echo Re-running the installer downloads only missing files, so it will not fix a FAIL that
+echo Windows causes, such as Smart App Control blocking the AI program.
 pause
 exit /b 1
 
