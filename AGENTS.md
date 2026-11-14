@@ -85,7 +85,10 @@ Windows CI also runs `.github/scripts/check-fetch.ps1` with Windows PowerShell 5
 to exercise the installer's real downloader against local executable fixtures (plus
 `Expand-Zip` refusing a bad-CRC zip: the installer unpacks zips with
 `%SystemRoot%\System32\tar.exe`, never plain `tar.exe`, which Git Bash resolves to GNU tar), and
-`.github/scripts/check-doc-qa.ps1` for reader source pairing and relocation.
+`.github/scripts/check-doc-qa.ps1` for reader source pairing and relocation, and
+`.github/scripts/check-space-estimate.ps1`, which runs the installer's space-estimate block
+(from its `(#68): Get-SpaceEstimate, defined above.` comment to the `folder tree` rule) with
+no PSDrive, as on a network share, and requires the estimate lines.
 `.github/scripts/check-doc-sources.sh` verifies that published manual text still matches
 `sources.tsv`; a changed publisher file must be reviewed, not silently re-hashed. Archive.org timeouts and 5xx are warnings; only a 4xx or changed text fails.
 Maintenance notes for the reader live in `doc-qa/README.md`.

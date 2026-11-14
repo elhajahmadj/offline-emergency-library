@@ -440,16 +440,17 @@ $mapGB = 0
 if((-not $SkipMaps) -or $BmOnly){ $mapGB = [double](($sel | ForEach-Object { [double]$_.containerSize } | Measure-Object -Sum).Sum) / 1GB }
 $est = Get-SpaceEstimate $mapGB
 $estGB = [math]::Round(($est.Values | Measure-Object -Sum).Sum, 1)
-try {
-  $drive = (Get-Item $Root).PSDrive
-  $freeGB = [math]::Round((Get-PSDrive $drive.Name).Free/1GB,1)
-  # Folder bytes do not prove this selection's downloads are complete: they can be
-  # unrelated files, old editions, unpacked maps or preallocated partial files (#102).
-  $needGB = $estGB
-  Log "Destination: $Root   (free space: $(Gb $freeGB) GB)"
-  Log "Space estimate for this selection: about $(Gb $estGB) GB"
-  foreach($k in $est.Keys){ Log ("  {0,6} GB  {1}" -f (Gb $est[$k]), $k) }
-  if($Kolibri){ Log '     (Kolibri content is not counted: you pick it in the app)' }
+# Folder bytes do not prove this selection's downloads are complete: they can be
+# unrelated files, old editions, unpacked maps or preallocated partial files (#102).
+$needGB = $estGB
+# A network share (\\server\share) has no PSDrive, so the free space can be unknown (#276).
+$freeGB = $null
+try { $freeGB = [math]::Round((Get-PSDrive (Get-Item $Root).PSDrive.Name).Free/1GB,1) } catch {}
+Log "Destination: $Root   (free space: $(if($null -ne $freeGB){ "$(Gb $freeGB) GB" } else { 'unknown' }))"
+Log "Space estimate for this selection: about $(Gb $estGB) GB"
+foreach($k in $est.Keys){ Log ("  {0,6} GB  {1}" -f (Gb $est[$k]), $k) }
+if($Kolibri){ Log '     (Kolibri content is not counted: you pick it in the app)' }
+if($null -ne $freeGB){
   Log "Conservative space budget: $(Gb $needGB) GB. Free: $(Gb $freeGB) GB."
   Log "Existing files are not subtracted; a re-run may need less space."
   if($needGB -gt $freeGB){
@@ -463,7 +464,7 @@ try {
       Log "  Continuing at the user's request."
     }
   }
-} catch {}
+}
 
 # ---------------------------------------------------------------- folder tree
 $dirs = @(
@@ -821,11 +822,9 @@ foreach($p in $pdfs){
     if($url){
       $out = Join-Path $Root "$($p.d)\$($p.n)"
       Log "pdf: $($p.n)"
-      Fetch $url $out
-      if(Test-Path $out){
-        $fs = New-Object IO.FileStream($out,'Open'); $b = New-Object byte[] 4; [void]$fs.Read($b,0,4); $fs.Close()
-        if(-not ([System.Text.Encoding]::ASCII.GetString($b) -eq '%PDF')){ Log "  ERROR: $($p.n) not a valid PDF (removed)"; Remove-Item $out -Force; exit 1 }
-      } else { Log "  WARN: $($p.n) failed to download" }
+      Fetch $url $out   # exits on a missing or empty file
+      $fs = New-Object IO.FileStream($out,'Open'); $b = New-Object byte[] 4; [void]$fs.Read($b,0,4); $fs.Close()
+      if(-not ([System.Text.Encoding]::ASCII.GetString($b) -eq '%PDF')){ Log "  ERROR: $($p.n) not a valid PDF (removed)"; Remove-Item $out -Force; exit 1 }
     } else { Log "pdf: NO PDF for $($p.id)" }
   }catch{ Log "pdf ERROR $($p.n): $($_.Exception.Message)" }
 }
@@ -838,14 +837,12 @@ if(-not $Only){
     $ecDir  = Join-Path $Root 'Medical\Emergency-Childbirth'
     $ecHtml = Join-Path $ecDir 'Emergency Childbirth (US Civil Defense).html'
     Log 'html: Emergency Childbirth (US Civil Defense).html'
-    Fetch "$ecBase/pg26923-images.html" $ecHtml
-    if(Test-Path $ecHtml){
-      $body = Get-Content -LiteralPath $ecHtml -Raw
-      if($body -notmatch '(?i)<html|<!doctype'){ Log '  ERROR: Emergency Childbirth was not HTML (removed)'; Remove-Item $ecHtml -Force; exit 1 }
-      $imgs = [regex]::Matches($body,'src="images/([^"]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
-      if($imgs){ New-Item -ItemType Directory -Force (Join-Path $ecDir 'images') | Out-Null }
-      foreach($im in $imgs){ Fetch "$ecBase/images/$im" (Join-Path $ecDir "images\$im") }
-    } else { Log '  WARN: Emergency Childbirth failed to download' }
+    Fetch "$ecBase/pg26923-images.html" $ecHtml   # exits on a missing or empty file
+    $body = Get-Content -LiteralPath $ecHtml -Raw
+    if($body -notmatch '(?i)<html|<!doctype'){ Log '  ERROR: Emergency Childbirth was not HTML (removed)'; Remove-Item $ecHtml -Force; exit 1 }
+    $imgs = [regex]::Matches($body,'src="images/([^"]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
+    if($imgs){ New-Item -ItemType Directory -Force (Join-Path $ecDir 'images') | Out-Null }
+    foreach($im in $imgs){ Fetch "$ecBase/images/$im" (Join-Path $ecDir "images\$im") }
   }catch{ Log "html ERROR Emergency Childbirth: $($_.Exception.Message)" }
 }
 

@@ -764,10 +764,8 @@ get_pdf_url(){ # url  localname  destdir   (direct link)
   out="$3/$2"
   log "pdf: $2"
   fetch "$1" "$out"
-  # validate it's really a PDF; drop error pages / empties
-  if [ -f "$out" ]; then
-    if [ "$(head -c 4 "$out" 2>/dev/null)" != "%PDF" ]; then log "  ERROR: $2 was not a valid PDF (removed)"; rm -f "$out"; exit 1; fi
-  else log "  WARN: $2 failed to download"; fi
+  # validate it's really a PDF; drop error pages (fetch already exits on a missing or empty file)
+  if [ "$(head -c 4 "$out" 2>/dev/null)" != "%PDF" ]; then log "  ERROR: $2 was not a valid PDF (removed)"; rm -f "$out"; exit 1; fi
 }
 get_html_doc(){ # baseurl  htmlfile  localname  destdir   (an HTML page + the images/ it references)
   # Grabs the page and every images/<file> it links, so it opens fully offline in a browser.
