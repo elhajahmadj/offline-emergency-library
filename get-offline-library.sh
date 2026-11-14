@@ -1678,5 +1678,5 @@ else
   echo ""
   echo "  Your offline library is in: $ROOT"
   echo "  Fix the FAIL line(s) above before you rely on it."
-  exit 1
+  exit 4   # finished, but a self-check failed: install.sh / install.command say so (#271)
 fi

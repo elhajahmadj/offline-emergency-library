@@ -1570,7 +1570,7 @@ Log "CHECKSUMS-SHA256.txt: $($arr.Count) files. Run CHECK-DRIVE every few months
 # Read-only checks of what was built, so a broken kit never ends with a bare DONE.
 # Writes nothing to the drive (CHECKSUMS-SHA256.txt above stays correct).
 Log '=== Self-check ==='
-$scFail = 0
+$scFail = 0; $scBlocked = $false
 function ScPass($m){ Log "  PASS  $m" }
 function ScWarn($m){ Log "  WARN  $m" }
 function ScFail($m){ Log "  FAIL  $m"; $script:scFail++ }
@@ -1603,6 +1603,7 @@ if($env:OS -eq 'Windows_NT'){
     } elseif($null -eq $rc){
       ScFail "AI engine does not start on this computer (x64): Windows did not let llama-cli.exe run. $runErr"
       Log '        Smart App Control or another app-control policy may block it: see Windows Security > App & browser control. The drive itself is fine.'
+      $scBlocked = $true
     } else {
       ScFail "AI engine does not start on this computer (x64): exit code $rc"
       if($rc -eq -1073741515){ Log '        A DLL is missing (0xC0000135). If a file is missing from engine\x64, re-run the installer. Otherwise install the Microsoft Visual C++ Redistributable (x64) and run the AI again.' }
@@ -1715,5 +1716,10 @@ if($scFail -eq 0){
   Write-Host ''
   Write-Host "  Your offline library is in: $Root" -ForegroundColor Yellow
   Write-Host "  Fix the FAIL line(s) above before you rely on it." -ForegroundColor Yellow
-  exit 1
+  if($scBlocked){
+    Write-Host '  Windows blocked the AI program (Smart App Control or another app-control policy).' -ForegroundColor Yellow
+    Write-Host '  Re-running the installer will not change that: see Windows Security > App & browser control.' -ForegroundColor Yellow
+    Write-Host '  The manuals, maps and archives on the drive do not need the AI and work as they are.' -ForegroundColor Yellow
+  }
+  exit 4   # finished, but a self-check failed: install.bat / install.sh / install.command say so (#271)
 }
