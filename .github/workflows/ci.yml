@@ -36,6 +36,8 @@ jobs:
         run: bash .github/scripts/check-changelog.sh
       - name: Launcher parity (bash vs PowerShell installer)
         run: bash .github/scripts/check-launchers.sh
+      - name: Launchers tell a failed self-check from a failed install (#271)
+        run: bash .github/scripts/check-install-exit.sh
       - name: Catalog ids and sizes match both installers (#139)
         run: bash .github/scripts/check-catalog.sh
       - name: Component table has a license and source for every download (#67)
@@ -109,6 +111,10 @@ jobs:
         if: runner.os == 'Windows'
         shell: powershell
         run: .\.github\scripts\check-doc-qa.ps1
+      - name: install.bat tells a failed self-check from a failed install (#271)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: bash .github/scripts/check-install-exit.sh
       - name: Catalog ids with Windows PowerShell 5.1 (#139)
         if: runner.os == 'Windows'
         shell: bash
