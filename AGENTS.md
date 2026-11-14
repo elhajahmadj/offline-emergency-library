@@ -85,7 +85,10 @@ Windows CI also runs `.github/scripts/check-fetch.ps1` with Windows PowerShell 5
 to exercise the installer's real downloader against local executable fixtures (plus
 `Expand-Zip` refusing a bad-CRC zip: the installer unpacks zips with
 `%SystemRoot%\System32\tar.exe`, never plain `tar.exe`, which Git Bash resolves to GNU tar), and
-`.github/scripts/check-doc-qa.ps1` for reader source pairing and relocation.
+`.github/scripts/check-doc-qa.ps1` for reader source pairing and relocation, and
+`.github/scripts/check-space-estimate.ps1`, which runs the installer's space-estimate block
+(from its `(#68): Get-SpaceEstimate, defined above.` comment to the `folder tree` rule) with
+no PSDrive, as on a network share, and requires the estimate lines.
 `.github/scripts/check-doc-sources.sh` verifies that published manual text still matches
 `sources.tsv`; a changed publisher file must be reviewed, not silently re-hashed. Archive.org timeouts and 5xx are warnings; only a 4xx or changed text fails.
 Maintenance notes for the reader live in `doc-qa/README.md`.
@@ -100,6 +103,18 @@ translator selections. It runs in the existing lint job on PRs and the weekly sc
 Kiwix archives download through `fetch_zim` / `Fetch-Zim`, which remove other monthly editions
 (`<prefix>YYYY-MM.zim`) of the same archive once the new one is complete;
 `.github/scripts/check-zim-editions.sh` runs both against a `file://` source.
+PDFs and models download through `fetch_remote` / `Fetch-Remote` (size-named part file, never a
+resume onto a replaced file); `.github/scripts/check-changed-source.sh` runs both installers'
+real helpers against a `file://` source that changes size between runs.
+`.github/scripts/check-readme-index.sh` builds README.html with both installers' index code and
+`build-readme-index.ps1` on a fixture drive whose names hold `' # % &`, and requires every link
+to open its file; it extracts each installer's block by its `README index` start and
+`index written` / `README index ERROR` end lines.
+Installer exit codes the launchers read: 0 done, 4 finished but a self-check failed (a re-run will
+not fix it), anything else failed or stopped (a re-run resumes); `install.sh` / `install.command`
+already use 2 (no picker selection) and 3 (cancelled) for their own paths.
+`.github/scripts/check-install-exit.sh` runs `install.sh`, `install.command` and (where `cmd.exe`
+exists) `install.bat` against a stub installer for each case.
 For the milestone 2 picker (#139), also exercise a fresh non-Lite selection containing
 `core`, `gpt4all-repair` and `wikipedia` without `models` on both installers; verify
 the large models and their launchers are absent while the core chat remains available.

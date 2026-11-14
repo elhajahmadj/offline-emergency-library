@@ -48,11 +48,11 @@ for skip in 0 1; do
   skip_models=$skip; [ "$lite" = 1 ] && skip_models=1
   sh_out="$T/sh-tr$translate-lite$lite-skip$skip/AI-Offline"; ps_out="$T/ps-tr$translate-lite$lite-skip$skip/AI-Offline"
   mkdir -p "$sh_out/models" "$ps_out/models"
-  ( set +u; ROOT="${sh_out%/AI-Offline}"; LITE=$lite; SKIP_MODELS=$skip_models; TRANSLATE=$translate; ONLY=""; log(){ :; }; fetch(){ printf fixture > "$2"; }; . "$T/models.sh"; . "$T/sec.sh" ) || { echo "FAIL: bash sections exited non-zero (lite=$lite skip=$skip translate=$translate)"; fail=1; }
+  ( set +u; ROOT="${sh_out%/AI-Offline}"; LITE=$lite; SKIP_MODELS=$skip_models; TRANSLATE=$translate; ONLY=""; log(){ :; }; fetch(){ printf fixture > "$2"; }; fetch_remote(){ fetch "$@"; }; . "$T/models.sh"; . "$T/sec.sh" ) || { echo "FAIL: bash sections exited non-zero (lite=$lite skip=$skip translate=$translate)"; fail=1; }
   if [ "$lite" = 1 ]; then L='$true'; else L='$false'; fi
   if [ "$skip_models" = 1 ]; then S='$true'; else S='$false'; fi
   if [ "$translate" = 1 ]; then TR='$true'; else TR='$false'; fi
-  pwsh -NoProfile -NonInteractive -Command "\$ErrorActionPreference='Stop'; \$Root='${ps_out%/AI-Offline}'; \$Lite=$L; \$SkipModels=$S; \$Translate=$TR; \$Only=@(); function Log(\$m){}; function Fetch(\$url,\$out){ [IO.File]::WriteAllText(\$out,'fixture') }; . '$T/models.ps1'; . '$T/sec.ps1'" \
+  pwsh -NoProfile -NonInteractive -Command "\$ErrorActionPreference='Stop'; \$Root='${ps_out%/AI-Offline}'; \$Lite=$L; \$SkipModels=$S; \$Translate=$TR; \$Only=@(); function Log(\$m){}; function Fetch(\$url,\$out){ [IO.File]::WriteAllText(\$out,'fixture') }; function Fetch-Remote(\$url,\$out){ Fetch \$url \$out };. '$T/models.ps1'; . '$T/sec.ps1'" \
     || { echo "FAIL: PowerShell launcher section exited non-zero (lite=$lite)"; fail=1; }
   # Set-Content ends a file with the OS newline: CRLF on Windows, LF here. Make the last
   # line end like it does on Windows; every other line comes from the CRLF source above.

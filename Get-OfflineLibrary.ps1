@@ -201,7 +201,7 @@ function Get-SpaceEstimate($mapGB){
   if((-not $Lite) -and (-not $Only)){ $est['GPT4All, iFixit, Appropedia'] = 4.5 }
   if(-not $SkipWikipedia){ $est['Wikipedia'] = 49.1 }
   if((-not $SkipMaps) -or $BmOnly){
-    if(-not $SkipMaps){ $est["maps for '$Region' + desktop viewer"] = [math]::Round($mapGB + 0.5, 1) }
+    if(-not $SkipMaps){ $est["maps for '$Region' + desktop viewer"] = [math]::Round($mapGB + 0.7, 1) }
     if($BrowserMaps){
       $rt = @(($Region -split '[,; ]') | Where-Object { $_ } | ForEach-Object { (Resolve-RegionToken $_.Trim()).ToLower() })
       # all of the US ~15.4 GB; states ~0.4 of their OsmAnd size (#102); always + the world map
@@ -327,7 +327,9 @@ $UseAria = (-not $NoAria) -and [bool](Get-Command aria2c -ErrorAction SilentlyCo
 # Show a live progress meter (percent/size/speed/ETA) only when attached to a real
 # console; stay quiet when output is redirected (CI/logging) so it doesn't fill with bars.
 $DlTty = -not [Console]::IsOutputRedirected
-function Fetch($url,$out){
+# Fetch url out [-Soft]: with -Soft (an optional download) a failed download throws instead of
+# ending the run, so the caller's try/catch can skip it (#272). Ctrl+C (aria2 exit 7) still stops.
+function Fetch($url,$out,[switch]$Soft){
   if($UseAria){
     $ariaProg = if($DlTty){ '--summary-interval=1' } else { '--summary-interval=0' }
     # A native program that cannot start leaves LASTEXITCODE unchanged (#132).
@@ -338,6 +340,7 @@ function Fetch($url,$out){
     # part-done file: it is preallocated with gaps, so 'curl -C -' would keep a corrupt
     # copy. aria2 resumes it from its .aria2 control file on the next run.
     if($LASTEXITCODE -eq 7 -or (Test-Path "$out.aria2")){
+      if($Soft -and $LASTEXITCODE -ne 7){ throw "download stopped: $url -> $out (optional, skipped; re-run to resume)" }
       Log "ERROR: download stopped: $url -> $out. Re-run the installer to resume."
       exit 1
     }
@@ -347,6 +350,7 @@ function Fetch($url,$out){
   $global:LASTEXITCODE = $null
   curl.exe -fL -C - --retry 10 --retry-delay 5 --retry-all-errors $curlProg -o $out $url
   if($LASTEXITCODE -ne 0 -or -not (Test-Path $out -PathType Leaf) -or (Get-Item $out).Length -eq 0){
+    if($Soft){ throw "download failed: $url -> $out (optional, skipped; re-run to try again)" }
     Log "ERROR: download failed: $url -> $out. Re-run the installer to resume."
     exit 1
   }
@@ -364,16 +368,16 @@ function Remote-Size($url){
 # one edition into another, and it replaces the old file only once it is complete.
 # With no size known, this is a plain Fetch. With -Soft, a size mismatch from the source
 # changing mid-download is not fatal: it throws (caught by the optional viewer's try) so
-# the run continues (#99).
+# the run continues (#99). -Soft also reaches Fetch, so a failed download throws too (#272).
 function Fetch-Sized($url,$out,$bytes,[switch]$Soft){
-  if(-not $bytes){ Fetch $url $out; return }
+  if(-not $bytes){ Fetch $url $out -Soft:$Soft; return }
   if((Test-Path $out -PathType Leaf) -and -not (Test-Path "$out.aria2") -and (Get-Item $out).Length -eq [int64]$bytes){ return }
   $part = "$out.$bytes.part"
   Get-ChildItem -Path (Split-Path $out -Parent) -Filter ((Split-Path $out -Leaf) + '.*.part') -ErrorAction SilentlyContinue |
     Where-Object { $_.FullName -ne $part } |
     ForEach-Object { Remove-Item -LiteralPath $_.FullName -Force -ErrorAction SilentlyContinue; Remove-Item -LiteralPath ($_.FullName + '.aria2') -Force -ErrorAction SilentlyContinue }
   if(Test-Path $out -PathType Leaf){ Log "  re-download: $(Split-Path $out -Leaf) (size on disk is not the source's $bytes bytes)" }
-  Fetch $url $part
+  Fetch $url $part -Soft:$Soft
   $got = (Get-Item $part).Length
   if($got -ne [int64]$bytes){
     Remove-Item -LiteralPath $part -Force -ErrorAction SilentlyContinue; Remove-Item -LiteralPath "$part.aria2" -Force -ErrorAction SilentlyContinue
@@ -384,6 +388,9 @@ function Fetch-Sized($url,$out,$bytes,[switch]$Soft){
   Remove-Item -LiteralPath "$out.aria2" -Force -ErrorAction SilentlyContinue
   Move-Item -LiteralPath $part -Destination $out -Force
 }
+# A file a publisher can replace under the same URL (PDFs, models): never resume one
+# version into another (#274). One HEAD request; with no size known, a plain Fetch.
+function Fetch-Remote($url,$out){ Fetch-Sized $url $out (Remote-Size $url) }
 if($UseAria){ Log 'Downloader: aria2 (fast, multi-connection)' } else { Log "Downloader: curl (tip: install 'aria2' for much faster downloads)" }
 if($Lite -and -not $PSBoundParameters.ContainsKey('Selection') -and -not $Guided){ Log "Lite preset: 3B AI, medical/survival references and maps for '$Region' (unless skipped). Size depends on region; use -Region for a small area or -SkipMaps. Re-run without -Lite to add the full library." }
 if($SelList -and -not $Guided){ Log "Selection from ${Selection}: $SelList (same as: $SelSame)" }
@@ -436,16 +443,17 @@ $mapGB = 0
 if((-not $SkipMaps) -or $BmOnly){ $mapGB = [double](($sel | ForEach-Object { [double]$_.containerSize } | Measure-Object -Sum).Sum) / 1GB }
 $est = Get-SpaceEstimate $mapGB
 $estGB = [math]::Round(($est.Values | Measure-Object -Sum).Sum, 1)
-try {
-  $drive = (Get-Item $Root).PSDrive
-  $freeGB = [math]::Round((Get-PSDrive $drive.Name).Free/1GB,1)
-  # Folder bytes do not prove this selection's downloads are complete: they can be
-  # unrelated files, old editions, unpacked maps or preallocated partial files (#102).
-  $needGB = $estGB
-  Log "Destination: $Root   (free space: $(Gb $freeGB) GB)"
-  Log "Space estimate for this selection: about $(Gb $estGB) GB"
-  foreach($k in $est.Keys){ Log ("  {0,6} GB  {1}" -f (Gb $est[$k]), $k) }
-  if($Kolibri){ Log '     (Kolibri content is not counted: you pick it in the app)' }
+# Folder bytes do not prove this selection's downloads are complete: they can be
+# unrelated files, old editions, unpacked maps or preallocated partial files (#102).
+$needGB = $estGB
+# A network share (\\server\share) has no PSDrive, so the free space can be unknown (#276).
+$freeGB = $null
+try { $freeGB = [math]::Round((Get-PSDrive (Get-Item $Root).PSDrive.Name).Free/1GB,1) } catch {}
+Log "Destination: $Root   (free space: $(if($null -ne $freeGB){ "$(Gb $freeGB) GB" } else { 'unknown' }))"
+Log "Space estimate for this selection: about $(Gb $estGB) GB"
+foreach($k in $est.Keys){ Log ("  {0,6} GB  {1}" -f (Gb $est[$k]), $k) }
+if($Kolibri){ Log '     (Kolibri content is not counted: you pick it in the app)' }
+if($null -ne $freeGB){
   Log "Conservative space budget: $(Gb $needGB) GB. Free: $(Gb $freeGB) GB."
   Log "Existing files are not subtracted; a re-run may need less space."
   if($needGB -gt $freeGB){
@@ -459,7 +467,7 @@ try {
       Log "  Continuing at the user's request."
     }
   }
-} catch {}
+}
 
 # ---------------------------------------------------------------- folder tree
 $dirs = @(
@@ -581,13 +589,13 @@ $models = @(
 foreach($m in $models){
   if($Only){ continue }   # -Only adds pieces: the core models are not touched (#74)
   if($SkipModels -and $m.big){ Log "model (skipped): $($m.n)"; continue }
-  Log "model: $($m.n)"; Fetch $m.u (Join-Path $Root "AI-Offline\models\$($m.n)")
+  Log "model: $($m.n)"; Fetch-Remote $m.u (Join-Path $Root "AI-Offline\models\$($m.n)")
 }
 # Translator (opt-in): one small multilingual model run by the same engine, so no new runtime.
 $TrModel = 'Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf'
 if($Translate){
   Log "model (translator): $TrModel"
-  Fetch "https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TrModel" (Join-Path $Root "AI-Offline\models\$TrModel")
+  Fetch-Remote "https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TrModel" (Join-Path $Root "AI-Offline\models\$TrModel")
 } else { Log '=== Translator not selected - add -Translate to include (~2.5 GB) ===' }
 # Every model the installer can download, for the self-check (only files on the drive are checked).
 $GgufUrls = @($models | ForEach-Object { $_.u }) + "https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TrModel"
@@ -820,11 +828,9 @@ foreach($p in $pdfs){
     if($url){
       $out = Join-Path $Root "$($p.d)\$($p.n)"
       Log "pdf: $($p.n)"
-      Fetch $url $out
-      if(Test-Path $out){
-        $fs = New-Object IO.FileStream($out,'Open'); $b = New-Object byte[] 4; [void]$fs.Read($b,0,4); $fs.Close()
-        if(-not ([System.Text.Encoding]::ASCII.GetString($b) -eq '%PDF')){ Log "  ERROR: $($p.n) not a valid PDF (removed)"; Remove-Item $out -Force; exit 1 }
-      } else { Log "  WARN: $($p.n) failed to download" }
+      Fetch-Remote $url $out   # exits on a missing or empty file
+      $fs = New-Object IO.FileStream($out,'Open'); $b = New-Object byte[] 4; [void]$fs.Read($b,0,4); $fs.Close()
+      if(-not ([System.Text.Encoding]::ASCII.GetString($b) -eq '%PDF')){ Log "  ERROR: $($p.n) not a valid PDF (removed)"; Remove-Item $out -Force; exit 1 }
     } else { Log "pdf: NO PDF for $($p.id)" }
   }catch{ Log "pdf ERROR $($p.n): $($_.Exception.Message)" }
 }
@@ -837,14 +843,12 @@ if(-not $Only){
     $ecDir  = Join-Path $Root 'Medical\Emergency-Childbirth'
     $ecHtml = Join-Path $ecDir 'Emergency Childbirth (US Civil Defense).html'
     Log 'html: Emergency Childbirth (US Civil Defense).html'
-    Fetch "$ecBase/pg26923-images.html" $ecHtml
-    if(Test-Path $ecHtml){
-      $body = Get-Content -LiteralPath $ecHtml -Raw
-      if($body -notmatch '(?i)<html|<!doctype'){ Log '  ERROR: Emergency Childbirth was not HTML (removed)'; Remove-Item $ecHtml -Force; exit 1 }
-      $imgs = [regex]::Matches($body,'src="images/([^"]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
-      if($imgs){ New-Item -ItemType Directory -Force (Join-Path $ecDir 'images') | Out-Null }
-      foreach($im in $imgs){ Fetch "$ecBase/images/$im" (Join-Path $ecDir "images\$im") }
-    } else { Log '  WARN: Emergency Childbirth failed to download' }
+    Fetch "$ecBase/pg26923-images.html" $ecHtml   # exits on a missing or empty file
+    $body = Get-Content -LiteralPath $ecHtml -Raw
+    if($body -notmatch '(?i)<html|<!doctype'){ Log '  ERROR: Emergency Childbirth was not HTML (removed)'; Remove-Item $ecHtml -Force; exit 1 }
+    $imgs = [regex]::Matches($body,'src="images/([^"]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
+    if($imgs){ New-Item -ItemType Directory -Force (Join-Path $ecDir 'images') | Out-Null }
+    foreach($im in $imgs){ Fetch "$ecBase/images/$im" (Join-Path $ecDir "images\$im") }
   }catch{ Log "html ERROR Emergency Childbirth: $($_.Exception.Message)" }
 }
 
@@ -882,7 +886,8 @@ if(-not $SkipMaps){
     $worldRow = $idx.osmand_regions.region | Where-Object { $_.name -eq $world } | Select-Object -First 1
     if((-not $BmOnly) -and -not (Test-Path $worldPath) -and $worldRow){
       Log "osmand: $world (world basemap for the desktop viewer)"
-      Fetch-Sized "https://download.osmand.net/download.php?standard=yes&file=$world" $worldPath $worldRow.containerSize -Soft
+      # optional: a failed download skips it and the run goes on, like bash's ( ... ) || true (#272)
+      try{ Fetch-Sized "https://download.osmand.net/download.php?standard=yes&file=$world" $worldPath $worldRow.containerSize -Soft }catch{ Log "  note: $($_.Exception.Message)" }
     } elseif((-not $BmOnly) -and -not (Test-Path $worldPath)) {
       Log "osmand note: $world is not in the current index; skipping the optional basemap."
     }
@@ -1492,7 +1497,9 @@ $bat = Join-Path $Root 'CHECK-DRIVE.bat'
 Copy-Item (Join-Path $Root 'CHECK-DRIVE.sh') (Join-Path $Root 'CHECK-DRIVE.command') -Force   # macOS double-click
 
 Log '=== Building README.html (full index of everything) ==='
-function Esc2($s){ $s -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;' }
+# File names into the page (#278): Esc2 escapes cell text; Href also encodes what would end or change a link path.
+function Esc2($s){ $s -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;' -replace "'",'&#39;' }
+function Href($p){ Esc2 ($p -replace '%','%25' -replace '#','%23' -replace '\?','%3F' -replace "'",'%27') }
 function Rel2($full){ ($full.Substring($Root.Length)).TrimStart('\','/') -replace '\\','/' }
 function Nice2($name){ ($name -replace '\.[A-Za-z0-9]+$','') -replace '[-_]',' ' }
 function Human2($b){ if($b -ge 1GB){"{0:N2} GB" -f ($b/1GB)}elseif($b -ge 1MB){"{0:N0} MB" -f ($b/1MB)}else{"{0:N0} KB" -f ($b/1KB)} }
@@ -1514,13 +1521,13 @@ try{
   [void]$sb.Append("<div class='hero'>Every guide, document, manual, archive, app and data file on this drive, with links.<br><span class='muted'>Generated $(Get-Date -Format 'yyyy-MM-dd HH:mm')</span></div>")
   if(Test-Path (Join-Path $Root 'START-HERE.html')){ [void]$sb.Append("<p>&#128073; New here? Start with <a href='START-HERE.html'><b>START-HERE.html</b></a>.</p>") }
   [void]$sb.Append("<h2>&#128214; Guides &amp; Documentation</h2><table><tr><th>Guide</th><th>Folder</th><th>Open</th></tr>")
-  foreach($h in $htmlDocs){ $rel=Rel2 $h.FullName; $dir=Split-Path $rel -Parent; if(-not $dir){$dir='(root)'}; $mdRel=$rel -replace '\.html$','.md'; $mdLink=if(Test-Path (Join-Path $Root $mdRel)){" &middot; <a href='$mdRel'>md</a>"}else{''}; [void]$sb.Append("<tr><td>$(Esc2 (Nice2 $h.Name))</td><td class='muted'>$dir</td><td><a href='$rel'>HTML</a>$mdLink</td></tr>") }
+  foreach($h in $htmlDocs){ $rel=Rel2 $h.FullName; $dir=Split-Path $rel -Parent; if(-not $dir){$dir='(root)'}; $mdRel=$rel -replace '\.html$','.md'; $mdLink=if(Test-Path (Join-Path $Root $mdRel)){" &middot; <a href='$(Href $mdRel)'>md</a>"}else{''}; [void]$sb.Append("<tr><td>$(Esc2 (Nice2 $h.Name))</td><td class='muted'>$(Esc2 $dir)</td><td><a href='$(Href $rel)'>HTML</a>$mdLink</td></tr>") }
   [void]$sb.Append("</table>")
-  if($pdfs){ [void]$sb.Append("<h2>&#128218; Manuals &amp; Books (PDF)</h2><table><tr><th>Document</th><th>Folder</th><th>Size</th><th>Open</th></tr>"); foreach($p in $pdfs){ $rel=Rel2 $p.FullName; [void]$sb.Append("<tr><td>$(Esc2 (Nice2 $p.Name))</td><td class='muted'>$(Split-Path $rel -Parent)</td><td>$(Human2 $p.Length)</td><td><a href='$rel'>PDF</a></td></tr>") }; [void]$sb.Append("</table>") }
-  if($zims){ [void]$sb.Append("<h2>&#127760; Offline Archives (ZIM &mdash; open with Kiwix)</h2><table><tr><th>Archive</th><th>Folder</th><th>Size</th><th>File</th></tr>"); foreach($z in $zims){ $rel=Rel2 $z.FullName; [void]$sb.Append("<tr><td>$(Esc2 (Nice2 $z.Name))</td><td class='muted'>$(Split-Path $rel -Parent)</td><td>$(Human2 $z.Length)</td><td><a href='$rel'>open</a></td></tr>") }; [void]$sb.Append("</table>") }
-  if($progs){ [void]$sb.Append("<h2>&#9881; Programs &amp; Launchers</h2><table><tr><th>Item</th><th>Folder</th></tr>"); foreach($x in $progs){ $rel=Rel2 $x.FullName; $dir=Split-Path $rel -Parent; if(-not $dir){$dir='(root)'}; [void]$sb.Append("<tr><td><a href='$rel'>$(Esc2 $x.Name)</a></td><td class='muted'>$dir</td></tr>") }; [void]$sb.Append("</table>") }
-  if($apks){ [void]$sb.Append("<h2>&#128241; Phone Apps (Android APK)</h2><table><tr><th>App</th><th>Folder</th><th>Size</th></tr>"); foreach($a in $apks){ $rel=Rel2 $a.FullName; [void]$sb.Append("<tr><td><a href='$rel'>$(Esc2 $a.Name)</a></td><td class='muted'>$(Split-Path $rel -Parent)</td><td>$(Human2 $a.Length)</td></tr>") }; [void]$sb.Append("</table>") }
-  if($data){ [void]$sb.Append("<h2>&#128451; Data</h2><table><tr><th>Item</th><th>Folder</th><th>Size</th></tr>"); foreach($d in ($data|Where-Object{$_.Name -like '*.bz2'})){ $rel=Rel2 $d.FullName; [void]$sb.Append("<tr><td>$(Esc2 $d.Name) <span class='muted'>(Wikipedia)</span></td><td class='muted'>$(Split-Path $rel -Parent)</td><td>$(Human2 $d.Length)</td></tr>") }; $maps=$data|Where-Object{$_.Name -like '*.obf.zip'}; if($maps){ $sum=($maps|Measure-Object Length -Sum).Sum; [void]$sb.Append("<tr><td>Offline maps (OsmAnd) - $($maps.Count) files</td><td class='muted'>OsmAnd</td><td>$(Human2 $sum)</td></tr>") }; [void]$sb.Append("</table>") }
+  if($pdfs){ [void]$sb.Append("<h2>&#128218; Manuals &amp; Books (PDF)</h2><table><tr><th>Document</th><th>Folder</th><th>Size</th><th>Open</th></tr>"); foreach($p in $pdfs){ $rel=Rel2 $p.FullName; [void]$sb.Append("<tr><td>$(Esc2 (Nice2 $p.Name))</td><td class='muted'>$(Esc2 (Split-Path $rel -Parent))</td><td>$(Human2 $p.Length)</td><td><a href='$(Href $rel)'>PDF</a></td></tr>") }; [void]$sb.Append("</table>") }
+  if($zims){ [void]$sb.Append("<h2>&#127760; Offline Archives (ZIM &mdash; open with Kiwix)</h2><table><tr><th>Archive</th><th>Folder</th><th>Size</th><th>File</th></tr>"); foreach($z in $zims){ $rel=Rel2 $z.FullName; [void]$sb.Append("<tr><td>$(Esc2 (Nice2 $z.Name))</td><td class='muted'>$(Esc2 (Split-Path $rel -Parent))</td><td>$(Human2 $z.Length)</td><td><a href='$(Href $rel)'>open</a></td></tr>") }; [void]$sb.Append("</table>") }
+  if($progs){ [void]$sb.Append("<h2>&#9881; Programs &amp; Launchers</h2><table><tr><th>Item</th><th>Folder</th></tr>"); foreach($x in $progs){ $rel=Rel2 $x.FullName; $dir=Split-Path $rel -Parent; if(-not $dir){$dir='(root)'}; [void]$sb.Append("<tr><td><a href='$(Href $rel)'>$(Esc2 $x.Name)</a></td><td class='muted'>$(Esc2 $dir)</td></tr>") }; [void]$sb.Append("</table>") }
+  if($apks){ [void]$sb.Append("<h2>&#128241; Phone Apps (Android APK)</h2><table><tr><th>App</th><th>Folder</th><th>Size</th></tr>"); foreach($a in $apks){ $rel=Rel2 $a.FullName; [void]$sb.Append("<tr><td><a href='$(Href $rel)'>$(Esc2 $a.Name)</a></td><td class='muted'>$(Esc2 (Split-Path $rel -Parent))</td><td>$(Human2 $a.Length)</td></tr>") }; [void]$sb.Append("</table>") }
+  if($data){ [void]$sb.Append("<h2>&#128451; Data</h2><table><tr><th>Item</th><th>Folder</th><th>Size</th></tr>"); foreach($d in ($data|Where-Object{$_.Name -like '*.bz2'})){ $rel=Rel2 $d.FullName; [void]$sb.Append("<tr><td>$(Esc2 $d.Name) <span class='muted'>(Wikipedia)</span></td><td class='muted'>$(Esc2 (Split-Path $rel -Parent))</td><td>$(Human2 $d.Length)</td></tr>") }; $maps=$data|Where-Object{$_.Name -like '*.obf.zip'}; if($maps){ $sum=($maps|Measure-Object Length -Sum).Sum; [void]$sb.Append("<tr><td>Offline maps (OsmAnd) - $($maps.Count) files</td><td class='muted'>OsmAnd</td><td>$(Human2 $sum)</td></tr>") }; [void]$sb.Append("</table>") }
   [void]$sb.Append("</div></body></html>")
   [System.IO.File]::WriteAllText((Join-Path $Root 'README.html'), $sb.ToString(), [System.Text.UTF8Encoding]::new($false))
   Log "README.html index written."
@@ -1576,7 +1583,7 @@ Log "CHECKSUMS-SHA256.txt: $($arr.Count) files. Run CHECK-DRIVE every few months
 # Read-only checks of what was built, so a broken kit never ends with a bare DONE.
 # Writes nothing to the drive (CHECKSUMS-SHA256.txt above stays correct).
 Log '=== Self-check ==='
-$scFail = 0
+$scFail = 0; $scBlocked = $false
 function ScPass($m){ Log "  PASS  $m" }
 function ScWarn($m){ Log "  WARN  $m" }
 function ScFail($m){ Log "  FAIL  $m"; $script:scFail++ }
@@ -1609,6 +1616,7 @@ if($env:OS -eq 'Windows_NT'){
     } elseif($null -eq $rc){
       ScFail "AI engine does not start on this computer (x64): Windows did not let llama-cli.exe run. $runErr"
       Log '        Smart App Control or another app-control policy may block it: see Windows Security > App & browser control. The drive itself is fine.'
+      $scBlocked = $true
     } else {
       ScFail "AI engine does not start on this computer (x64): exit code $rc"
       if($rc -eq -1073741515){ Log '        A DLL is missing (0xC0000135). If a file is missing from engine\x64, re-run the installer. Otherwise install the Microsoft Visual C++ Redistributable (x64) and run the AI again.' }
@@ -1721,5 +1729,10 @@ if($scFail -eq 0){
   Write-Host ''
   Write-Host "  Your offline library is in: $Root" -ForegroundColor Yellow
   Write-Host "  Fix the FAIL line(s) above before you rely on it." -ForegroundColor Yellow
-  exit 1
+  if($scBlocked){
+    Write-Host '  Windows blocked the AI program (Smart App Control or another app-control policy).' -ForegroundColor Yellow
+    Write-Host '  Re-running the installer will not change that: see Windows Security > App & browser control.' -ForegroundColor Yellow
+    Write-Host '  The manuals, maps and archives on the drive do not need the AI and work as they are.' -ForegroundColor Yellow
+  }
+  exit 4   # finished, but a self-check failed: install.bat / install.sh / install.command say so (#271)
 }

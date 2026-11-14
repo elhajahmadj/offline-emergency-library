@@ -251,7 +251,7 @@ space_estimate(){
   [ "$SKIP_MODELS" = 0 ] && est 8.9 "8B + 7B AI models"
   [ "$LITE" = 0 ] && [ -z "$ONLY" ] && est 4.5 "GPT4All, iFixit, Appropedia"
   [ "$SKIP_WIKI" = 0 ] && est 49.1 "Wikipedia"
-  [ "$SKIP_MAPS" = 0 ] && est "$(LC_ALL=C awk -v m="$MAP_MB" 'BEGIN{printf "%.1f", m/1024 + 0.5}')" "maps for '$REGION' + desktop viewer"
+  [ "$SKIP_MAPS" = 0 ] && est "$(LC_ALL=C awk -v m="$MAP_MB" 'BEGIN{printf "%.1f", m/1024 + 0.7}')" "maps for '$REGION' + desktop viewer"
   if [ "$BROWSER_MAPS" = 1 ] && { [ "$SKIP_MAPS" = 0 ] || [ "$BM_ONLY" = 1 ]; }; then
     # all of the US ~15.4 GB; states ~0.4 of their OsmAnd size (#102); always + the world map
     bm=0
@@ -400,6 +400,9 @@ fetch(){ # url out
     # .aria2 control file on the next run.
     if [ "$arc" = 7 ] || [ -e "$2.aria2" ]; then
       log "ERROR: download stopped: $1 -> $2. Re-run the installer to resume."
+      # aria2 catches Ctrl+C and exits 7, so bash never sees the signal: re-raise it on this
+      # shell, or a fetch inside ( ... ) (optional downloads) ends only the subshell (#272).
+      if [ "$arc" = 7 ]; then trap - INT; kill -INT "${BASHPID:-$(exec sh -c 'echo "$PPID"')}"; fi
       exit 1
     fi
     echo "  (aria2 failed, falling back to curl)"
@@ -419,7 +422,8 @@ remote_size(){ curl -sIL -A "${UA:-Mozilla/5.0}" "$1" 2>/dev/null | tr -d '\r' |
 # one edition into another, and it replaces the old file only once it is complete.
 # With no size known, this is a plain fetch. With a 4th arg (soft), a size mismatch from
 # the source changing mid-download is not fatal: it returns 1 so an optional download (the
-# desktop viewer) can be skipped and the run continues (#99).
+# desktop viewer) can be skipped and the run continues (#99). A failed download still exits
+# (fetch), so run a soft call in ( ... ): the exit then ends only the subshell (#272).
 fetch_sized(){ # url out bytes [soft]
   [ -n "$3" ] || { fetch "$1" "$2"; return; }
   if [ -f "$2" ] && [ ! -e "$2.aria2" ] && [ "$(wc -c < "$2" | tr -d ' ')" = "$3" ]; then return 0; fi
@@ -435,6 +439,9 @@ fetch_sized(){ # url out bytes [soft]
   fi
   rm -f "$2.aria2"; mv -f "$part" "$2"
 }
+# A file a publisher can replace under the same URL (PDFs, models): never resume one
+# version into another (#274). One HEAD request; with no size known, a plain fetch.
+fetch_remote(){ fetch_sized "$1" "$2" "$(remote_size "$1")"; }
 if [ "$USE_ARIA" = 1 ]; then log "Downloader: aria2 (fast, multi-connection)"; else log "Downloader: curl (tip: install 'aria2' for much faster downloads)"; fi
 [ "$SELECT_SET" = 1 ] && log "Selection from $SELECT:$SEL_LIST (same as:$SAME)"
 [ "$GUIDED" = 1 ] && log "Guided install:$SEL_LIST (same as: $GUIDED_CMD)"
@@ -617,16 +624,16 @@ MQ7="$HF/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q4_K_M.gguf"
 TR_MODEL="Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
 MTR="$HF/Qwen_Qwen3-4B-Instruct-2507-GGUF/resolve/main/$TR_MODEL"
 GGUF_URLS="$M3B $M8B $MQ7 $MTR"   # for the self-check (only files on the drive are checked)
-if [ -z "$ONLY" ]; then fetch "$M3B" "$ROOT/AI-Offline/models/${M3B##*/}"; log "model: Llama-3.2-3B done"; fi
+if [ -z "$ONLY" ]; then fetch_remote "$M3B" "$ROOT/AI-Offline/models/${M3B##*/}"; log "model: Llama-3.2-3B done"; fi
 if [ "$SKIP_MODELS" = 0 ]; then
-  fetch "$M8B" "$ROOT/AI-Offline/models/${M8B##*/}"; log "model: Llama-3.1-8B done"
-  fetch "$MQ7" "$ROOT/AI-Offline/models/${MQ7##*/}"; log "model: Qwen2.5-7B done"
+  fetch_remote "$M8B" "$ROOT/AI-Offline/models/${M8B##*/}"; log "model: Llama-3.1-8B done"
+  fetch_remote "$MQ7" "$ROOT/AI-Offline/models/${MQ7##*/}"; log "model: Qwen2.5-7B done"
 else
   log "models: large models skipped"
 fi
 # Translator (opt-in): one small multilingual model run by the same engine, so no new runtime.
 if [ "$TRANSLATE" = 1 ]; then
-  fetch "$MTR" "$ROOT/AI-Offline/models/$TR_MODEL"; log "model (translator): $TR_MODEL done"
+  fetch_remote "$MTR" "$ROOT/AI-Offline/models/$TR_MODEL"; log "model (translator): $TR_MODEL done"
 else
   log "=== Translator not selected - add --translate to include (~2.5 GB) ==="
 fi
@@ -769,11 +776,9 @@ get_pdf(){ # id  localname  destdir   (archive.org item)
 get_pdf_url(){ # url  localname  destdir   (direct link)
   out="$3/$2"
   log "pdf: $2"
-  fetch "$1" "$out"
-  # validate it's really a PDF; drop error pages / empties
-  if [ -f "$out" ]; then
-    if [ "$(head -c 4 "$out" 2>/dev/null)" != "%PDF" ]; then log "  ERROR: $2 was not a valid PDF (removed)"; rm -f "$out"; exit 1; fi
-  else log "  WARN: $2 failed to download"; fi
+  fetch_remote "$1" "$out"
+  # validate it's really a PDF; drop error pages (fetch already exits on a missing or empty file)
+  if [ "$(head -c 4 "$out" 2>/dev/null)" != "%PDF" ]; then log "  ERROR: $2 was not a valid PDF (removed)"; rm -f "$out"; exit 1; fi
 }
 get_html_doc(){ # baseurl  htmlfile  localname  destdir   (an HTML page + the images/ it references)
   # Grabs the page and every images/<file> it links, so it opens fully offline in a browser.
@@ -944,7 +949,7 @@ if [ "$SKIP_MAPS" = 0 ]; then
   if [ "$HAVE_UNZIP" = 1 ]; then
     # "latest" URLs keep their file name across new editions: fetch by remote size (#57)
     mcu="https://download.osmand.net/latest-night-build/OsmAndMapCreator-main.zip"
-    if fetch_sized "$mcu" "$MVD/OsmAndMapCreator.zip" "$(remote_size "$mcu")" soft; then
+    if ( fetch_sized "$mcu" "$MVD/OsmAndMapCreator.zip" "$(remote_size "$mcu")" soft ); then
       # unpack to a new folder; replace the working viewer only if the unpack worked
       rm -rf "$MVD/app.new"
       if unzip -o -q "$MVD/OsmAndMapCreator.zip" -d "$MVD/app.new" && [ -f "$MVD/app.new/OsmAndMapCreator.sh" ]; then
@@ -955,7 +960,7 @@ if [ "$SKIP_MAPS" = 0 ]; then
     fi
     jreurl="https://api.adoptium.net/v3/binary/latest/21/ga/${PLAT}/${JARCH}/jre/hotspot/normal/eclipse"
     [ "$PLAT" = mac ] && jreurl="https://api.adoptium.net/v3/binary/latest/21/ga/mac/${JARCH}/jre/hotspot/normal/eclipse"
-    if fetch_sized "$jreurl" "$MVD/jre.tar.gz" "$(remote_size "$jreurl")" soft; then
+    if ( fetch_sized "$jreurl" "$MVD/jre.tar.gz" "$(remote_size "$jreurl")" soft ); then
       rm -rf "$MVD/_jre"; mkdir -p "$MVD/_jre"; tar -xf "$MVD/jre.tar.gz" -C "$MVD/_jre" 2>/dev/null
       if [ -n "$(find "$MVD/_jre" -name java -type f 2>/dev/null | head -n1)" ]; then
         rm -rf "$MVD/jre"; mv "$MVD/_jre"/*/ "$MVD/jre" 2>/dev/null
@@ -1432,7 +1437,10 @@ log "=== Building README.html (full index of everything) ==="
 IDX="$ROOT/README.html"
 IDXCSS='<style>:root{--bg:#0f1420;--card:#171f2e;--ink:#e7ecf3;--muted:#9fb0c3;--accent:#4fd1c5;--accent2:#f6ad55;--line:#273246;--code:#0b0f17}@media(prefers-color-scheme:light){:root{--bg:#f4f6fb;--card:#fff;--ink:#15202b;--muted:#56657a;--accent:#0d9488;--accent2:#b45309;--line:#e2e8f0;--code:#f1f5f9}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Arial,sans-serif}.wrap{max-width:1000px;margin:0 auto;padding:28px 20px 80px}h1{font-size:30px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}h2{font-size:21px;border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:32px}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:Consolas,monospace;font-size:13px}table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14.5px}th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}th{background:rgba(127,127,127,.12)}.muted{color:var(--muted);font-size:13px}.hero{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}</style>'
 relp(){ printf '%s' "${1#"$ROOT"/}"; }
-nicen(){ b="$(basename "$1")"; b="${b%.*}"; printf '%s' "$b" | tr '_-' '  '; }
+# File names into the page (#278): he escapes cell text; hu encodes what would end or change a link path.
+he(){ printf '%s' "$1" | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e "s/'/\&#39;/g"; }
+hu(){ printf '%s' "$1" | sed -e 's/%/%25/g' -e 's/#/%23/g' -e 's/?/%3F/g' -e "s/'/%27/g" -e 's/&/%26/g' -e 's/</%3C/g' -e 's/>/%3E/g'; }
+nicen(){ b="$(basename "$1")"; b="${b%.*}"; he "$(printf '%s' "$b" | tr '_-' '  ')"; }
 hsz(){ du -h "$1" 2>/dev/null | cut -f1; }
 {
   printf '%s' "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Offline Emergency Library - Full Index</title>$IDXCSS</head><body><div class=\"wrap\">"
@@ -1443,36 +1451,36 @@ hsz(){ du -h "$1" 2>/dev/null | cut -f1; }
   printf '%s' "<h2>&#128214; Guides &amp; Documentation</h2><table><tr><th>Guide</th><th>Folder</th><th>Open</th></tr>"
   find "$ROOT" -type f ! -name '._*' -name '*.html' ! -name 'README.html' | sort | while read -r f; do
     rel="$(relp "$f")"; dir="$(dirname "$rel")"; [ "$dir" = "." ] && dir='(root)'
-    mdrel="${rel%.html}.md"; ml=""; [ -f "$ROOT/$mdrel" ] && ml=" &middot; <a href='$mdrel'>md</a>"
-    printf '%s' "<tr><td>$(nicen "$f")</td><td class='muted'>$dir</td><td><a href='$rel'>HTML</a>$ml</td></tr>"
+    mdrel="${rel%.html}.md"; ml=""; [ -f "$ROOT/$mdrel" ] && ml=" &middot; <a href='$(hu "$mdrel")'>md</a>"
+    printf '%s' "<tr><td>$(nicen "$f")</td><td class='muted'>$(he "$dir")</td><td><a href='$(hu "$rel")'>HTML</a>$ml</td></tr>"
   done
   printf '%s' "</table>"
   # pdfs
   if find "$ROOT" -type f ! -name '._*' -name '*.pdf' | grep -q .; then
     printf '%s' "<h2>&#128218; Manuals &amp; Books (PDF)</h2><table><tr><th>Document</th><th>Folder</th><th>Size</th><th>Open</th></tr>"
-    find "$ROOT" -type f ! -name '._*' -name '*.pdf' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(nicen "$f")</td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td><td><a href='$rel'>PDF</a></td></tr>"; done
+    find "$ROOT" -type f ! -name '._*' -name '*.pdf' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(nicen "$f")</td><td class='muted'>$(he "$(dirname "$rel")")</td><td>$(hsz "$f")</td><td><a href='$(hu "$rel")'>PDF</a></td></tr>"; done
     printf '%s' "</table>"
   fi
   # zims
   if find "$ROOT" -type f ! -name '._*' -name '*.zim' | grep -q .; then
     printf '%s' "<h2>&#127760; Offline Archives (ZIM &mdash; open with Kiwix)</h2><table><tr><th>Archive</th><th>Folder</th><th>Size</th><th>File</th></tr>"
-    find "$ROOT" -type f ! -name '._*' -name '*.zim' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(nicen "$f")</td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td><td><a href='$rel'>open</a></td></tr>"; done
+    find "$ROOT" -type f ! -name '._*' -name '*.zim' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(nicen "$f")</td><td class='muted'>$(he "$(dirname "$rel")")</td><td>$(hsz "$f")</td><td><a href='$(hu "$rel")'>open</a></td></tr>"; done
     printf '%s' "</table>"
   fi
   # programs
   printf '%s' "<h2>&#9881; Programs &amp; Launchers</h2><table><tr><th>Item</th><th>Folder</th></tr>"
-  { find "$ROOT" -type f ! -name '._*' \( -name '*.bat' -o -name '*.sh' -o -name '*.command' -o -name '*.appimage' -o -name '*.run' -o -name '*.dmg' \); find "$ROOT" -type f ! -name '._*' -name '*.exe' | grep -iE 'installer|kiwix-desktop'; } | sort -u | while read -r f; do rel="$(relp "$f")"; dir="$(dirname "$rel")"; [ "$dir" = "." ] && dir='(root)'; printf '%s' "<tr><td><a href='$rel'>$(basename "$f")</a></td><td class='muted'>$dir</td></tr>"; done
+  { find "$ROOT" -type f ! -name '._*' \( -name '*.bat' -o -name '*.sh' -o -name '*.command' -o -name '*.appimage' -o -name '*.run' -o -name '*.dmg' \); find "$ROOT" -type f ! -name '._*' -name '*.exe' | grep -iE 'installer|kiwix-desktop'; } | sort -u | while read -r f; do rel="$(relp "$f")"; dir="$(dirname "$rel")"; [ "$dir" = "." ] && dir='(root)'; printf '%s' "<tr><td><a href='$(hu "$rel")'>$(he "$(basename "$f")")</a></td><td class='muted'>$(he "$dir")</td></tr>"; done
   printf '%s' "</table>"
   # apks
   if find "$ROOT" -type f ! -name '._*' -name '*.apk' | grep -q .; then
     printf '%s' "<h2>&#128241; Phone Apps (Android APK)</h2><table><tr><th>App</th><th>Folder</th><th>Size</th></tr>"
-    find "$ROOT" -type f ! -name '._*' -name '*.apk' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td><a href='$rel'>$(basename "$f")</a></td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td></tr>"; done
+    find "$ROOT" -type f ! -name '._*' -name '*.apk' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td><a href='$(hu "$rel")'>$(he "$(basename "$f")")</a></td><td class='muted'>$(he "$(dirname "$rel")")</td><td>$(hsz "$f")</td></tr>"; done
     printf '%s' "</table>"
   fi
   # data
   if find "$ROOT" -type f ! -name '._*' \( -name '*.bz2' -o -name '*.obf.zip' \) | grep -q .; then
     printf '%s' "<h2>&#128451; Data</h2><table><tr><th>Item</th><th>Folder</th><th>Size</th></tr>"
-    find "$ROOT" -type f ! -name '._*' -name '*.bz2' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(basename "$f") <span class='muted'>(Wikipedia)</span></td><td class='muted'>$(dirname "$rel")</td><td>$(hsz "$f")</td></tr>"; done
+    find "$ROOT" -type f ! -name '._*' -name '*.bz2' | sort | while read -r f; do rel="$(relp "$f")"; printf '%s' "<tr><td>$(he "$(basename "$f")") <span class='muted'>(Wikipedia)</span></td><td class='muted'>$(he "$(dirname "$rel")")</td><td>$(hsz "$f")</td></tr>"; done
     mc=$(find "$ROOT" -type f ! -name '._*' -name '*.obf.zip' | wc -l | tr -d ' ')
     [ "$mc" -gt 0 ] && printf '%s' "<tr><td>Offline maps (OsmAnd) - $mc files</td><td class='muted'>OsmAnd</td><td>$(du -ch "$ROOT"/OsmAnd/*.obf.zip 2>/dev/null | tail -1 | cut -f1)</td></tr>"
     printf '%s' "</table>"
@@ -1684,5 +1692,5 @@ else
   echo ""
   echo "  Your offline library is in: $ROOT"
   echo "  Fix the FAIL line(s) above before you rely on it."
-  exit 1
+  exit 4   # finished, but a self-check failed: install.sh / install.command say so (#271)
 fi
