@@ -97,6 +97,9 @@ against stale junctions and relocation with a fake Java, without network access.
 `.github/scripts/check-launchers.sh` runs model placement with local download fixtures
 and checks generated launcher model references across full, Lite, skipped-model and
 translator selections. It runs in the existing lint job on PRs and the weekly schedule.
+Kiwix archives download through `fetch_zim` / `Fetch-Zim`, which remove other monthly editions
+(`<prefix>YYYY-MM.zim`) of the same archive once the new one is complete;
+`.github/scripts/check-zim-editions.sh` runs both against a `file://` source.
 For the milestone 2 picker (#139), also exercise a fresh non-Lite selection containing
 `core`, `gpt4all-repair` and `wikipedia` without `models` on both installers; verify
 the large models and their launchers are absent while the core chat remains available.
