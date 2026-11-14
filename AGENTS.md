@@ -97,6 +97,10 @@ against stale junctions and relocation with a fake Java, without network access.
 `.github/scripts/check-launchers.sh` runs model placement with local download fixtures
 and checks generated launcher model references across full, Lite, skipped-model and
 translator selections. It runs in the existing lint job on PRs and the weekly schedule.
+`.github/scripts/check-readme-index.sh` builds README.html with both installers' index code and
+`build-readme-index.ps1` on a fixture drive whose names hold `' # % &`, and requires every link
+to open its file; it extracts each installer's block by its `README index` start and
+`index written` / `README index ERROR` end lines.
 For the milestone 2 picker (#139), also exercise a fresh non-Lite selection containing
 `core`, `gpt4all-repair` and `wikipedia` without `models` on both installers; verify
 the large models and their launchers are absent while the core chat remains available.
