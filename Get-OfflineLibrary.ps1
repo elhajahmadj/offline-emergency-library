@@ -485,6 +485,17 @@ function Latest-Zim($dirUrl,$prefix){
   $names = [regex]::Matches($html, [regex]::Escape($prefix)+'[^"<]*\.zim') | ForEach-Object {$_.Value} | Sort-Object -Unique
   if($names){ return ($names | Select-Object -Last 1) } else { return $null }
 }
+# Fetch-Zim url out: Kiwix names carry their month (name_YYYY-MM.zim). Once the newest edition
+# is complete, remove older or part-done editions of the same archive in that folder (#275).
+function Fetch-Zim($url,$out){
+  Fetch $url $out
+  $leaf = Split-Path $out -Leaf
+  if($leaf -notmatch '^(.+)\d{4}-\d{2}\.zim$'){ return }
+  $pre = $Matches[1]
+  Get-ChildItem -LiteralPath (Split-Path $out -Parent) -File -Filter '*.zim' -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -ne $leaf -and $_.Name.StartsWith($pre) -and $_.Name.Substring($pre.Length) -match '^\d{4}-\d{2}\.zim$' } |
+    ForEach-Object { Log "  removed old edition: $($_.Name)"; Remove-Item -LiteralPath $_.FullName, "$($_.FullName).aria2" -Force -ErrorAction SilentlyContinue }
+}
 function Gh-ReleaseWith($repo,$needle){
   $rels = Invoke-RestMethod "https://api.github.com/repos/$repo/releases?per_page=20" -Headers @{'User-Agent'='ps'}
   foreach($r in $rels){ if($r.assets | Where-Object { $_.name -match $needle }){ return $r } }
@@ -654,7 +665,7 @@ foreach($z in $zims){
   if($Only){ Log 'zim: core archives not touched (-Only)'; break }
   if($Lite -and $z.d -in @('Manuals\Repair-iFixit','Manuals\DIY-Appropedia')){ continue }
   $name = Latest-Zim $z.dir $z.pre
-  if($name){ Log "zim: $name"; Fetch ($z.dir+$name) (Join-Path $Root "$($z.d)\$name") }
+  if($name){ Log "zim: $name"; Fetch-Zim ($z.dir+$name) (Join-Path $Root "$($z.d)\$name") }
   else { Log "zim: NOT FOUND for prefix $($z.pre)" }
 }
 
@@ -663,7 +674,7 @@ if($Education){
   Log "=== [5b] Education: Khan Academy (Kiwix ZIM, ~168 GB with videos, lang=$EduLang) ==="
   New-Item -ItemType Directory -Force (Join-Path $Root 'Education\KhanAcademy') | Out-Null
   $kaName = Latest-Zim 'https://download.kiwix.org/zim/other/' "khanacademy_$($EduLang)_all_"
-  if($kaName){ Log "zim: $kaName"; Fetch ("https://download.kiwix.org/zim/other/$kaName") (Join-Path $Root "Education\KhanAcademy\$kaName") }
+  if($kaName){ Log "zim: $kaName"; Fetch-Zim ("https://download.kiwix.org/zim/other/$kaName") (Join-Path $Root "Education\KhanAcademy\$kaName") }
   else { Log "Khan Academy: no ZIM found for language '$EduLang' (try -EduLang en|es|fr)" }
 } else { Log "=== [5b] Education (Khan Academy) not selected - add -Education to include (~168 GB) ===" }
 
@@ -694,7 +705,7 @@ if($ExtraZims){
   foreach($z in $extra){
     New-Item -ItemType Directory -Force (Join-Path $Root $z.d) | Out-Null
     $name = Latest-Zim $z.dir $z.pre
-    if($name){ Log "zim: $name"; Fetch ($z.dir+$name) (Join-Path $Root "$($z.d)\$name") }
+    if($name){ Log "zim: $name"; Fetch-Zim ($z.dir+$name) (Join-Path $Root "$($z.d)\$name") }
     else { Log "zim: NOT FOUND for prefix $($z.pre)" }
   }
 } else { Log "=== [5d] Extra archives (Wikivoyage + Wikibooks) not selected - add -ExtraZims to include (~5.8 GB) ===" }
@@ -854,7 +865,7 @@ if(-not $SkipWikipedia){
   Log '=== [7/8] Wikipedia (full, no images - Kiwix ZIM, ~49 GB) ==='
   New-Item -ItemType Directory -Force (Join-Path $Root 'Wikipedia') | Out-Null
   $wk = Latest-Zim 'https://download.kiwix.org/zim/wikipedia/' 'wikipedia_en_all_nopic_'
-  if($wk){ Log "zim: $wk"; Fetch ("https://download.kiwix.org/zim/wikipedia/$wk") (Join-Path $Root "Wikipedia\$wk") }
+  if($wk){ Log "zim: $wk"; Fetch-Zim ("https://download.kiwix.org/zim/wikipedia/$wk") (Join-Path $Root "Wikipedia\$wk") }
   else { Log 'Wikipedia: ZIM not found' }
 } else { Log '=== [7/8] Wikipedia SKIPPED ===' }
 

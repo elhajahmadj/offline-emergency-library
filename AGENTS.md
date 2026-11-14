@@ -100,6 +100,9 @@ against stale junctions and relocation with a fake Java, without network access.
 `.github/scripts/check-launchers.sh` runs model placement with local download fixtures
 and checks generated launcher model references across full, Lite, skipped-model and
 translator selections. It runs in the existing lint job on PRs and the weekly schedule.
+Kiwix archives download through `fetch_zim` / `Fetch-Zim`, which remove other monthly editions
+(`<prefix>YYYY-MM.zim`) of the same archive once the new one is complete;
+`.github/scripts/check-zim-editions.sh` runs both against a `file://` source.
 PDFs and models download through `fetch_remote` / `Fetch-Remote` (size-named part file, never a
 resume onto a replaced file); `.github/scripts/check-changed-source.sh` runs both installers'
 real helpers against a `file://` source that changes size between runs.

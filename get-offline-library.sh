@@ -552,6 +552,16 @@ gh_asset_latest(){ # repo regex -> asset url from the 'latest' release
    | grep -E "$2" | head -n1
 }
 latest_zim(){ curl -sL -A "$UA" "$1" | grep -oE "$2[^\"<]*\.zim" | sort -u | tail -n1; }
+# fetch_zim url out: Kiwix names carry their month (name_YYYY-MM.zim). Once the newest edition
+# is complete, remove older or part-done editions of the same archive in that folder (#275).
+fetch_zim(){ # url out
+  fetch "$1" "$2"
+  zpre="${2%[0-9][0-9][0-9][0-9]-[0-9][0-9].zim}"
+  [ "$zpre" != "$2" ] || return 0
+  for o in "$zpre"[0-9][0-9][0-9][0-9]-[0-9][0-9].zim; do
+    if [ -e "$o" ] && [ "$o" != "$2" ]; then log "  removed old edition: $(basename "$o")"; rm -f "$o" "$o.aria2"; fi
+  done
+}
 
 # ================================================================ 1. AI engine
 # llama.cpp for Windows, macOS and Linux, all from ONE build, so a drive made on any
@@ -667,7 +677,7 @@ fi
 
 # ================================================================ 5. ZIM archives
 log "=== [5/8] Offline archives (Kiwix ZIM) ==="
-add_zim(){ n="$(latest_zim "$1" "$2")"; [ -n "$n" ] && { log "zim: $n"; fetch "$1$n" "$3/$n"; } || log "zim: not found ($2)"; }
+add_zim(){ n="$(latest_zim "$1" "$2")"; [ -n "$n" ] && { log "zim: $n"; fetch_zim "$1$n" "$3/$n"; } || log "zim: not found ($2)"; }
 if [ -n "$ONLY" ]; then log "zim: core archives not touched (--only)"; else
 if [ "$LITE" = 0 ]; then
   add_zim "https://download.kiwix.org/zim/ifixit/"    "ifixit_en_all_"            "$ROOT/Manuals/Repair-iFixit"
@@ -687,7 +697,7 @@ if [ "$EDU" = 1 ]; then
   log "=== [5b] Education: Khan Academy (Kiwix ZIM, ~168 GB with videos, lang=$EDULANG) ==="
   mkdir -p "$ROOT/Education/KhanAcademy"
   kaname="$(latest_zim 'https://download.kiwix.org/zim/other/' "khanacademy_${EDULANG}_all_")"
-  if [ -n "$kaname" ]; then log "zim: $kaname"; fetch "https://download.kiwix.org/zim/other/$kaname" "$ROOT/Education/KhanAcademy/$kaname"
+  if [ -n "$kaname" ]; then log "zim: $kaname"; fetch_zim "https://download.kiwix.org/zim/other/$kaname" "$ROOT/Education/KhanAcademy/$kaname"
   else log "Khan Academy: no ZIM for language '$EDULANG' (try --edu-lang en|es|fr)"; fi
 else
   log "=== [5b] Education (Khan Academy) not selected - add --education to include (~168 GB) ==="
@@ -902,7 +912,7 @@ if [ "$SKIP_WIKI" = 0 ]; then
   log "=== [7/8] Wikipedia (full, no images - Kiwix ZIM, ~49 GB) ==="
   mkdir -p "$ROOT/Wikipedia"
   wk="$(latest_zim 'https://download.kiwix.org/zim/wikipedia/' 'wikipedia_en_all_nopic_')"
-  if [ -n "$wk" ]; then log "zim: $wk"; fetch "https://download.kiwix.org/zim/wikipedia/$wk" "$ROOT/Wikipedia/$wk"
+  if [ -n "$wk" ]; then log "zim: $wk"; fetch_zim "https://download.kiwix.org/zim/wikipedia/$wk" "$ROOT/Wikipedia/$wk"
   else log "Wikipedia: ZIM not found"; fi
 else log "=== [7/8] Wikipedia SKIPPED ==="; fi
 
