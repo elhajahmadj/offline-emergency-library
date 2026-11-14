@@ -112,6 +112,9 @@ if [ "${rc:-1}" = 0 ]; then
   echo "Done. Open START-HERE.html in the OfflineLibrary folder inside the folder you chose."
 elif [ "${rc:-1}" = 3 ]; then
   : # user cancelled at the confirm step; no error
+elif [ "${rc:-1}" = 4 ]; then
+  echo "The download finished, but the self-check found a problem: see the FAIL lines above."
+  echo "Re-running the installer downloads only missing files, so it will not fix a FAIL this computer causes."
 else
   echo "Installation failed or was stopped. Review any error above and _download.log, then re-run to resume."
 fi

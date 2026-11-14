@@ -23,6 +23,11 @@ on Windows, macOS and Linux, for **US and non-US regions**.
 3. OffRoad opens with your region's maps. Pan and zoom with the mouse. Use **Search** for a
    town or street; the search and rendering use the local map files.
 
+**OffRoad quirks (the viewer, not your maps):** the window opens small, so maximize it.
+**Search** puts a cross on the place but does not move the map there: zoom out and pan to the
+cross. Some labels read `TRANSLATE_ME:region` or `TRANSLATE_ME:city`; they are untranslated
+names in the viewer and do not affect the maps.
+
 **Dependencies: fully handled.** The folder includes a **portable Java runtime** (`jre\`),
 OffRoad (`offroad\`), and a small world basemap. Nothing else is needed on a 64-bit PC.
 The launcher sets up a private OffRoad folder and links it to `OsmAnd\obf\`, so the maps are

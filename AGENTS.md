@@ -101,6 +101,11 @@ translator selections. It runs in the existing lint job on PRs and the weekly sc
 `build-readme-index.ps1` on a fixture drive whose names hold `' # % &`, and requires every link
 to open its file; it extracts each installer's block by its `README index` start and
 `index written` / `README index ERROR` end lines.
+Installer exit codes the launchers read: 0 done, 4 finished but a self-check failed (a re-run will
+not fix it), anything else failed or stopped (a re-run resumes); `install.sh` / `install.command`
+already use 2 (no picker selection) and 3 (cancelled) for their own paths.
+`.github/scripts/check-install-exit.sh` runs `install.sh`, `install.command` and (where `cmd.exe`
+exists) `install.bat` against a stub installer for each case.
 For the milestone 2 picker (#139), also exercise a fresh non-Lite selection containing
 `core`, `gpt4all-repair` and `wikipedia` without `models` on both installers; verify
 the large models and their launchers are absent while the core chat remains available.
